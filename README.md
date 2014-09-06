@@ -4,9 +4,9 @@
 This is, at best, a proof-of-concept effort currently. The API will change. This README will change. Change will change. Hope and Change. Don't go changin', to try to please me...
 
 ##What Is It
-luxJS is an opinionated implementation of a Flux architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled - all communication happens via message passing. Here's a gist of the opinions at play:
+luxJS is an opinionated implementation of a Flux architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
 
-* All communication happens via message passing.
+* *All* communication happens via message passing.
 * Each message payload should be fully serializable(!)
 * Components use an ActionCreator API as a proxy to stores.
 * Stores should never *ever* **EVER** be used directly. You should ONLY communicate with a store via ActionCreator APIs, or an equivalent message-capable API that follows the lux message contracts for these operations.
@@ -19,7 +19,7 @@ luxJS is an opinionated implementation of a Flux architecture using ReactJS, pos
 ####ControllerViews
 A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `luxAction` and `luxStore` (see the section on mixins below for more information on the mixins' API). The `luxAction` mixin gives the ControllerView an `ActionCreator` API for the specified store(s). The `luxStore` mixin wires the component into the bus to listen for updates from the specified store(s).
 
-You get an instance of a controller view by calling `lux.createControllerView()`. For example, the ControllerView below is being given an ActionCreator API for the "board" store, and is also listening to the board store for data:
+You get an instance of a ControllerView by calling `lux.createControllerView()`. For example, the ControllerView below is being given an ActionCreator API for the "board" store, and is also listening to the board store for data:
 
 
 ```javascript
@@ -95,10 +95,10 @@ yourApp.dispatcher = new lux.Dispatcher();
 ```
 
 ####ActionCoordinator
-The Dispatcher will stand one of these up any time it processes an action. An ActionCoordinator is also an FSM underneath. A tree structure of stores is passed to the ActionCoordinator as it stands up. The store action handlers are invoked as parallel as possible. Once complete, the ActionCoordinator tells the stores to notify any listening components of state changes. You do not have to create an ActionCoordinator, the Dispatcher does this for you.
+The Dispatcher will stand one of these up any time it processes an action. An ActionCoordinator is also an FSM underneath. A tree structure of stores is passed to the ActionCoordinator as it stands up. The store action handlers are invoked in as parallel a fashion as possible. Once complete, the ActionCoordinator tells the stores to notify any listening components of state changes. You do not have to create an ActionCoordinator, the Dispatcher does this for you.
 
 ####Store
-A store should contain your data as well as any business logic related to that data. A lux Store can be created by calling `lux.createStore()`. A store should always have a `namespace` (just a logical name for it) and it will have any number of action handlers. What you name an action handler on a store is important, as the same name will be used on the corresponding ActionCreator API. A store action handler can return a value synchronously, or return a promise. Inside the action handler is where you'd manage storing/retrieving your data (in memory, local storage, over HTTP). Stores contain the following methods:
+A store should contain your data as well as any business logic related to that data. A lux Store can be created by calling `lux.createStore()`. A store should always have a `namespace` (just a logical name for it) and it will have any number of action handlers. What you name an action handler on a store is important, as the same name will be used on the corresponding ActionCreator API. A store action handler can return a value synchronously, or return a promise. Inside the action handler is where you'd manage storing/retrieving your data (in memory, local storage, over HTTP, etc.). Stores contain the following methods:
 
 * `getState` - returns a promise, that when resolved will pass the current state of the store to the callback.
 * `setState` - works much like a component's `setState` method (via shallow extending/assigning).
@@ -141,7 +141,7 @@ var boardStore = lux.createStore({
 The options argument passed to `lux.createStore` takes an option `storageStrategy` property. By default, lux will use the `MemoryStorage` strategy- which acts as an in-memory cache for your data (you can still retrieve data from over the wire/localStorage, etc.). You can easily implement your own storage strategy - please see the `MemoryStorage` class in the source for more information. (I will document this more later on.)
 
 ####ActionCreator APIs
-Since components don't talk to stores directly - the use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores are created. You can get one for a specific store by calling `lux.getActionCreatorFor(storeNamespace)`. If you use the luxAction mixin (or use a ControllerView or lux Component), action creator APIs will appear under this.actions.storeNamespace. The auto-generated ActionCreator APIs use the same method names as the corresponding store handler method. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API for a store, or even override the methods on an auto-generated one. You just have to honor the message contracts (see the source for information on that now....more documentation later).
+Components don't talk to stores directly. Instead, they use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores are created. You can get one for a specific store by calling `lux.getActionCreatorFor(storeNamespace)`. If you use the luxAction mixin (or use a ControllerView or lux Component), action creator APIs will appear under this.actions.storeNamespace. The auto-generated ActionCreator APIs use the same method names as the corresponding store handler method. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API for a store, or even override the methods on an auto-generated one. You just have to honor the message contracts (see the source for information on that now....more documentation later).
 
 ####luxAction mixin
 The luxAction mixin (which is provided automatically when you call `lux.createControllerView` and `lux.createComponent`) will look for a `getActionsFor` array on your component options. This array should contain the string namespace values for the store(s) the component wants ActionCreators for. The ActionCreator APIs will appear on the component under `this.actions.storeNamespace`.
