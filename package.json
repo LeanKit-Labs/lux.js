@@ -1,0 +1,30 @@
+{
+  "name": "lux.js",
+  "version": "0.0.1",
+  "description": "Flux-based architecture for using ReactJS at LeanKit",
+  "scripts": {
+    "test": "mocha ./spec/*.js"
+  },
+  "dependencies": {
+    "conduitjs": "^0.3.3",
+    "lodash": "^2.4.1",
+    "postal": "^0.10.3",
+    "postal.request-response": "git://github.com/postaljs/postal.request-response.git#err-reply",
+    "react": "^0.11.1",
+    "traceur": "0.0.58"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-imports": "0.0.2",
+    "gulp-rename": "^1.2.0",
+    "gulp-sourcemaps": "^1.1.1",
+    "gulp-traceur": "^0.13.0",
+    "mocha": "^1.21.4",
+    "open": "0.0.5",
+    "should": "^4.0.4"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "author": "Jim Cowart"
+}

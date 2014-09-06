@@ -1,0 +1,31 @@
+.l-header {
+	width: 100%;
+	max-width: 100%; /* overrides foundation */
+	padding: 0 1em 0 1em;
+}
+
+.l-header::after {
+	clear:both;
+}
+
+.l-header-left {
+	float:left;
+	margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.l-header-left > li {
+	display: inline-block;
+}
+
+.l-header-right {
+	float:right;
+	margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.l-header-right > li {
+	display: inline-block;
+}

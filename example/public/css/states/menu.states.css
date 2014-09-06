@@ -1,0 +1,16 @@
+.analytics.is-active, .analytics:hover {
+	background-position: -34px -136px;
+}
+
+.help.is-active, .help:hover {
+	background-position: -34px -204px;
+}
+
+.is-drop-menu-closing {
+	opacity: 0;
+	-webkit-transition: opacity .2s ease-out;
+    -moz-transition: opacity .2s ease-out;
+    -ms-transition: opacity .2s ease-out;
+    -o-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
