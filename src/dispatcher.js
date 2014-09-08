@@ -108,3 +108,5 @@ class Dispatcher extends machina.Fsm {
 		this.__subscriptions.forEach((subscription) => subscription.unsubscribe());
 	}
 }
+
+var dispatcher = new Dispatcher();

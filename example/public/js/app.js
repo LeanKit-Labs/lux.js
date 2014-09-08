@@ -14,7 +14,6 @@ define( [
     if(e.channel === "postal") { return; }
     console.log( JSON.stringify( e, null, 2 ) /*.substr(0,300)*/ );
   } );
-  window.dispatcher = new lux.Dispatcher();
   // We need to tell postal how to get a deferred instance
   postal.configuration.promise.createDeferred = function() {
     return when.defer();

@@ -42,7 +42,7 @@
     createControllerView,
     createComponent,
     removeStore,
-    Dispatcher,
+    dispatcher,
     ActionCoordinator,
     getActionCreatorFor( store ) {
       return actionCreators[store];
