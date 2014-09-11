@@ -19,23 +19,30 @@ module.exports = {
   },
   resolve: {
     alias: {
-      lodash       : path.join( __dirname, "./node_modules/lodash/dist/lodash.js" ),
-      when         : path.join( __dirname, "./node_modules/when/when.js"),
-      react        : path.join( __dirname, "./node_modules/react/dist/react-with-addons.js" ),
-      machina      : path.join( __dirname, "./node_modules/machina/lib/machina.js" ),
-      conduitjs    : path.join( __dirname, "./node_modules/conduitjs/lib/conduit.js" ),
-      postal       : path.join( __dirname, "./node_modules/postal/lib/postal.js" ),
+      lodash         : path.join( __dirname, "./node_modules/lodash/dist/lodash.js" ),
+      when           : path.join( __dirname, "./node_modules/when/when.js"),
+      "when.parallel": path.join( __dirname, "./node_modules/when/parallel.js"),
+      "when.pipeline": path.join( __dirname, "./node_modules/when/pipeline.js"),
+      react          : path.join( __dirname, "./node_modules/react/dist/react-with-addons.js" ),
+      machina        : path.join( __dirname, "./node_modules/machina/lib/machina.js" ),
+      conduitjs      : path.join( __dirname, "./node_modules/conduitjs/lib/conduit.js" ),
+      postal         : path.join( __dirname, "./node_modules/postal/lib/postal.js" ),
       "postal.request-response" : path.join( __dirname, "./node_modules/postal.request-response/lib/postal.request-response.js" ),
-      traceur      : path.join( __dirname, "./node_modules/traceur/bin/traceur-runtime.js"),
-      lux          : path.join( __dirname, "../lib/lux.js"),
+      traceur        : path.join( __dirname, "./node_modules/traceur/bin/traceur-runtime.js"),
+      lux            : path.join( __dirname, "../lib/lux.js"),
 
       laneParser        : path.join( __dirname, "./public/js/stores/laneParser"),
       boardStore        : path.join( __dirname, "./public/js/stores/boardStore"),
+      loggingStore      : path.join( __dirname, "./public/js/stores/loggingStore"),
+      pointlessActionCountingStore: path.join( __dirname, "./public/js/stores/pointlessActionCountingStore"),
+      fakeNotificationStore  : path.join( __dirname, "./public/js/stores/fakeNotificationStore"),
       LaneSelector      : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelector.jsx"),
       LaneSelectorTable : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelectorTable.jsx"),
       LaneSelectorRow   : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelectorRow.jsx"),
       LaneSelectorCell  : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelectorCell.jsx"),
       Lane              : path.join( __dirname, "./public/js/components/LaneSelector/Lane.jsx"),
+      Notification      : path.join( __dirname, "./public/js/components/Notification/Notification.jsx"),
+      ActionCounter     : path.join( __dirname, "./public/js/components/ActionCounter/ActionCounter.jsx")
     }
   },
   debug: true

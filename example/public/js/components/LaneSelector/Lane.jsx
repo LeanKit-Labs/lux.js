@@ -4,9 +4,8 @@ define([
 	"lux",
 	"LaneSelectorTable",
 	"LaneSelectorRow",
-	"LaneSelectorCell",
-	"postal"
-], function(React, lux, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, postal) {
+	"LaneSelectorCell"
+], function(React, lux, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell) {
 
 	var classSet = React.addons.classSet;
 
@@ -34,11 +33,6 @@ define([
 				depth: 0,
 				isParentActive: false
 			};
-		},
-
-		toggleChildren: function(e) {
-			e.stopPropagation();
-			this.setState({ isCollapsed: !this.state.isCollapsed });
 		},
 
 		toggleActive: function(e) {
@@ -111,7 +105,7 @@ define([
 								  siblingSize={1} 
 								  isParentActive={this.props.isParentActive} 
 								  isActive={item.isActive}/>
-						</LaneSelectorRow>
+						</LaneSelectorRow>;
 					}.bind(this))
 				}
 				</LaneSelectorTable>;
@@ -137,7 +131,7 @@ define([
 									 depth={depth} 
 									 siblingSize={siblingSize} 
 									 isParentActive={this.props.isParentActive} 
-									 isActive={item.isActive}/>
+									 isActive={item.isActive}/>;
 					}.bind(this))
 				}
 				</LaneSelectorTable>;
