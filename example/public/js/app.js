@@ -3,9 +3,7 @@ define( [
 	"traceur",
 	"lux",
 	"postal.request-response",
-	"when",
-	"when.pipeline",
-	"when.parallel"
+	"when"
 ], function( React, traceur, lux, postal, when ) {
 	window.React = React;
 	window.lux = lux;
@@ -23,6 +21,7 @@ define( [
 	postal.configuration.promise.getPromise = function( dfd ) {
 		return dfd.promise;
 	};
+
 	require( [
 		"boardStore", 
 		"loggingStore",

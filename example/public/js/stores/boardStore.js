@@ -1,8 +1,22 @@
 define([
 	"lux",
+	"lodash",
 	"laneParser",
-	"./boardData.json"
-], function(lux, parser, mockData) {
+	"./boardData.json",
+	"jquery",
+	"when",
+	"imports?jQuery=jquery!mockjax"
+], function(lux, _, parser, mockData, $, when) {
+
+	$.mockjax({
+		url: /\/board\/([\d]+)/,
+		urlParams: [ "boardId" ],
+		response: function(settings) {
+			this.responseText = mockData.boards.find(function(x) {
+				return x.boardId.toString() === settings.urlParams.boardId;
+			});
+		} 
+	});
 
 	function toggleAncestors(lookup, target) {
 		var parentId = target.parentLaneId;
@@ -52,17 +66,22 @@ define([
 							toggleAncestors(boards[boardId].lookup, target);
 							toggleDescendants(target);
 						}
-					}.bind(this)
+					}
 				);
 			},
 			loadBoard: function(boardId) {
-				var raw = mockData.boards.find(function(x) {
-					return x.boardId == boardId;
-				});
-				var placeholder = {};
-				placeholder[boardId] = parser.transform(raw);
-				this.setState(placeholder);;
-				return placeholder[boardId];
+				return $.ajax({
+					url: "/board/" + boardId,
+					dataType: "json"
+				}).then(
+					function(resp) {
+						var placeholder = {};
+						placeholder[boardId] = parser.transform(resp);
+						this.setState(placeholder);
+						return placeholder[boardId];
+					}.bind(this),
+					function(err) { console.log(err); }
+				);
 			}
 		}
 	});

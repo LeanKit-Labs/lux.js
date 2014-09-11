@@ -150,7 +150,7 @@ The luxAction mixin (which is provided automatically when you call `lux.createCo
 Th luxStore mixin (which is provided automatically when you call `lux.createControllerView` and `lux.createComponent`) will look for a `stores` array on your component options. The elements in this array should either be the string namespace of a store, or an object containing a `store` property that's the string namespace and a `handler` property that's a method that takes a data argument (updated state from a store) and handles updating the component's state. A default handler which simply calls `setState(newData)` is provided if you just use the store's string namespace as the value in the array.
 
 ##What It Lacks & Other Caveats
-Boy this thing is rough. Right now it doesn't have, but *will* have soon:
+Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 
 * The ability to process multiple actions simultaneously, but with the Dispatcher preventing action/store collision.
 * Additional mixins and/or storage strategies
