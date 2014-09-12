@@ -58,7 +58,7 @@ define([
 		namespace: "board",
 		handlers: {
 			toggleLaneSelection: function(boardId, laneId) {
-				this.getState().then(
+				return this.getState().then(
 					function(boards) {
 						var target = boards[boardId] && boards[boardId].lookup[laneId];
 						if(target) {

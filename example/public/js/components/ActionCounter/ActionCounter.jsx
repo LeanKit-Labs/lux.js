@@ -17,7 +17,7 @@ define([
 
 		getInitialState: function() {
 			return {
-				notice: ""
+				count: 0
 			};
 		},
 

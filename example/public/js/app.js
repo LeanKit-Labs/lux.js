@@ -11,7 +11,7 @@ define( [
 	window.postal = postal;
 	postal.addWireTap( function( d, e ) {
 		if(e.channel === "postal") { return; }
-		console.log( JSON.stringify( e, null, 2 ).substr(0,300) );
+		console.log( JSON.stringify( e, null, 2 ).substr(0,330) );
 	});
 	// We need to tell postal how to get a deferred instance
 	postal.configuration.promise.createDeferred = function() {

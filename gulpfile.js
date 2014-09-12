@@ -22,6 +22,8 @@ gulp.task("default", function() {
 		.pipe( imports() )
 		.pipe( hintNot() )
 		.pipe( sourcemaps.init() )
+		.pipe( rename( "lux-es6.js" ) )
+		.pipe( gulp.dest( "lib/" ) )
 		.pipe( traceur( {
 			script: "lux",
 			outputLanguage: "es5",
@@ -31,6 +33,7 @@ gulp.task("default", function() {
 			pkg: pkg
 		} ) )
 		.pipe( sourcemaps.write() )
+		.pipe( rename( "lux.js" ) )
 		.pipe( gulp.dest( "lib/" ) )
 		.pipe( uglify( {
 			compress: {
