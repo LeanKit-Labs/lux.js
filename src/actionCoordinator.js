@@ -55,8 +55,6 @@ class ActionCoordinator extends machina.Fsm {
                                 ]
                             ).then(function(...results) {
                                 this.results = results;
-                                console.log("ZE RESULTS");
-                                console.log(results);
                                 this.transition("success");
                             }.bind(this), function(err) {
                                 this.err = err;
@@ -77,6 +75,9 @@ class ActionCoordinator extends machina.Fsm {
                 },
                 failure: {
                     _onEnter: function() {
+                        luxCh.publish("notify", {
+                            action: this.action
+                        });
                         luxCh.publish("failure.action", {
                             action: this.action,
                             err: this.err
