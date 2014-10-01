@@ -5,7 +5,7 @@ define([
 	var lookup = {};
 
 	var updateState = function(deps, state) {
-		var key = deps.logging || "Unknown";
+		var key = deps.logging && deps.logging.result || "Unknown";
 		lookup[key] = (lookup[key] || 0) + 1; 
 		var newState =
 			{ notice: "'" + key + "' (notification has been published " +

@@ -1,7 +1,7 @@
-/* global configSubscription, luxCh, buildActionList, entries, stores */
+/* global configSubscription, luxCh, buildActionList, entries, stores, when */
 /* jshint -W098 */
 
-class MemoryStorage {
+class InMemoryTransport {
     constructor(state) {
         this.state = state || {};
         this.changedKeys = [];
@@ -42,13 +42,15 @@ class MemoryStorage {
 function transformHandler(store, target, key, handler) {
     target[key] = function(data) {
         var res = handler.apply(store, data.actionArgs.concat([data.deps]));
-        if (res instanceof Promise || (res && typeof res.then === "function")) {
-            return res;
-        } else {
-            return new Promise(function(resolve, reject) {
-                resolve(res);
+        return when.join(
+            when(res).catch(function(err) { return err; }),
+            store.getState()
+        ).then(function(values){
+            return when({
+                result: values[0],
+                state: values[1]
             });
-        }
+        });
     };
 }
 
@@ -71,13 +73,13 @@ function transformHandlers(store, handlers) {
 }
 
 class Store {
-    constructor(namespace, handlers, storageStrategy) {
+    constructor(namespace, handlers, transportStrategy) {
         this.namespace = namespace;
-        this.storage = storageStrategy;
+        this.transport = transportStrategy;
         this.actionHandlers = transformHandlers(this, handlers);
         this.__subscription = {
             dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
-            notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush))
+            notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch)
         };
         luxCh.publish("register", {
             namespace,
@@ -92,24 +94,26 @@ class Store {
     }
 
     getState(...args) {
-        return this.storage.getState(...args);
+        return this.transport.getState(...args);
     }
 
     setState(...args) {
-        return this.storage.setState(...args);
+        return this.transport.setState(...args);
     }
 
     replaceState(...args) {
-        return this.storage.replaceState(...args);
+        return this.transport.replaceState(...args);
     }
 
     flush() {
-        luxCh.publish(`notification.${this.namespace}`, this.storage.flush());
+        this.inDispatch = false;
+        luxCh.publish(`notification.${this.namespace}`, this.transport.flush());
     }
 
     handlePayload(data, envelope) {
         var namespace = this.namespace;
         if (this.actionHandlers.hasOwnProperty(data.actionType)) {
+            this.inDispatch = true;
             this.actionHandlers[data.actionType]
                 .call(this, data)
                 .then(
@@ -121,12 +125,12 @@ class Store {
 }
 
 /* jshint ignore:start */
-function createStore({ namespace, handlers = {}, storageStrategy = new MemoryStorage() }) {
+function createStore({ namespace, handlers = {}, transportStrategy = new InMemoryTransport() }) {
     if (namespace in stores) {
         throw new Error(` The store namespace "${namespace}" already exists.`);
     }
 
-    var store = new Store(namespace, handlers, storageStrategy);
+    var store = new Store(namespace, handlers, transportStrategy);
     actionCreators[namespace] = buildActionCreatorFrom(Object.keys(handlers));
     return store;
 }
