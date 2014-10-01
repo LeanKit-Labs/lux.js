@@ -9,8 +9,7 @@ define([
 	      	{
 	      		store: "pointlessActionCounting",
 	      		handler: function(data) {
-	      			console.log(data);
-		      		this.setState({ count: data.state });
+	      			this.setState({ count: data.state });
 		      	}
 	      	}
       	],

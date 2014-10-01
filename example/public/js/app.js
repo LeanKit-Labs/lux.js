@@ -3,8 +3,11 @@ define( [
 	"traceur",
 	"lux",
 	"postal.request-response",
-	"when"
-], function( React, traceur, lux, postal, when ) {
+	"when",
+	"jquery",
+	"./stores/boardData.json",
+	"imports?jQuery=jquery!mockjax"
+], function( React, traceur, lux, postal, when, $, mockData) {
 	// For Devtools, etc.
 	window.React = React;
 	window.lux = lux;
@@ -14,6 +17,7 @@ define( [
 		if(e.channel === "postal") { return; }
 		console.log( JSON.stringify( e, null, 2 ).substr(0,330) );
 	});
+
 	// We need to tell postal how to get a deferred instance
 	postal.configuration.promise.createDeferred = function() {
 		return when.defer();
@@ -22,6 +26,16 @@ define( [
 	postal.configuration.promise.getPromise = function( dfd ) {
 		return dfd.promise;
 	};
+
+	$.mockjax({
+		url: /\/board\/([\d]+)/,
+		urlParams: [ "boardId" ],
+		response: function(settings) {
+			this.responseText = mockData.boards.find(function(x) {
+				return x.boardId.toString() === settings.urlParams.boardId;
+			});
+		} 
+	});
 
 	require( [
 		"boardStore", 

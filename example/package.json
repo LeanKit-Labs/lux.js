@@ -7,9 +7,7 @@
   "description": "lux.js example application",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "debug": "node-debug src/index.js --debug-brk",
-    "test": "mocha ./spec/*.js"
+    "start": "gulp"
   },
   "dependencies": {
     "conduitjs": "^0.3.3",

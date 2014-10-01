@@ -2,21 +2,8 @@ define([
 	"lux",
 	"lodash",
 	"laneParser",
-	"./boardData.json",
-	"jquery",
-	"when",
-	"imports?jQuery=jquery!mockjax"
-], function(lux, _, parser, mockData, $, when) {
-
-	$.mockjax({
-		url: /\/board\/([\d]+)/,
-		urlParams: [ "boardId" ],
-		response: function(settings) {
-			this.responseText = mockData.boards.find(function(x) {
-				return x.boardId.toString() === settings.urlParams.boardId;
-			});
-		} 
-	});
+	"jquery"
+], function(lux, _, parser, $) {
 
 	function toggleAncestors(lookup, target) {
 		var parentId = target.parentLaneId;
@@ -65,6 +52,7 @@ define([
 							target.isActive = !target.isActive;
 							toggleAncestors(boards[boardId].lookup, target);
 							toggleDescendants(target);
+							return target;
 						}
 					}
 				);

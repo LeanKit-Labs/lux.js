@@ -1,7 +1,8 @@
 /** @jsx React.DOM */
 define([
-	"lux"
-], function(lux) {
+	"lux",
+	"react"
+], function(lux, React) {
 
 	var Notification = lux.createControllerView({
 
@@ -9,8 +10,7 @@ define([
 	      	{
 	      		store: "fakeNotification",
 	      		handler: function(data) {
-	      			console.log(data);
-		      		this.setState({ notice: data.state });
+	      			this.setState({ notice: data.state });
 		      	}
 	      	}
       	],
