@@ -5,6 +5,7 @@ define( [
 	"postal.request-response",
 	"when"
 ], function( React, traceur, lux, postal, when ) {
+	// For Devtools, etc.
 	window.React = React;
 	window.lux = lux;
 	window.when = when;

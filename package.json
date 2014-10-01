@@ -27,7 +27,7 @@
     "when": "^3.4.5"
   },
   "devDependencies": {
-    "gulp": "^3.8.7",
+    "gulp": "^3.8.8",
     "gulp-imports": "0.0.2",
     "gulp-rename": "^1.2.0",
     "gulp-sourcemaps": "^1.1.1",

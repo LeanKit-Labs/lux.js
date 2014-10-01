@@ -50,9 +50,7 @@ class ActionCoordinator extends machina.Fsm {
                 dispatching: {
                     _onEnter() {
                             pipeline(
-                                [
-                                    for (generation of config.generations) processGeneration.call(this, generation, config.action)
-                                ]
+                                [for (generation of config.generations) processGeneration.call(this, generation, config.action)]
                             ).then(function(...results) {
                                 this.results = results;
                                 this.transition("success");

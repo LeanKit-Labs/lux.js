@@ -5,6 +5,7 @@ var webpackConfig = require( "./webpack.config.js" );
 var express = require( "express" );
 var path = require( "path" );
 var open = require( "open" ); //jshint ignore:line
+var livereload = require( "gulp-livereload" );
 var port = 3080;
 // modify some webpack config options
 var myDevConfig = Object.create( webpackConfig );
@@ -22,8 +23,10 @@ gulp.task( "default", [ "server" ] );
 // Disadvantage: Requests are not blocked until bundle is available,
 //               can serve an old app on refresh
 gulp.task( "build-dev", [ "webpack:build-dev" ], function() {
-    gulp.watch( [ "public/**/*" ], [ "webpack:build-dev" ] );
-
+    livereload.listen();
+    gulp.watch( [ "public/**/*", "../lib/**/*" ], [ "webpack:build-dev" ] );
+    gulp.watch( [ "public/{css,images,js-dist}/**/*" ] )
+        .on( "change", livereload.changed );
 } );
 
 gulp.task( "webpack:build-dev", function( callback ) {
