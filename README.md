@@ -4,7 +4,7 @@
 This is, at best, a proof-of-concept effort currently. The API will change. This README will change. Change will change. Hope and Change. Don't go changin', to try to please me...
 
 ##What Is It
-luxJS is an opinionated implementation of a Flux architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
+luxJS is an *opinionated* implementation of a Flux architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
 
 * *All* communication happens via message passing.
 * Each message payload should be fully serializable(!)
@@ -114,31 +114,37 @@ var boardStore = lux.createStore({
 	namespace: "board",
 	handlers: {
 		toggleLaneSelection: function(boardId, laneId) {
-			this.getState().then(
+			return this.getState().then(
 				function(boards) {
 					var target = boards[boardId] && boards[boardId].lookup[laneId];
 					if(target) {
 						target.isActive = !target.isActive;
 						toggleAncestors(boards[boardId].lookup, target);
 						toggleDescendants(target);
+						return target;
 					}
-				}.bind(this)
+				}
 			);
 		},
 		loadBoard: function(boardId) {
-			var raw = mockData.boards.find(function(x) {
-				return x.boardId == boardId;
-			});
-			var placeholder = {};
-			placeholder[boardId] = parser.transform(raw);
-			this.setState(placeholder);;
-			return placeholder[boardId];
+			return $.ajax({
+				url: "/board/" + boardId,
+				dataType: "json"
+			}).then(
+				function(resp) {
+					var placeholder = {};
+					placeholder[boardId] = parser.transform(resp);
+					this.setState(placeholder);
+					return placeholder[boardId];
+				}.bind(this),
+				function(err) { console.log(err); }
+			);
 		}
 	}
 });
 ```
 
-The options argument passed to `lux.createStore` takes an option `storageStrategy` property. By default, lux will use the `MemoryStorage` strategy- which acts as an in-memory cache for your data (you can still retrieve data from over the wire/localStorage, etc.). You can easily implement your own storage strategy - please see the `MemoryStorage` class in the source for more information. (I will document this more later on.)
+The options argument passed to `lux.createStore` takes an optional `transportStrategy` property. By default, lux will use the `InMemoryTransport` strategy- which acts as an in-memory cache for your data (you can still retrieve data from over the wire/localStorage, etc.). You can easily implement your own transport strategy - please see the `InMemoryTransport` class in the source for more information. (I will document this more later on.)
 
 ####ActionCreator APIs
 Components don't talk to stores directly. Instead, they use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores are created. You can get one for a specific store by calling `lux.getActionCreatorFor(storeNamespace)`. If you use the luxAction mixin (or use a ControllerView or lux Component), action creator APIs will appear under this.actions.storeNamespace. The auto-generated ActionCreator APIs use the same method names as the corresponding store handler method. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API for a store, or even override the methods on an auto-generated one. You just have to honor the message contracts (see the source for information on that now....more documentation later).
