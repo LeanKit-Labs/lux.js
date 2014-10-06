@@ -37,7 +37,7 @@ define([
 
 		toggleActive: function(e) {
 			e.stopPropagation();
-			this.actions.board.toggleLaneSelection(304355117, this.props.key);
+			this.toggleLaneSelection(304355117, this.props.key);
 		},
 
 		render: function() {

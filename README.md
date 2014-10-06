@@ -32,7 +32,11 @@ var LaneSelector = lux.createControllerView({
         handler: function(data) {
             var newState = data.state[this.props.boardId];
             this.setState(newState);
-        }
+        },
+        // immediate: t/f - optional (defaults to false). True tells
+        // store to notify component of state during componentWillMount
+        // and when state is received the above `handler` fn is invoked
+        immediate: true 
     }],
 
     getInitialState: function() {
@@ -42,7 +46,7 @@ var LaneSelector = lux.createControllerView({
     },
 
     componentWillMount: function() {
-        this.actions.board.loadBoard(this.props.boardId);
+        this.loadBoard(this.props.boardId);
     },
 
     render: function() {
@@ -78,7 +82,7 @@ var Lane = lux.createComponent({
 
 	toggleActive: function(e) {
 		e.stopPropagation();
-		this.actions.board.toggleLaneSelection(this.props.boardId, this.props.key);
+		this.toggleLaneSelection(this.props.boardId, this.props.key);
 	},
 
 	render: function() {

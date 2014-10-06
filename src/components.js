@@ -1,4 +1,4 @@
-/* global luxCh, React, getActionCreatorFor */
+/* global luxCh, React, getActionCreatorFor, entries */
 /* jshint -W098 */
 var luxStore = {
     componentWillMount: function() {
@@ -8,20 +8,31 @@ var luxStore = {
             this.setState(data.state || data);
         };
         this.__subscriptions = this.__subscriptions || [];
+        var immediate = [];
         this.stores.forEach(function(st) {
             var store = st.store || st;
             var handler = st.handler || genericStateChangeHandler;
             this.__subscriptions.push(
-                luxCh.subscribe("notification." + store, function(data) {
-                    handler.call(this, data);
-                }).withContext(this)
+                luxCh.subscribe("notification." + store, (data) => handler.call(this, data))
             );
+            if(st.immediate) {
+                immediate.push(store);
+            }
         }.bind(this));
+        if(immediate.length) {
+            this.loadState(...immediate);
+        }
     },
+
+    loadState: function(...stores) {
+        if(!stores.length) {
+            stores = this.stores.map((st) => st.store );
+        }
+        stores.forEach((store) => luxCh.publish(`notify.${store}`));
+    },
+
     componentWillUnmount: function() {
-        this.__subscriptions.forEach(function(sub) {
-            sub.unsubscribe();
-        });
+        this.__subscriptions.forEach((sub) => sub.unsubscribe());
     }
 };
 
@@ -30,7 +41,11 @@ var luxAction = {
         this.actions = this.actions || {};
         this.getActionsFor = this.getActionsFor || [];
         this.getActionsFor.forEach(function(store) {
-            this.actions[store] = getActionCreatorFor(store);
+            for(var [k, v] of entries(getActionCreatorFor(store))) {
+                if(!this.hasOwnProperty(k)) {
+                    this[k] = v;
+                }
+            }
         }.bind(this));
     }
 };

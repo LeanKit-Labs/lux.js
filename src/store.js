@@ -43,11 +43,17 @@ function transformHandler(store, target, key, handler) {
     target[key] = function(data) {
         var res = handler.apply(store, data.actionArgs.concat([data.deps]));
         return when.join(
-            when(res).catch(function(err) { return err; }),
+            when(res).then(
+                function(x){ return [null, x]; },
+                function(err){ return [err]; }
+            ),
             store.getState()
         ).then(function(values){
+            var res = values[0][1];
+            var err = values[0][0];
             return when({
-                result: values[0],
+                result: res,
+                error: err,
                 state: values[1]
             });
         });
@@ -56,11 +62,6 @@ function transformHandler(store, target, key, handler) {
 
 function transformHandlers(store, handlers) {
     var target = {};
-    if (!("getState" in handlers)) {
-        handlers.getState = function(...args) {
-            return this.getState(...args);
-        };
-    }
     for (var [key, handler] of entries(handlers)) {
         transformHandler(
             store,
@@ -79,7 +80,8 @@ class Store {
         this.actionHandlers = transformHandlers(this, handlers);
         this.__subscription = {
             dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
-            notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch)
+            notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
+            scopedNotify: configSubscription(this, luxCh.subscribe(`notify.${namespace}`, this.flush))
         };
         luxCh.publish("register", {
             namespace,
@@ -107,6 +109,7 @@ class Store {
 
     flush() {
         this.inDispatch = false;
+        
         luxCh.publish(`notification.${this.namespace}`, this.transport.flush());
     }
 

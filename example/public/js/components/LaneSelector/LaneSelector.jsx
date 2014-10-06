@@ -25,7 +25,7 @@ define( [
 			return { lanes: [] };
 		},
 		componentWillMount: function() {
-			this.actions.board.loadBoard( this.props.boardId );
+			this.loadBoard( this.props.boardId );
 		},
 		render: function() {
 			var siblingSize = this.state.lanes.length;
@@ -40,7 +40,7 @@ define( [
 									items={item.items}
 									depth={0}
 									siblingSize={siblingSize}
-									isActive={item.isActive} />
+									isActive={item.isActive} />;
 						})
 					}
 					</LaneSelectorRow>

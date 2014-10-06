@@ -1,11 +1,24 @@
 {
   "name": "lux.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "homepage" : "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "repository": {
     "type": "git",
     "url": "git://github.com/LeanKit-Labs/lux.js.git"
   },
+  "contributors": [
+    {
+      "name": "Jim Cowart",
+      "email": "jim@ifandelse.com",
+      "url": "http://ifandelse.com"
+    },
+    {
+      "name": "Doug Neiner",
+      "email": "doug@dougneiner.com",
+      "url": "http://code.dougneiner.com"
+    }
+  ],
   "keywords": [
     "react",
     "ReactJS",

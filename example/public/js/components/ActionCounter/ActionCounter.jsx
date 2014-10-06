@@ -1,7 +1,8 @@
 /** @jsx React.DOM */
 define([
-	"lux"
-], function(lux) {
+	"lux",
+	"react"
+], function(lux, React) {
 
 	var ActionCounter = lux.createControllerView({
 
