@@ -38,6 +38,7 @@ module.exports = {
       loggingStore      : path.join( __dirname, "./public/js/stores/loggingStore"),
       pointlessActionCountingStore: path.join( __dirname, "./public/js/stores/pointlessActionCountingStore"),
       fakeNotificationStore  : path.join( __dirname, "./public/js/stores/fakeNotificationStore"),
+      otherLogger       : path.join( __dirname, "./public/js/generic/otherLogger"),
       LaneSelector      : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelector.jsx"),
       LaneSelectorTable : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelectorTable.jsx"),
       LaneSelectorRow   : path.join( __dirname, "./public/js/components/LaneSelector/LaneSelectorRow.jsx"),

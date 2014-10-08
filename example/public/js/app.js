@@ -44,9 +44,11 @@ define( [
 		"fakeNotificationStore", 
 		"LaneSelector",
 		"Notification",
-		"ActionCounter"
-	], function( boardStore, loggingStore, pointlessActionCountingStore, fakeNotification, LaneSelector, Notification, ActionCounter ) {
+		"ActionCounter",
+		"otherLogger"
+	], function( boardStore, loggingStore, pointlessActionCountingStore, fakeNotification, LaneSelector, Notification, ActionCounter, OtherLogger ) {
 		window.boardStore = boardStore;
+		window.logger = new OtherLogger();
 		React.renderComponent(
 			LaneSelector({ boardId: 304355117 }), 
 			document.getElementById( "lane-selector" )

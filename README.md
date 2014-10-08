@@ -157,7 +157,14 @@ Components don't talk to stores directly. Instead, they use an ActionCreator API
 The luxAction mixin (which is provided automatically when you call `lux.createControllerView` and `lux.createComponent`) will look for a `getActionsFor` array on your component options. This array should contain the string namespace values for the store(s) the component wants ActionCreators for. The ActionCreator APIs will appear on the component under `this.actions.storeNamespace`.
 
 ####luxStore mixin
-Th luxStore mixin (which is provided automatically when you call `lux.createControllerView` and `lux.createComponent`) will look for a `stores` array on your component options. The elements in this array should either be the string namespace of a store, or an object containing a `store` property that's the string namespace and a `handler` property that's a method that takes a data argument (updated state from a store) and handles updating the component's state. A default handler which simply calls `setState(newData)` is provided if you just use the store's string namespace as the value in the array.
+The luxStore mixin (which is provided automatically when you call `lux.createControllerView` and `lux.createComponent`) will look for a `stores` array on your component options. The elements in this array should either be the string namespace of a store, or an object containing a `store` property that's the string namespace and a `handler` property that's a method that takes a data argument (updated state from a store) and handles updating the component's state. A default handler which simply calls `setState(newData)` is provided if you just use the store's string namespace as the value in the array.
+
+####lux.mixin
+The `lux.mixin()` method allows you to add support for lux stores and actions into any object. *You will not need to use this on React components or existing lux components.* Simply call `lux.mixin( this )` on your object, and lux will do the following steps:
+
+1. If it finds a `stores` property on your object it will wire up stores and store handlers (Including adding the `loadState` method to your object).
+2. If it finds a `getActionsFor` property on your object it will add top level methods for the needed actions.
+3. It will add a `luxCleanup()` method to your object. Invoke this method during a destroy or teardown lifecycle event to cleanup the mixin's subscriptions.
 
 ##What It Lacks & Other Caveats
 Boy this thing is rough. Right now it doesn't have, but *might* have soon:

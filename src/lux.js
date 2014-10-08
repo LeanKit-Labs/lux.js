@@ -55,6 +55,7 @@
     createComponent,
     removeStore,
     dispatcher,
+    mixin: mixin,
     ActionCoordinator,
     getActionCreatorFor
   };
