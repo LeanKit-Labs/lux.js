@@ -55,9 +55,7 @@ var luxActionMixin = {
         this.getActionsFor = this.getActionsFor || [];
         this.getActionsFor.forEach(function(store) {
             for(var [k, v] of entries(getActionCreatorFor(store))) {
-                if(!this.hasOwnProperty(k)) {
-                    this[k] = v;
-                }
+                this[k] = v;
             }
         }.bind(this));
     }
@@ -89,11 +87,7 @@ function mixin(context) {
 
 	if ( context.stores ) {
 		luxStoreMixin.setup.call( context );
-		for ( var k in luxStoreMixin.mixin ) {
-			if(!luxStoreMixin.mixin.hasOwnProperty(k)) {
-				context[ k ] = luxStoreMixin.mixin[ k ];
-			}
-		}
+		Object.assign(context, luxStoreMixin.mixin);
 		context.__luxCleanup.push( luxStoreMixin.teardown );
 	}
 
