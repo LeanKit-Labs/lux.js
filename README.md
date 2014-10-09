@@ -68,7 +68,7 @@ As of v0.2.0, a lux ControllerView will wait on all the stores involved in an ac
 >Opinionation: In a lux app, ControllerViews are the *only* components that should be allowed listen to stores for state. Other non-ControllerViews might have internal state (that's not from a store) and that's OK, but only ControllerViews should be wired to listen to stores.
 
 ####"Normal" Lux Components
-For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.createComponent()`. For example, this component is being given an ActionCreator API for the "board" store, but is NOT listening to the board store for state, since it's not a ControllerView:
+For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.createComponent()`. For example, this component is being given an ActionCreator API for the "board" store (which adds the `toggleLaneSelection` method to the component), but is NOT listening to the board store for state, since it's not a ControllerView:
 
 ```javascript
 var Lane = lux.createComponent({
