@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage" : "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "repository": {
@@ -31,8 +31,6 @@
   },
   "dependencies": {
     "conduitjs": "^0.3.3",
-    "gulp-header": "^1.0.5",
-    "gulp-hint-not": "0.0.3",
     "postal": "^0.10.3",
     "postal.request-response": "git://github.com/postaljs/postal.request-response.git#err-reply",
     "react": "^0.11.1",
@@ -46,6 +44,8 @@
     "gulp-sourcemaps": "^1.1.1",
     "gulp-traceur": "^0.13.0",
     "gulp-uglify": "^1.0.1",
+    "gulp-header": "^1.0.5",
+    "gulp-hint-not": "0.0.3",
     "mocha": "^1.21.4",
     "should": "^4.0.4"
   },
