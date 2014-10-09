@@ -11,16 +11,16 @@ define( [
  ],
  function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane ) {
 	var LaneSelector = lux.createControllerView( {
+		displayName: "LaneSelector",
 		getActionsFor: ["board"],
-		stores: [ 
-			{
-				store: "board",
-				handler: function(data) {
-					var newState = data.state[this.props.boardId];
-					this.setState(newState);
-				}
-			}
-		],
+		stores: {
+			listenTo: ["board"],
+			onChange: function(stores) {
+				var newState = stores.board.state[this.props.boardId];
+				this.setState(newState);
+			},
+			immediate: true
+		},
 		getInitialState: function() {
 			return { lanes: [] };
 		},

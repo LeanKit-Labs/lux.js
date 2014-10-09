@@ -15,7 +15,7 @@ define( [
 	window.postal = postal;
 	postal.addWireTap( function( d, e ) {
 		if(e.channel === "postal") { return; }
-		console.log( JSON.stringify( e, null, 2 ).substr(0,330) );
+		console.log( JSON.stringify( e, null, 2 ).substr(0,300));
 	});
 
 	// We need to tell postal how to get a deferred instance
@@ -44,9 +44,11 @@ define( [
 		"fakeNotificationStore", 
 		"LaneSelector",
 		"Notification",
-		"ActionCounter"
-	], function( boardStore, loggingStore, pointlessActionCountingStore, fakeNotification, LaneSelector, Notification, ActionCounter ) {
+		"ActionCounter",
+		"otherLogger"
+	], function( boardStore, loggingStore, pointlessActionCountingStore, fakeNotification, LaneSelector, Notification, ActionCounter, OtherLogger ) {
 		window.boardStore = boardStore;
+		window.logger = new OtherLogger();
 		React.renderComponent(
 			LaneSelector({ boardId: 304355117 }), 
 			document.getElementById( "lane-selector" )

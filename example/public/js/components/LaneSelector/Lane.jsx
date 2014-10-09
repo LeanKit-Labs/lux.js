@@ -17,7 +17,9 @@ define([
 	}
 
 	var Lane = lux.createComponent({
-      
+
+		displayName: "Lane",
+
     	getActionsFor: ["board"],
 
 		getInitialState: function() {
@@ -52,7 +54,7 @@ define([
 				)
 			);
 			var childClasses = classSet({
-				"lane-collapsed" : this.state.isCollapsed 
+				"lane-collapsed" : this.state.isCollapsed
 			});
 			var toggleClasses = classSet({
 				"fa" : true,
@@ -66,10 +68,10 @@ define([
 			return <LaneSelectorCell className={classes} onClick={this.toggleActive}>
 				<div>
 					{
-						this.props.items.length ? 
+						this.props.items.length ?
 							<button className="lane-sel-toggle" onClick={this.toggleChildren}>
 								<i className={toggleClasses}/>
-							</button> : null	
+							</button> : null
 					}
 				<span>{this.props.name}</span>
 				</div>
@@ -79,12 +81,15 @@ define([
 							<VerticalLaneGroup   className={childClasses} items={this.props.items} depth={newDepth} isParentActive={this.props.isActive} /> :
 							<HorizontalLaneGroup className={childClasses} items={this.props.items} depth={newDepth} isParentActive={this.props.isActive} />
 					}
-				</div>					
+				</div>
 			</LaneSelectorCell>;
 		}
 	});
 
 	var VerticalLaneGroup = React.createClass({
+
+		displayName: "VerticalLaneGroup",
+
 		getDefaultProps: function() {
 			return {
 				isParentActive: false
@@ -99,11 +104,11 @@ define([
 					this.props.items.map(function(item){
 						return <LaneSelectorRow key={item.id} className="lane-sel-vertical">
 							<Lane key={item.id}
-								  name={item.name} 
-								  items={item.items} 
-								  depth={depth} 
-								  siblingSize={1} 
-								  isParentActive={this.props.isParentActive} 
+								  name={item.name}
+								  items={item.items}
+								  depth={depth}
+								  siblingSize={1}
+								  isParentActive={this.props.isParentActive}
 								  isActive={item.isActive}/>
 						</LaneSelectorRow>;
 					}.bind(this))
@@ -113,6 +118,9 @@ define([
 	});
 
 	var HorizontalLaneGroup = React.createClass({
+
+		displayName: "HorizontalLaneGroup",
+
 		getDefaultProps: function() {
 			return {
 				isParentActive: false
@@ -125,12 +133,12 @@ define([
 				<LaneSelectorTable className="lane-sel-horizontal">
 				{
 					this.props.items.map(function(item){
-						return <Lane key={item.id} 
-									 name={item.name} 
-									 items={item.items} 
-									 depth={depth} 
-									 siblingSize={siblingSize} 
-									 isParentActive={this.props.isParentActive} 
+						return <Lane key={item.id}
+									 name={item.name}
+									 items={item.items}
+									 depth={depth}
+									 siblingSize={siblingSize}
+									 isParentActive={this.props.isParentActive}
 									 isActive={item.isActive}/>;
 					}.bind(this))
 				}

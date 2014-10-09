@@ -1,30 +1,30 @@
-define([
+define( [
 	"lux"
-], function(lux) {
+], function( lux ) {
 
-	function updateState(state) {
-		var newState = { count: (state.count || 0) + 1 };
-		this.setState(newState);
-		return newState;
-	}
-
-	var pointlessActionCountingStore = lux.createStore({
-		namespace: "pointlessActionCounting",
-		handlers: {
-			toggleLaneSelection: {
-				handler: function(boardId, laneId, deps) {
-					return this.getState().then( updateState.bind( this ) );
-				},
-				waitFor: ["board", "logging"]
-			},
-			loadBoard: {
-				handler: function(boardId, deps) {
-					return this.getState().then( updateState.bind( this ) );
-				},
-				waitFor: ["board", "logging"]
-			}
+		function updateState( state ) {
+			var newState = { count: ( state.count || 0 ) + 1 };
+			this.setState( newState );
+			return newState;
 		}
-	});
 
-	return pointlessActionCountingStore;
-});
+		var pointlessActionCountingStore = new lux.Store( {
+			namespace: "pointlessActionCounting",
+			handlers: {
+				toggleLaneSelection: {
+					handler: function( boardId, laneId, deps ) {
+						return updateState.call( this, this.getState() );
+					},
+					waitFor: [ "board", "logging" ]
+				},
+				loadBoard: {
+					handler: function( boardId, deps ) {
+						return updateState.call( this, this.getState() );
+					},
+					waitFor: [ "board", "logging" ]
+				}
+			}
+		} );
+
+		return pointlessActionCountingStore;
+	} );
