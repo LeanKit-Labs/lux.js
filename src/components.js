@@ -63,7 +63,7 @@ var luxStoreMixin = {
 			if(immediate === true) {
 				this.loadState();
 			} else {
-		    	this.loadState(...immediate);
+				this.loadState(...immediate);
 			}
 		}
 	},
@@ -73,7 +73,7 @@ var luxStoreMixin = {
 	mixin: {
 		loadState: function (...stores) {
 			if(!stores.length) {
-			    stores = this.stores.listenTo;
+				stores = this.stores.listenTo;
 			}
 			stores.forEach((store) => luxCh.publish(`notify.${store}`));
 		}
@@ -81,41 +81,41 @@ var luxStoreMixin = {
 };
 
 var luxStoreReactMixin = {
-    componentWillMount: luxStoreMixin.setup,
-    loadState: luxStoreMixin.mixin.loadState,
-    componentWillUnmount: luxStoreMixin.teardown
+	componentWillMount: luxStoreMixin.setup,
+	loadState: luxStoreMixin.mixin.loadState,
+	componentWillUnmount: luxStoreMixin.teardown
 };
 
 var luxActionMixin = {
 	setup: function () {
-        this.actions = this.actions || {};
-        this.getActionsFor = this.getActionsFor || [];
-        this.getActionsFor.forEach(function(store) {
-            for(var [k, v] of entries(getActionCreatorFor(store))) {
-                this[k] = v;
-            }
-        }.bind(this));
-    }
+		this.actions = this.actions || {};
+		this.getActionsFor = this.getActionsFor || [];
+		this.getActionsFor.forEach(function(store) {
+			for(var [k, v] of entries(getActionCreatorFor(store))) {
+				this[k] = v;
+			}
+		}.bind(this));
+	}
 };
 
 var luxActionReactMixin = {
-    componentWillMount: luxActionMixin.setup
+	componentWillMount: luxActionMixin.setup
 };
 
 function createControllerView(options) {
-    var opt = {
-        mixins: [luxStoreReactMixin, luxActionReactMixin].concat(options.mixins || [])
-    };
-    delete options.mixins;
-    return React.createClass(Object.assign(opt, options));
+	var opt = {
+		mixins: [luxStoreReactMixin, luxActionReactMixin].concat(options.mixins || [])
+	};
+	delete options.mixins;
+	return React.createClass(Object.assign(opt, options));
 }
 
 function createComponent(options) {
-    var opt = {
-        mixins: [luxActionReactMixin].concat(options.mixins || [])
-    };
-    delete options.mixins;
-    return React.createClass(Object.assign(opt, options));
+	var opt = {
+		mixins: [luxActionReactMixin].concat(options.mixins || [])
+	};
+	delete options.mixins;
+	return React.createClass(Object.assign(opt, options));
 }
 
 
