@@ -11,6 +11,7 @@ define( [
  ],
  function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane ) {
 	var LaneSelector = lux.createControllerView( {
+		displayName: "LaneSelector",
 		getActionsFor: ["board"],
 		stores: {
 			listenTo: ["board"],

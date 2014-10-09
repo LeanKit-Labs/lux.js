@@ -6,6 +6,8 @@ define([
 
 	var ActionCounter = lux.createControllerView({
 
+		displayName: "ActionCounter",
+
 		stores: {
       		listenTo: "pointlessActionCounting"
       	},

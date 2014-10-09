@@ -6,6 +6,8 @@ define([
 
 	var Notification = lux.createControllerView({
 
+		displayName: "Notification",
+
 		stores: {
       		listenTo: "fakeNotification",
       		onChange: function(data) {
