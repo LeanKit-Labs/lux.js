@@ -6,14 +6,12 @@ define([
 
 	var Notification = lux.createControllerView({
 
-		stores: [ 
-	      	{
-	      		store: "fakeNotification",
-	      		handler: function(data) {
-	      			this.setState({ notice: data.state });
-		      	}
+		stores: {
+      		listenTo: "fakeNotification",
+      		onChange: function(data) {
+      			this.setState({ notice: data.fakeNotification.state });
 	      	}
-      	],
+      	},
 
 		getInitialState: function() {
 			return {

@@ -60,6 +60,7 @@ class Dispatcher extends machina.Fsm {
                 preparing: {
                     _onEnter: function() {
                         var stores = this.actionMap[this.luxAction.action.actionType];
+                        this.luxAction.stores = stores;
                         this.luxAction.generations = buildGenerations(stores);
                         this.transition(this.luxAction.generations.length ? "dispatching" : "ready");
                     },
@@ -70,6 +71,7 @@ class Dispatcher extends machina.Fsm {
                 dispatching: {
                     _onEnter: function() {
                         var coordinator = this.luxAction.coordinator = new ActionCoordinator({
+                            storeList: this.luxAction.stores.map((st) => st.namespace),
                             generations: this.luxAction.generations,
                             action: this.luxAction.action
                         });

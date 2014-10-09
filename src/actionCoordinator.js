@@ -60,7 +60,7 @@ class ActionCoordinator extends machina.Fsm {
                             }.bind(this));
                         },
                         _onExit: function() {
-                            luxCh.publish("dispatchCycle");
+                            luxCh.publish("prenotify", { stores: this.storeList });
                         }
                 },
                 success: {

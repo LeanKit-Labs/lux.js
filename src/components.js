@@ -7,27 +7,31 @@ var luxMixinCleanup = function () {
 	delete this.__luxCleanup;
 };
 
+function gateKeeper(store, data) {
+	var payload = {};
+	payload[store] = data;
+	this.stores.onChange.call(this, payload);
+}
+
 var luxStoreMixin = {
 	setup: function () {
-		this.stores = this.stores || [];
-		this.stateChangeHandlers = this.stateChangeHandlers || {};
-		var genericStateChangeHandler = function(data) {
-		    this.setState(data.state || data);
+		var stores = this.stores = (this.stores || {});
+		var immediate = stores.immediate;
+		var listenTo = typeof stores.listenTo === "string" ? [stores.listenTo] : stores.listenTo;
+		var genericStateChangeHandler = function(stores) {
+		    this.setState(stores);
 		};
 		this.__subscriptions = this.__subscriptions || [];
-		var immediate = [];
-		this.stores.forEach(function(st) {
-		    var store = st.store || st;
-		    var handler = st.handler || genericStateChangeHandler;
-		    this.__subscriptions.push(
-		        luxCh.subscribe("notification." + store, (data) => handler.call(this, data))
-		    );
-		    if(st.immediate) {
-		        immediate.push(store);
-		    }
-		}.bind(this));
-		if(immediate.length) {
-		    this.loadState(...immediate);
+		var handler = stores.onChange || genericStateChangeHandler;
+		listenTo.forEach((store) => this.__subscriptions.push(
+	        luxCh.subscribe(`notification.${store}`, (data) => gateKeeper.call(this, store, data))
+	    ));
+		if(immediate) {
+			if(immediate === true) {
+				this.loadState();
+			} else {
+		    	this.loadState(...immediate);
+			}
 		}
 	},
 	teardown: function () {
@@ -36,7 +40,7 @@ var luxStoreMixin = {
 	mixin: {
 		loadState: function (...stores) {
 			if(!stores.length) {
-			    stores = this.stores.map((st) => st.store );
+			    stores = this.stores.listenTo;
 			}
 			stores.forEach((store) => luxCh.publish(`notify.${store}`));
 		}

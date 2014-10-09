@@ -60,11 +60,11 @@ class Store {
         } else {
             stores[namespace] = this;
         }
-        this.state = options.state || {};
         this.changedKeys = [];
         this.actionHandlers = transformHandlers(this, options.handlers);
         actionCreators[namespace] = buildActionCreatorFrom(Object.keys(options.handlers));
         Object.assign(this, options);
+        this.state = options.state || {};
         this.__subscription = {
             dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
             notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
