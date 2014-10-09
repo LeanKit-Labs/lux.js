@@ -18,7 +18,8 @@ define( [
 				handler: function(data) {
 					var newState = data.state[this.props.boardId];
 					this.setState(newState);
-				}
+				},
+				immediate: true
 			}
 		],
 		getInitialState: function() {

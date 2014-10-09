@@ -1,36 +1,35 @@
-define([
+define( [
 	"lux"
-], function(lux) {
+], function( lux ) {
 
-	var lookup = {};
+		var lookup = {};
 
-	var updateState = function(deps, state) {
-		var key = deps.logging && deps.logging.result || "Unknown";
-		lookup[key] = (lookup[key] || 0) + 1; 
-		var newState =
-			{ notice: "'" + key + "' (notification has been published " +
-				lookup[key] + (lookup[key] > 1 ? " times" : " time") + ")" };
-		this.setState(newState);
-		return newState;
-	};
+		var updateState = function( deps ) {
+			var key = deps.logging && deps.logging.result || "Unknown";
+			lookup[ key ] = ( lookup[ key ] || 0 ) + 1;
+			var newState = { notice: "'" + key + "' (notification has been published " +
+					lookup[ key ] + ( lookup[ key ] > 1 ? " times" : " time" ) + ")" };
+			this.setState( newState );
+			return newState;
+		};
 
-	var fakeNotificationStore = lux.createStore({
-		namespace: "fakeNotification",
-		handlers: {
-			toggleLaneSelection: {
-				handler: function(boardId, laneId, deps) {
-					return this.getState().then(updateState.bind(this, deps));
+		var fakeNotificationStore = new lux.Store( {
+			namespace: "fakeNotification",
+			handlers: {
+				toggleLaneSelection: {
+					handler: function( boardId, laneId, deps ) {
+						return updateState.call( this, deps );
+					},
+					waitFor: [ "pointlessActionCounting", "logging" ]
 				},
-				waitFor: ["pointlessActionCounting", "logging"]
-			},
-			loadBoard: {
-				handler: function(boardId, deps) {
-					return this.getState().then(updateState.bind(this, deps));
-				},
-				waitFor: ["pointlessActionCounting", "logging"]
+				loadBoard: {
+					handler: function( boardId, deps ) {
+						return updateState.call( this, deps );
+					},
+					waitFor: [ "pointlessActionCounting", "logging" ]
+				}
 			}
-		}
-	});
+		} );
 
-	return fakeNotificationStore;
-});
+		return fakeNotificationStore;
+	} );

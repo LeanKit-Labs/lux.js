@@ -49,8 +49,7 @@
   // jshint ignore: start
   return {
     channel: luxCh,
-    stores,
-    createStore,
+    Store,
     createControllerView,
     createComponent,
     removeStore,

@@ -1,62 +1,29 @@
-/* global configSubscription, luxCh, buildActionList, entries, stores, when */
+/* global configSubscription, luxCh, buildActionList, entries, when, actionCreators, buildActionCreatorFrom */
 /* jshint -W098 */
-
-class InMemoryTransport {
-    constructor(state) {
-        this.state = state || {};
-        this.changedKeys = [];
-    }
-
-    getState() {
-        return new Promise(
-            function(resolve, reject) {
-                resolve(this.state);
-            }.bind(this)
-        );
-    }
-
-    setState(newState) {
-        Object.keys(newState).forEach((key) => {
-            this.changedKeys[key] = true;
-        });
-        this.state = Object.assign(this.state, newState);
-    }
-
-    replaceState(newState) {
-        Object.keys(newState).forEach((key) => {
-            this.changedKeys[key] = true;
-        });
-        this.state = newState;
-    }
-
-    flush() {
-        var changedKeys = Object.keys(this.changedKeys);
-        this.changedKeys = {};
-        return {
-            changedKeys,
-            state: this.state
-        };
-    }
-}
 
 function transformHandler(store, target, key, handler) {
     target[key] = function(data) {
-        var res = handler.apply(store, data.actionArgs.concat([data.deps]));
-        return when.join(
-            when(res).then(
+        return when(handler.apply(store, data.actionArgs.concat([data.deps])))
+            .then(
                 function(x){ return [null, x]; },
                 function(err){ return [err]; }
-            ),
-            store.getState()
-        ).then(function(values){
-            var res = values[0][1];
-            var err = values[0][0];
-            return when({
-                result: res,
-                error: err,
-                state: values[1]
+            ).then(function(values){
+                var result = values[1];
+                var error = values[0];
+                if(error && typeof store.handleActionError === "function") {
+                    return when.join( error, result, store.handleActionError(key, error));
+                } else {
+                    return when.join( error, result );
+                }
+            }).then(function(values){
+                var res = values[1];
+                var err = values[0];
+                return when({
+                    result: res,
+                    error: err,
+                    state: store.getState()
+                });
             });
-        });
     };
 }
 
@@ -73,11 +40,31 @@ function transformHandlers(store, handlers) {
     return target;
 }
 
+function ensureStoreOptions(options) {
+    if(!options.namespace) {
+        throw new Error("A lux store must have a namespace value provided");
+    }
+    if(!options.handlers) {
+        throw new Error("A lux store must have action handler methods provided");
+    }
+}
+
+var stores = {};
+
 class Store {
-    constructor(namespace, handlers, transportStrategy) {
-        this.namespace = namespace;
-        this.transport = transportStrategy;
-        this.actionHandlers = transformHandlers(this, handlers);
+    constructor(options) {
+        ensureStoreOptions(options);
+        var namespace = options.namespace;
+        if (namespace in stores) {
+            throw new Error(` The store namespace "${namespace}" already exists.`);
+        } else {
+            stores[namespace] = this;
+        }
+        this.state = options.state || {};
+        this.changedKeys = [];
+        this.actionHandlers = transformHandlers(this, options.handlers);
+        actionCreators[namespace] = buildActionCreatorFrom(Object.keys(options.handlers));
+        Object.assign(this, options);
         this.__subscription = {
             dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
             notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
@@ -85,7 +72,7 @@ class Store {
         };
         luxCh.publish("register", {
             namespace,
-            actions: buildActionList(handlers)
+            actions: buildActionList(options.handlers)
         });
     }
 
@@ -93,24 +80,32 @@ class Store {
         for (var [k, subscription] of entries(this.__subscription)) {
             subscription.unsubscribe();
         }
+        delete stores[this.namespace];
     }
 
-    getState(...args) {
-        return this.transport.getState(...args);
+    getState() {
+        return this.state;
     }
 
-    setState(...args) {
-        return this.transport.setState(...args);
+    setState(newState) {
+        Object.keys(newState).forEach((key) => {
+            this.changedKeys[key] = true;
+        });
+        return (this.state = Object.assign(this.state, newState));
     }
 
-    replaceState(...args) {
-        return this.transport.replaceState(...args);
+    replaceState(newState) {
+        Object.keys(newState).forEach((key) => {
+            this.changedKeys[key] = true;
+        });
+        return (this.state = newState);
     }
 
     flush() {
         this.inDispatch = false;
-        
-        luxCh.publish(`notification.${this.namespace}`, this.transport.flush());
+        var changedKeys = Object.keys(this.changedKeys);
+        this.changedKeys = {};
+        luxCh.publish(`notification.${this.namespace}`, { changedKeys, state: this.state });
     }
 
     handlePayload(data, envelope) {
@@ -127,19 +122,6 @@ class Store {
     }
 }
 
-/* jshint ignore:start */
-function createStore({ namespace, handlers = {}, transportStrategy = new InMemoryTransport() }) {
-    if (namespace in stores) {
-        throw new Error(` The store namespace "${namespace}" already exists.`);
-    }
-
-    var store = new Store(namespace, handlers, transportStrategy);
-    actionCreators[namespace] = buildActionCreatorFrom(Object.keys(handlers));
-    return store;
-}
-/* jshint ignore:end */
-
 function removeStore(namespace) {
     stores[namespace].dispose();
-    delete stores[namespace];
 }
