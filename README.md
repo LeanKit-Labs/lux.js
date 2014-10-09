@@ -35,15 +35,18 @@ var LaneSelector = lux.createControllerView({
         listenTo: "board",
 
         // The `stores` argument contains a top level property
-        // for each store listed in `listenTo` above
+        // for each store listed in `listenTo` above. When listening
+        // to multiple stores, check for the presence of the store namespaces
+        // as they will only be included if the state changed for that store.
         onChange: function(stores) {
-            var newState = data.board.state[this.props.boardId];
+            var newState = stores.board.state[this.props.boardId];
             this.setState(newState);
         },
 
-        // immediate: t/f - optional (defaults to false). True tells
+        // immediate: t/f or array - optional (defaults to false). True tells
         // store(s) to notify component of state during componentWillMount
-        // and when state is received the above `onChange` fn is invoked
+        // and when state is received the above `onChange` fn is invoked.
+        // Passing an array of store namespaces to limit which are fetched immediately
         immediate: true
     },
 
