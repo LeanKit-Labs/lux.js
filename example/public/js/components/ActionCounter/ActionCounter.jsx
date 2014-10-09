@@ -7,21 +7,18 @@ define([
 	var ActionCounter = lux.createControllerView({
 
 		stores: {
-      		listenTo: ["pointlessActionCounting"],
-      		onChange: function(data) {
-      			this.setState({ count: data.pointlessActionCounting.state });
-	      	}
+      		listenTo: "pointlessActionCounting"
       	},
 
 		getInitialState: function() {
 			return {
-				count: 0
+				pointlessActionCounting: 0
 			};
 		},
 
 		render: function() {
 			return <div>
-				<h2>Actions Taken So Far:&nbsp;{this.state.count}</h2>
+				<h2>Actions Taken So Far:&nbsp;{this.state.pointlessActionCounting}</h2>
 			</div>;
 		}
 	});

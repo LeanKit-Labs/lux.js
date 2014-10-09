@@ -7,7 +7,7 @@ define(["lux"], function ( lux ) {
 		constructor: OtherLogger,
 		getActionsFor: ["board"],
 		stores: {
-			listenTo: "board",
+			listenTo: [ "board", "logging" ],
 			onChange: function( data ) {
 				console.log( "OTHER LOGGER", "Received new state", data );
 			}
