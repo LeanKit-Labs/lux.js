@@ -2,7 +2,7 @@
 /* jshint -W117, -W098 */
 function pluck(obj, keys) {
 	var res = keys.reduce((accum, key) => {
-		accum[key] = (obj[key] && obj[key].result);
+		accum[key] = (obj[key] && obj[key]);
 		return accum;
 	}, {});
 	return res;

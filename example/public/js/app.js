@@ -18,15 +18,6 @@ define( [
 		console.log( JSON.stringify( e, null, 2 ).substr(0,300));
 	});
 
-	// We need to tell postal how to get a deferred instance
-	postal.configuration.promise.createDeferred = function() {
-		return when.defer();
-	};
-	// We need to tell postal how to get a "public-facing"/safe promise instance
-	postal.configuration.promise.getPromise = function( dfd ) {
-		return dfd.promise;
-	};
-
 	$.mockjax({
 		url: /\/board\/([\d]+)/,
 		urlParams: [ "boardId" ],
