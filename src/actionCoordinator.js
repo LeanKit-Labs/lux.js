@@ -19,8 +19,10 @@ function processGeneration(generation, action) {
 						topic: `dispatch.${store.namespace}`,
 						data: data
 					}).then((response) => {
-						this.stores[store.namespace] = this.stores[store.namespace] || {};
-						this.stores[store.namespace].result = response.result;
+						this.stores[store.namespace] = response;
+						if(response.hasChanged) {
+							this.updated.push(store.namespace);
+						}
 					});
 				};
 			})).then(() => this.stores);
@@ -39,7 +41,8 @@ class ActionCoordinator extends machina.Fsm {
 	constructor(config) {
 		Object.assign(this, {
 			generationIndex: 0,
-			stores: {}
+			stores: {},
+			updated: []
 		}, config);
 		super({
 			initialState: "uninitialized",
@@ -52,7 +55,6 @@ class ActionCoordinator extends machina.Fsm {
 							pipeline(
 								[for (generation of config.generations) processGeneration.call(this, generation, config.action)]
 							).then(function(...results) {
-								this.results = results;
 								this.transition("success");
 							}.bind(this), function(err) {
 								this.err = err;
@@ -60,7 +62,7 @@ class ActionCoordinator extends machina.Fsm {
 							}.bind(this));
 						},
 						_onExit: function() {
-							luxCh.publish("prenotify", { stores: this.storeList });
+							luxCh.publish("prenotify", { stores: this.updated });
 						}
 				},
 				success: {

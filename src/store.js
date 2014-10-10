@@ -19,6 +19,7 @@ function transformHandler(store, target, key, handler) {
 				var res = values[1];
 				var err = values[0];
 				return when({
+					hasChanged: store.hasChanged,
 					result: res,
 					error: err,
 					state: store.getState()
@@ -64,6 +65,8 @@ class Store {
 		this.actionHandlers = transformHandlers(this, options.handlers);
 		actionCreators[namespace] = buildActionCreatorFrom(Object.keys(options.handlers));
 		Object.assign(this, options);
+		this.inDispatch = false;
+		this.hasChanged = false;
 		this.state = options.state || {};
 		this.__subscription = {
 			dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
@@ -88,6 +91,7 @@ class Store {
 	}
 
 	setState(newState) {
+		this.hasChanged = true;
 		Object.keys(newState).forEach((key) => {
 			this.changedKeys[key] = true;
 		});
@@ -95,6 +99,7 @@ class Store {
 	}
 
 	replaceState(newState) {
+		this.hasChanged = true;
 		Object.keys(newState).forEach((key) => {
 			this.changedKeys[key] = true;
 		});
@@ -103,9 +108,15 @@ class Store {
 
 	flush() {
 		this.inDispatch = false;
-		var changedKeys = Object.keys(this.changedKeys);
-		this.changedKeys = {};
-		luxCh.publish(`notification.${this.namespace}`, { changedKeys, state: this.state });
+		if(this.hasChanged) {
+			var changedKeys = Object.keys(this.changedKeys);
+			this.changedKeys = {};
+			this.hasChanged = false;
+			luxCh.publish(`notification.${this.namespace}`, { changedKeys, state: this.state });
+		} else {
+			luxCh.publish(`nochange.${this.namespace}`);
+		}
+
 	}
 
 	handlePayload(data, envelope) {
@@ -115,7 +126,7 @@ class Store {
 			this.actionHandlers[data.actionType]
 				.call(this, data)
 				.then(
-					(result) => envelope.reply(null, { result, namespace }),
+					(result) => envelope.reply(null, result),
 					(err) => envelope.reply(err)
 				);
 		}

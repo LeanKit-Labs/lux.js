@@ -71,7 +71,6 @@ class Dispatcher extends machina.Fsm {
 				dispatching: {
 					_onEnter: function() {
 						var coordinator = this.luxAction.coordinator = new ActionCoordinator({
-							storeList: this.luxAction.stores.map((st) => st.namespace),
 							generations: this.luxAction.generations,
 							action: this.luxAction.action
 						});

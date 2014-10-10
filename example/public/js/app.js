@@ -34,14 +34,14 @@ define( [
 			this.responseText = mockData.boards.find(function(x) {
 				return x.boardId.toString() === settings.urlParams.boardId;
 			});
-		} 
+		}
 	});
 
 	require( [
-		"boardStore", 
+		"boardStore",
 		"loggingStore",
 		"pointlessActionCountingStore",
-		"fakeNotificationStore", 
+		"fakeNotificationStore",
 		"LaneSelector",
 		"Notification",
 		"ActionCounter",
@@ -50,7 +50,7 @@ define( [
 		window.boardStore = boardStore;
 		window.logger = new OtherLogger();
 		React.renderComponent(
-			LaneSelector({ boardId: 304355117 }), 
+			LaneSelector({ boardId: 304355117 }),
 			document.getElementById( "lane-selector" )
 		);
 		React.renderComponent(

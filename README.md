@@ -1,4 +1,4 @@
-#luxJS (v0.2.0)
+#luxJS (v0.2.1)
 
 ##Be Warned
 This project is experiencing a lot of flux (yes, we love puns). The API will change. This README will change. Change will change. Hope and Change. Don't go changin', to try to please me...
