@@ -52,6 +52,7 @@ define( [
 						target.isActive = !target.isActive;
 						toggleAncestors( boards[ boardId ].lookup, target );
 						toggleDescendants( target );
+						this.setState(boards);
 						return target;
 					}
 				},
