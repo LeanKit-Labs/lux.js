@@ -22,6 +22,9 @@ gulp.task("default", function() {
 		.pipe( imports() )
 		.pipe( hintNot() )
 		.pipe( sourcemaps.init() )
+		.pipe( header( banner, {
+			pkg: pkg
+		} ) )
 		.pipe( rename( "lux-es6.js" ) )
 		.pipe( gulp.dest( "lib/" ) )
 		.pipe( traceur( {
