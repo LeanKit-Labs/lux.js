@@ -21,6 +21,15 @@
 	}
 }( this, function( traceur, React, postal, machina, when, pipeline, parallel ) {
 
+	// We need to tell postal how to get a deferred instance from when.js
+	postal.configuration.promise.createDeferred = function() {
+		return when.defer();
+	};
+	// We need to tell postal how to get a "public-facing"/safe promise instance
+	postal.configuration.promise.getPromise = function( dfd ) {
+		return dfd.promise;
+	};
+
 	var luxCh = postal.channel( "lux" );
 	var stores = {};
 
