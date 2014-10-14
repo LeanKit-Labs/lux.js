@@ -10,7 +10,8 @@ define(["lux"], function ( lux ) {
 			listenTo: [ "board", "logging" ],
 			onChange: function( data ) {
 				console.log( "OTHER LOGGER", "Received new state", data );
-			}
+			},
+			immediate: false
 		},
 		initialize: function () {
 			lux.mixin( this );

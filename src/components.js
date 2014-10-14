@@ -36,7 +36,7 @@ function handlePreNotify( data ) {
 var luxStoreMixin = {
 	setup: function () {
 		var stores = this.stores = (this.stores || {});
-		var immediate = stores.immediate || true;
+		var immediate = stores.hasOwnProperty("immediate") ? stores.immediate : true;
 		var listenTo = typeof stores.listenTo === "string" ? [stores.listenTo] : stores.listenTo;
 		var genericStateChangeHandler = function(stores) {
 			if ( typeof this.setState === "function" ) {
