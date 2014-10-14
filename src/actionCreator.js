@@ -26,7 +26,9 @@ function buildActionCreatorFrom(actionList) {
 				topic: "action",
 				data: {
 					actionType: action,
-					actionArgs: args
+					actionArgs: args,
+					component: this.constructor && this.constructor.displayName,
+					rootNodeID: this._rootNodeID
 				}
 			});
 		};

@@ -84,7 +84,11 @@ var luxStoreMixin = {
 			stores.forEach(
 				(store) => luxCh.request({
 					topic: `notify.${store}`,
-					replyChannel: LUX_CHANNEL
+					replyChannel: LUX_CHANNEL,
+					data: {
+						component: this.constructor && this.constructor.displayName,
+						rootNodeID: this._rootNodeID
+					}
 				}).then((data) => gateKeeper.call(this, store, data))
 			);
 		}
