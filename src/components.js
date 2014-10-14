@@ -59,7 +59,10 @@ var luxStoreMixin = {
 		this.__subscriptions.push(
 			luxCh.subscribe("prenotify", (data) => handlePreNotify.call(this, data))
 		);
+		// immediate can either be a bool, or an array of store namespaces
+		// first check is for truthy
 		if(immediate) {
+			// second check is for strict bool equality
 			if(immediate === true) {
 				this.loadState();
 			} else {
@@ -75,7 +78,13 @@ var luxStoreMixin = {
 			if(!stores.length) {
 				stores = this.stores.listenTo;
 			}
-			stores.forEach((store) => luxCh.publish(`notify.${store}`));
+			this.__luxWaitFor = [...stores];
+			stores.forEach(
+				(store) => luxCh.request({
+					topic: `notify.${store}`,
+					replyChannel: "lux"
+				}).then((data) => gateKeeper.call(this, store, data))
+			);
 		}
 	}
 };

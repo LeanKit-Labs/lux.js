@@ -71,7 +71,13 @@ class Store {
 		this.__subscription = {
 			dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
 			notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
-			scopedNotify: configSubscription(this, luxCh.subscribe(`notify.${namespace}`, this.flush))
+			scopedNotify: configSubscription(
+				this,
+				luxCh.subscribe(
+					`notify.${namespace}`,
+					(data, env) => env.reply(null, { changedKeys: [], state: this.state })
+				)
+			)
 		};
 		luxCh.publish("register", {
 			namespace,
