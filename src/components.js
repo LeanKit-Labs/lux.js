@@ -1,4 +1,4 @@
-/* global luxCh, React, getActionCreatorFor, entries */
+/* global luxCh, React, getActionCreatorFor, entries, LUX_CHANNEL */
 /* jshint -W098 */
 
 var luxMixinCleanup = function () {
@@ -36,7 +36,7 @@ function handlePreNotify( data ) {
 var luxStoreMixin = {
 	setup: function () {
 		var stores = this.stores = (this.stores || {});
-		var immediate = stores.immediate;
+		var immediate = stores.immediate || true;
 		var listenTo = typeof stores.listenTo === "string" ? [stores.listenTo] : stores.listenTo;
 		var genericStateChangeHandler = function(stores) {
 			if ( typeof this.setState === "function" ) {
@@ -75,14 +75,16 @@ var luxStoreMixin = {
 	},
 	mixin: {
 		loadState: function (...stores) {
+			var listenTo;
 			if(!stores.length) {
-				stores = this.stores.listenTo;
+				listenTo = this.stores.listenTo;
+				stores = typeof listenTo === "string" ? [listenTo] : listenTo;
 			}
 			this.__luxWaitFor = [...stores];
 			stores.forEach(
 				(store) => luxCh.request({
 					topic: `notify.${store}`,
-					replyChannel: "lux"
+					replyChannel: LUX_CHANNEL
 				}).then((data) => gateKeeper.call(this, store, data))
 			);
 		}
@@ -132,8 +134,8 @@ function mixin(context) {
 	context.__luxCleanup = [];
 
 	if ( context.stores ) {
-		luxStoreMixin.setup.call( context );
 		Object.assign(context, luxStoreMixin.mixin);
+		luxStoreMixin.setup.call( context );
 		context.__luxCleanup.push( luxStoreMixin.teardown );
 	}
 
