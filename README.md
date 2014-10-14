@@ -1,4 +1,4 @@
-#luxJS (v0.2.2)
+#luxJS (v0.2.3)
 
 ##Be Warned
 This project is experiencing a lot of flux (yes, we love puns). The API will change. This README will change. Change will change. Hope and Change. Don't go changin', to try to please me...
@@ -43,10 +43,12 @@ var LaneSelector = lux.createControllerView({
             this.setState(newState);
         },
 
-        // immediate: t/f or array - optional (defaults to false). True tells
+        // immediate: t/f or array - optional (defaults to true). True tells
         // store(s) to notify component of state during componentWillMount
         // and when state is received the above `onChange` fn is invoked.
-        // Passing an array of store namespaces to limit which are fetched immediately
+        // Passing true causes all stores in `listenTo` to send their state
+        // to this component. Passing an array of store namespaces can limit
+        // which stores are fetched immediately.
         immediate: true
     },
 
