@@ -1,4 +1,4 @@
-/* global parallel,luxCh, machina, pipeline */
+/* global parallel,luxCh, machina, pipeline, LUX_CHANNEL */
 /* jshint -W117, -W098 */
 function pluck(obj, keys) {
 	var res = keys.reduce((accum, key) => {
@@ -17,6 +17,7 @@ function processGeneration(generation, action) {
 					}, action);
 					return luxCh.request({
 						topic: `dispatch.${store.namespace}`,
+						replyChannel: LUX_CHANNEL,
 						data: data
 					}).then((response) => {
 						this.stores[store.namespace] = response;

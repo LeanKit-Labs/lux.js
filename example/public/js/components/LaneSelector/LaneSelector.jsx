@@ -25,6 +25,7 @@ define( [
 			return { lanes: [] };
 		},
 		componentWillMount: function() {
+			window.laneSelector = this;
 			this.loadBoard( this.props.boardId );
 		},
 		render: function() {

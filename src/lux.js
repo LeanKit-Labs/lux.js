@@ -30,7 +30,8 @@
 		return dfd.promise;
 	};
 
-	var luxCh = postal.channel( "lux" );
+	var LUX_CHANNEL = "lux";
+	var luxCh = postal.channel( LUX_CHANNEL );
 	var stores = {};
 
 	// jshint ignore:start
