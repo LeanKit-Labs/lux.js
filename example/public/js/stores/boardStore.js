@@ -45,7 +45,6 @@ define( [
 			namespace: "board",
 			handlers: {
 				toggleLaneSelection: function( boardId, laneId ) {
-					//throw new Error("BECAUSE I SAID SO!!!!");
 					var boards = this.getState();
 					var target = boards[ boardId ] && boards[ boardId ].lookup[ laneId ];
 					if ( target ) {

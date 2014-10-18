@@ -111,7 +111,7 @@ var Lane = lux.createComponent({
 I'm glad you asked. We use normal React components for those concerns. Lux is there to *complement*, not take the place of nor hide React.
 
 ####Dispatcher
-This Dispatcher listens for actions that are dispatched by Components using ActionCreator APIs. Underneath, it's an FSM. While only *currently* allowing one action at at time, it will be expanded in the future to allow for more fine-tuned throttling, etc. You don't have to do anything special, lux creates a single dispatcher instance for you.
+This Dispatcher listens for actions that are dispatched by Components using ActionCreator APIs. Underneath, it's an FSM. While only *currently* allowing one action at at time, it might be expanded in the future to allow for more fine-tuned throttling, etc. You don't have to do anything special, lux creates a single dispatcher instance for you.
 
 ####ActionCoordinator
 The Dispatcher will stand one of these up any time it processes an action. An ActionCoordinator is also an FSM underneath. A tree structure of stores is passed to the ActionCoordinator as it stands up. The store action handlers are invoked in as parallel a fashion as possible. Once complete, the ActionCoordinator tells the stores to notify any listening components of state changes. You do not have to create an ActionCoordinator, the Dispatcher does this for you.
@@ -180,8 +180,9 @@ The `lux.mixin()` method allows you to add support for lux stores and actions in
 Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 
 * The ability to process multiple actions simultaneously, but with the Dispatcher preventing action/store collision.
-* Additional mixins and/or storage strategies
+* Additional mixins
 * More efficient component state update utilities (possibly looking into immutability helpers).
+* Debug helpers/add-ons to enhance dev-time visibility
 
 Other thoughts:
 
@@ -189,6 +190,14 @@ Other thoughts:
 * We might want to provide some out-of-the-box Stores that implement HTTP, Web Sockets, local storage and/or IndexedDB, etc.
 * Cross frame/worker communication with Dispatcher and Stores needs to be tested.
 
+##Dependencies
+
+* [ReactJS](http://facebook.github.io/react/)
+* [traceur](https://github.com/google/traceur-compiler) (lux is written in ES6, so it depends on the traceur runtime lib for non-ES6 environments)
+* [postal](https://github.com/postaljs/postal.js)
+* [postal.request-response](https://github.com/postaljs/postal.request-response)
+* [machina](https://github.com/ifandelse/machina.js)
+* [when.js](https://github.com/cujojs/when)
 
 ##Installation & Example
 
