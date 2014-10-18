@@ -1,4 +1,4 @@
-/* global entries, machina, ActionCoordinator, configSubscription, luxCh */
+/* global entries, machina, ActionCoordinator, configSubscription, actionChannel, storeChannel */
 /* jshint -W098 */
 function calculateGen(store, lookup, gen) {
 	gen = gen || 0;
@@ -88,8 +88,8 @@ class Dispatcher extends machina.Fsm {
 		this.__subscriptions = [
 			configSubscription(
 				this,
-				luxCh.subscribe(
-					"action",
+				actionChannel.subscribe(
+					"execute.*",
 					function(data, env) {
 						this.handleActionDispatch(data);
 					}
@@ -97,7 +97,7 @@ class Dispatcher extends machina.Fsm {
 			),
 			configSubscription(
 				this,
-				luxCh.subscribe(
+				storeChannel.subscribe(
 					"register",
 					function(data, env) {
 						this.handleStoreRegistration(data);

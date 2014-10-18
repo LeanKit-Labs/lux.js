@@ -30,9 +30,9 @@
 		return dfd.promise;
 	};
 
-	var LUX_CHANNEL = "lux";
-	var luxCh = postal.channel( LUX_CHANNEL );
-	var stores = {};
+	var actionChannel = postal.channel("lux.action");
+	var storeChannel = postal.channel("lux.store");
+	var dispatcherChannel = postal.channel("lux.dispatcher");
 
 	// jshint ignore:start
 	function* entries(obj) {
@@ -58,7 +58,6 @@
 
 	// jshint ignore: start
 	return {
-		channel: luxCh,
 		Store,
 		createControllerView,
 		createComponent,

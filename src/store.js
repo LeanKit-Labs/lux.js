@@ -1,4 +1,4 @@
-/* global configSubscription, luxCh, buildActionList, entries, when, actionCreators, buildActionCreatorFrom */
+/* global configSubscription, storeChannel, dispatcherChannel, buildActionList, entries, when, actionCreators, buildActionCreatorFrom */
 /* jshint -W098 */
 
 function transformHandler(store, target, key, handler) {
@@ -69,17 +69,17 @@ class Store {
 		this.hasChanged = false;
 		this.state = options.state || {};
 		this.__subscription = {
-			dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
-			notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
-			scopedNotify: configSubscription(
+			dispatch: configSubscription(this, dispatcherChannel.subscribe(`${namespace}.handle.*`, this.handlePayload)),
+			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
+			getState: configSubscription(
 				this,
-				luxCh.subscribe(
-					`notify.${namespace}`,
+				storeChannel.subscribe(
+					`${namespace}.state`,
 					(data, env) => env.reply(null, { changedKeys: [], state: this.state })
 				)
 			)
 		};
-		luxCh.publish("register", {
+		storeChannel.publish("register", {
 			namespace,
 			actions: buildActionList(options.handlers)
 		});
@@ -118,9 +118,9 @@ class Store {
 			var changedKeys = Object.keys(this.changedKeys);
 			this.changedKeys = {};
 			this.hasChanged = false;
-			luxCh.publish(`notification.${this.namespace}`, { changedKeys, state: this.state });
+			storeChannel.publish(`${this.namespace}.changed`, { changedKeys, state: this.state });
 		} else {
-			luxCh.publish(`nochange.${this.namespace}`);
+			storeChannel.publish(`${this.namespace}.unchanged`);
 		}
 
 	}

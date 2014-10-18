@@ -1,4 +1,5 @@
-/* global luxCh, React, getActionCreatorFor, entries, LUX_CHANNEL */
+
+/* global storeChannel, dispatcherChannel, React, getActionCreatorFor, entries */
 /* jshint -W098 */
 
 var luxMixinCleanup = function () {
@@ -54,10 +55,10 @@ var luxStoreMixin = {
 		stores.onChange = stores.onChange || genericStateChangeHandler;
 
 		listenTo.forEach((store) => this.__subscriptions.push(
-			luxCh.subscribe(`notification.${store}`, (data) => gateKeeper.call(this, store, data))
+			storeChannel.subscribe(`${store}.changed`, (data) => gateKeeper.call(this, store, data))
 		));
 		this.__subscriptions.push(
-			luxCh.subscribe("prenotify", (data) => handlePreNotify.call(this, data))
+			dispatcherChannel.subscribe("prenotify", (data) => handlePreNotify.call(this, data))
 		);
 		// immediate can either be a bool, or an array of store namespaces
 		// first check is for truthy
@@ -82,9 +83,9 @@ var luxStoreMixin = {
 			}
 			this.__luxWaitFor = [...stores];
 			stores.forEach(
-				(store) => luxCh.request({
-					topic: `notify.${store}`,
-					replyChannel: LUX_CHANNEL,
+				(store) => storeChannel.request({
+					topic: `${store}.state`,
+					replyChannel: storeChannel.channel,
 					data: {
 						component: this.constructor && this.constructor.displayName,
 						rootNodeID: this._rootNodeID

@@ -1,4 +1,4 @@
-/* global parallel,luxCh, machina, pipeline, LUX_CHANNEL */
+/* global parallel,dispatcherChannel, machina, pipeline */
 /* jshint -W117, -W098 */
 function pluck(obj, keys) {
 	var res = keys.reduce((accum, key) => {
@@ -15,9 +15,9 @@ function processGeneration(generation, action) {
 					var data = Object.assign({
 						deps: pluck(this.stores, store.waitFor)
 					}, action);
-					return luxCh.request({
-						topic: `dispatch.${store.namespace}`,
-						replyChannel: LUX_CHANNEL,
+					return dispatcherChannel.request({
+						topic: `${store.namespace}.handle.${action.actionType}`,
+						replyChannel: dispatcherChannel.channel,
 						data: data
 					}).then((response) => {
 						this.stores[store.namespace] = response;
@@ -63,12 +63,12 @@ class ActionCoordinator extends machina.Fsm {
 							}.bind(this));
 						},
 						_onExit: function() {
-							luxCh.publish("prenotify", { stores: this.updated });
+							dispatcherChannel.publish("prenotify", { stores: this.updated });
 						}
 				},
 				success: {
 					_onEnter: function() {
-						luxCh.publish("notify", {
+						dispatcherChannel.publish("notify", {
 							action: this.action
 						});
 						this.emit("success");
@@ -76,10 +76,10 @@ class ActionCoordinator extends machina.Fsm {
 				},
 				failure: {
 					_onEnter: function() {
-						luxCh.publish("notify", {
+						dispatcherChannel.publish("notify", {
 							action: this.action
 						});
-						luxCh.publish("failure.action", {
+						dispatcherChannel.publish("action.failure", {
 							action: this.action,
 							err: this.err
 						});

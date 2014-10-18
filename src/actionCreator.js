@@ -1,4 +1,4 @@
-/* global entries, luxCh */
+/* global entries, actionChannel */
 /* jshint -W098 */
 function buildActionList(handlers) {
 	var actionList = [];
@@ -22,8 +22,8 @@ function buildActionCreatorFrom(actionList) {
 	actionList.forEach(function(action) {
 		actionCreator[action] = function() {
 			var args = Array.from(arguments);
-			luxCh.publish({
-				topic: "action",
+			actionChannel.publish({
+				topic: `execute.${action}`,
 				data: {
 					actionType: action,
 					actionArgs: args,
