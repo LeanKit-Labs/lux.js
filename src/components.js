@@ -104,7 +104,6 @@ var luxStoreReactMixin = {
 
 var luxActionMixin = {
 	setup: function () {
-		this.actions = this.actions || {};
 		this.getActionsFor = this.getActionsFor || [];
 		this.getActionsFor.forEach(function(store) {
 			for(var [k, v] of entries(getActionCreatorFor(store))) {

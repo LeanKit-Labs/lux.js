@@ -36,6 +36,9 @@
 
 	// jshint ignore:start
 	function* entries(obj) {
+		if(typeof obj !== "object") {
+			obj = {};
+		}
 		for(var k of Object.keys(obj)) {
 			yield [k, obj[k]];
 		}
