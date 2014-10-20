@@ -30,7 +30,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      "spec/helpers/*",
+      "spec/helpers/phantomjs-shims.js",
+      "spec/helpers/karma-setup.js",
       "spec/**/*.spec.*"
     ],
 
@@ -44,7 +45,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
 		"spec/**/*.spec.*": [ "webpack" ],
-		"spec/helpers/setup.js": [ "webpack" ]
+		"spec/helpers/karma-setup.js": [ "webpack" ]
 	},
 
 	webpack: webpackConfig,

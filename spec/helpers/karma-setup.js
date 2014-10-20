@@ -1,3 +1,4 @@
+// Setup for when running with Karma
 require( "should/should" );
 window.React = require("react");
 window.utils = window.React.addons.TestUtils;
