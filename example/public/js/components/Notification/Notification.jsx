@@ -9,7 +9,7 @@ define([
 		displayName: "Notification",
 
 		stores: {
-      		listenTo: "fakeNotification",
+      		listenTo: ["fakeNotification", "pointlessActionCounting"],
       		onChange: function(data) {
       			this.setState({ notice: data.fakeNotification.state });
 	      	}

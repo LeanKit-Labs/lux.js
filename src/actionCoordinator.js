@@ -1,43 +1,27 @@
-/* global parallel,dispatcherChannel, machina, pipeline */
+/* global dispatcherChannel, machina */
 /* jshint -W117, -W098 */
-function pluck(obj, keys) {
-	var res = keys.reduce((accum, key) => {
-		accum[key] = obj[key];
-		return accum;
-	}, {});
-	return res;
-}
 
 function processGeneration(generation, action) {
-		return () => parallel(
-			generation.map((store) => {
-				return () => {
-					var data = Object.assign({
-						deps: pluck(this.stores, store.waitFor)
-					}, action);
-					return dispatcherChannel.request({
-						topic: `${store.namespace}.handle.${action.actionType}`,
-						replyChannel: dispatcherChannel.channel,
-						data: data
-					}).then((response) => {
-						this.stores[store.namespace] = response;
-						if(response.hasChanged) {
-							this.updated.push(store.namespace);
-						}
-					});
-				};
-			})).then(() => this.stores);
-	}
-	/*
-		Example of `config` argument:
-		{
-			generations: [],
-			action : {
-				actionType: "",
-				actionArgs: []
-			}
+	generation.map((store) => {
+		var data = Object.assign({
+			deps: pluck(this.stores, store.waitFor)
+		}, action);
+		dispatcherChannel.publish(
+			`${store.namespace}.handle.${action.actionType}`,
+			data
+		);
+	});
+}
+/*
+	Example of `config` argument:
+	{
+		generations: [],
+		action : {
+			actionType: "",
+			actionArgs: []
 		}
-	*/
+	}
+*/
 class ActionCoordinator extends machina.Fsm {
 	constructor(config) {
 		Object.assign(this, {
@@ -45,6 +29,14 @@ class ActionCoordinator extends machina.Fsm {
 			stores: {},
 			updated: []
 		}, config);
+
+		this.__subscriptions = {
+			handled: dispatcherChannel.subscribe(
+				"*.handled.*",
+				(data) => this.handle("action.handled", data)
+			)
+		};
+
 		super({
 			initialState: "uninitialized",
 			states: {
@@ -53,18 +45,21 @@ class ActionCoordinator extends machina.Fsm {
 				},
 				dispatching: {
 					_onEnter() {
-							pipeline(
-								[for (generation of config.generations) processGeneration.call(this, generation, config.action)]
-							).then(function(...results) {
-								this.transition("success");
-							}.bind(this), function(err) {
-								this.err = err;
-								this.transition("failure");
-							}.bind(this));
-						},
-						_onExit: function() {
-							dispatcherChannel.publish("prenotify", { stores: this.updated });
+						try {
+							[for (generation of config.generations) processGeneration.call(this, generation, config.action)];
+						} catch(ex) {
+							this.err = ex;
+							console.log(ex);
+							this.transition("failure");
 						}
+						this.transition("success");
+					},
+					"action.handled": function(data) {
+						this.updated.push(data.namespace);
+					},
+					_onExit: function() {
+						dispatcherChannel.publish("prenotify", { stores: this.updated });
+					}
 				},
 				success: {
 					_onEnter: function() {

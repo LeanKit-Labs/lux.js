@@ -2,10 +2,11 @@ define( [
 	"react",
 	"traceur",
 	"lux",
-	"postal.request-response",
+	"postal",
 	"when",
 	"jquery",
 	"./stores/boardData.json",
+	"./stores/fakeApi",
 	"imports?jQuery=jquery!mockjax"
 ], function( React, traceur, lux, postal, when, $, mockData) {
 	// For Devtools, etc.
@@ -27,6 +28,21 @@ define( [
 			});
 		}
 	});
+
+	lux.customActionCreator({
+		loadBoard: function(id) {
+			postal.publish({
+				channel: "lux.action",
+				topic: "execute.loadBoard",
+				data: {
+					actionType: "loadBoard",
+					actionArgs: [id],
+				}
+			});
+		}
+	});
+	lux.createActionGroup("board.api", ["loadBoard"]);
+	lux.createActionGroup("lane.selector", ["toggleLaneSelection"]);
 
 	require( [
 		"boardStore",

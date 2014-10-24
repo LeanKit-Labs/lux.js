@@ -7,16 +7,18 @@ define( [
 	"LaneSelectorRow",
 	"LaneSelectorCell",
 	"Lane",
+	"postal",
+	"boardStore",
 	"./lane-selector.css"
  ],
- function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane ) {
+ function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane, postal, boardStore ) {
 	var LaneSelector = lux.createControllerView( {
 		displayName: "LaneSelector",
-		getActionsFor: ["board"],
+		getActionsFor: ["board.api"],
 		stores: {
 			listenTo: ["board"],
 			onChange: function(stores) {
-				var newState = stores.board.state[this.props.boardId];
+				var newState = boardStore.getState()[this.props.boardId];
 				this.setState(newState);
 			},
 			immediate: true
@@ -24,6 +26,16 @@ define( [
 		getInitialState: function() {
 			return { lanes: [] };
 		},
+		// loadBoard: function(id) {
+		// 	postal.publish({
+		// 		channel: "lux.action",
+		// 		topic: "boardLoad",
+		// 		data: {
+		// 			actionType: "boardLoad",
+		// 			actionArgs: [id],
+		// 		}
+		// 	});
+		// },
 		componentWillMount: function() {
 			window.laneSelector = this;
 			this.loadBoard( this.props.boardId );

@@ -1,9 +1,8 @@
 define( [
 	"lux",
 	"lodash",
-	"laneParser",
-	"jquery"
-], function( lux, _, parser, $ ) {
+	"laneParser"
+], function( lux, _, parser) {
 
 		function toggleAncestors( lookup, target ) {
 			var parentId = target.parentLaneId;
@@ -44,30 +43,16 @@ define( [
 		var boardStore = new lux.Store( {
 			namespace: "board",
 			handlers: {
-				toggleLaneSelection: function( boardId, laneId ) {
-					var boards = this.getState();
-					var target = boards[ boardId ] && boards[ boardId ].lookup[ laneId ];
+				toggleLaneSelection: function( state, boardId, laneId ) {
+					var target = state[ boardId ] && state[ boardId ].lookup[ laneId ];
 					if ( target ) {
 						target.isActive = !target.isActive;
-						toggleAncestors( boards[ boardId ].lookup, target );
+						toggleAncestors( state[ boardId ].lookup, target );
 						toggleDescendants( target );
-						this.setState(boards);
-						return target;
 					}
 				},
-				loadBoard: function( boardId ) {
-					return $.ajax( {
-						url: "/board/" + boardId,
-						dataType: "json"
-					} ).then( function( resp ) {
-						var placeholder = {};
-						placeholder[ boardId ] = parser.transform( resp );
-						this.setState( placeholder );
-						return placeholder[ boardId ];
-					}.bind( this ), function( err ) {
-							console.log( err );
-						}
-					);
+				boardLoaded: function( state, boardId, board ) {
+					state[ boardId ] = parser.transform( board );
 				}
 			},
 			handleActionError: function() {

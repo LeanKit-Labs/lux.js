@@ -3,7 +3,7 @@
 ( function( root, factory ) {
 	if ( typeof define === "function" && define.amd ) {
 		// AMD. Register as an anonymous module.
-		define( [ "traceur", "react", "postal.request-response", "machina", "when", "when.pipeline", "when.parallel" ], factory );
+		define( [ "traceur", "react", "postal", "machina" ], factory );
 	} else if ( typeof module === "object" && module.exports ) {
 		// Node, or CommonJS-Like environments
 		module.exports = function( postal, machina, React ) {
@@ -11,28 +11,17 @@
 				require("traceur"),
 				React || require("react"),
 				postal,
-				machina,
-				require("when"),
-				require("when/pipeline"),
-				require("when/parallel"));
+				machina);
 		};
 	} else {
 		throw new Error("Sorry - luxJS only support AMD or CommonJS module environments.");
 	}
-}( this, function( traceur, React, postal, machina, when, pipeline, parallel ) {
-
-	// We need to tell postal how to get a deferred instance from when.js
-	postal.configuration.promise.createDeferred = function() {
-		return when.defer();
-	};
-	// We need to tell postal how to get a "public-facing"/safe promise instance
-	postal.configuration.promise.getPromise = function( dfd ) {
-		return dfd.promise;
-	};
+}( this, function( traceur, React, postal, machina ) {
 
 	var actionChannel = postal.channel("lux.action");
 	var storeChannel = postal.channel("lux.store");
 	var dispatcherChannel = postal.channel("lux.dispatcher");
+	var stores = {};
 
 	// jshint ignore:start
 	function* entries(obj) {
@@ -45,6 +34,14 @@
 	}
 	// jshint ignore:end
 
+	function pluck(obj, keys) {
+		var res = keys.reduce((accum, key) => {
+			accum[key] = obj[key];
+			return accum;
+		}, {});
+		return res;
+	}
+
 	function configSubscription(context, subscription) {
 		return subscription.withContext(context)
 		                   .withConstraint(function(data, envelope){
@@ -53,22 +50,32 @@
 		                   });
 	}
 
+	function ensureLuxProp(context) {
+		var __lux = context.__lux = (context.__lux || {});
+		var cleanup = __lux.cleanup = (__lux.cleanup || []);
+		var subscriptions = __lux.subscriptions = (__lux.subscriptions || {});
+		return __lux;
+	}
+
+	//import("./mixins.js");
 	//import("./actionCreator.js");
 	//import("./store.js");
 	//import("./actionCoordinator.js");
 	//import("./dispatcher.js");
-	//import("./components.js");
 
 	// jshint ignore: start
 	return {
-		Store,
-		createControllerView,
-		createComponent,
-		removeStore,
-		dispatcher,
-		mixin: mixin,
 		ActionCoordinator,
-		getActionCreatorFor
+		actionCreators,
+		createActionGroup,
+		createComponent,
+		createControllerView,
+		customActionCreator,
+		dispatcher,
+		getActionCreatorFor,
+		mixin: mixin,
+		removeStore,
+		Store
 	};
 	// jshint ignore: end
 

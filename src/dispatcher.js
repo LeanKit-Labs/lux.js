@@ -59,8 +59,7 @@ class Dispatcher extends machina.Fsm {
 				},
 				preparing: {
 					_onEnter: function() {
-						var stores = this.actionMap[this.luxAction.action.actionType];
-						this.luxAction.stores = stores;
+						var stores = this.luxAction.stores = this.actionMap[this.luxAction.action.actionType] || [];
 						this.luxAction.generations = buildGenerations(stores);
 						this.transition(this.luxAction.generations.length ? "dispatching" : "ready");
 					},
@@ -90,18 +89,7 @@ class Dispatcher extends machina.Fsm {
 				this,
 				actionChannel.subscribe(
 					"execute.*",
-					function(data, env) {
-						this.handleActionDispatch(data);
-					}
-				)
-			),
-			configSubscription(
-				this,
-				storeChannel.subscribe(
-					"register",
-					function(data, env) {
-						this.handleStoreRegistration(data);
-					}
+					(data, env) => this.handleActionDispatch(data)
 				)
 			)
 		];
@@ -111,8 +99,8 @@ class Dispatcher extends machina.Fsm {
 		this.handle("action.dispatch", data);
 	}
 
-	handleStoreRegistration(data, envelope) {
-		this.handle("register.store", data);
+	registerStore(config) {
+		this.handle("register.store", config);
 	}
 
 	dispose() {

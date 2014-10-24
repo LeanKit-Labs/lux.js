@@ -1,4 +1,4 @@
-/* global entries, actionChannel */
+/* global entries, actionChannel, pluck */
 /* jshint -W098 */
 function buildActionList(handlers) {
 	var actionList = [];
@@ -12,26 +12,34 @@ function buildActionList(handlers) {
 }
 
 var actionCreators = {};
+var actionGroups = {};
 
-function getActionCreatorFor( store ) {
-	return actionCreators[store];
+function getActionCreatorFor( group ) {
+	return actionGroups[group] ? pluck(actionCreators, actionGroups[group]) : {};
 }
 
-function buildActionCreatorFrom(actionList) {
-	var actionCreator = {};
+function generateActionCreator(actionList) {
+	actionList = (typeof actionList === "string") ? [actionList] : actionList;
 	actionList.forEach(function(action) {
-		actionCreator[action] = function() {
-			var args = Array.from(arguments);
-			actionChannel.publish({
-				topic: `execute.${action}`,
-				data: {
-					actionType: action,
-					actionArgs: args,
-					component: this.constructor && this.constructor.displayName,
-					rootNodeID: this._rootNodeID
-				}
-			});
-		};
+		if(!actionCreators[action]) {
+			actionCreators[action] = function() {
+				var args = Array.from(arguments);
+				actionChannel.publish({
+					topic: `execute.${action}`,
+					data: {
+						actionType: action,
+						actionArgs: args
+					}
+				});
+			};
+		}
 	});
-	return actionCreator;
+}
+
+function customActionCreator(action) {
+	actionCreators = Object.assign(actionCreators, action);
+}
+
+function createActionGroup(groupName, actions) {
+	actionGroups[groupName] = actions;
 }
