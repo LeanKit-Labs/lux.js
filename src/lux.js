@@ -57,15 +57,14 @@
 		return __lux;
 	}
 
-	//import("./mixins.js");
 	//import("./actionCreator.js");
+	//import("./mixins.js");
 	//import("./store.js");
 	//import("./actionCoordinator.js");
 	//import("./dispatcher.js");
 
 	// jshint ignore: start
 	return {
-		ActionCoordinator,
 		actionCreators,
 		createActionGroup,
 		createComponent,

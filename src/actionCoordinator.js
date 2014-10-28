@@ -55,7 +55,9 @@ class ActionCoordinator extends machina.Fsm {
 						this.transition("success");
 					},
 					"action.handled": function(data) {
-						this.updated.push(data.namespace);
+						if(data.hasChanged) {
+							this.updated.push(data.namespace);
+						}
 					},
 					_onExit: function() {
 						dispatcherChannel.publish("prenotify", { stores: this.updated });

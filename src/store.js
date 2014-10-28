@@ -3,7 +3,7 @@
 
 function transformHandler(store, state, target, key, handler) {
 	target[key] = function(...args) {
-		var res = handler.apply(store, [state].concat(...args));
+		return handler.apply(store, [state].concat(...args));
 	};
 }
 
@@ -22,6 +22,9 @@ function transformHandlers(store, state, handlers) {
 }
 
 function ensureStoreOptions(options) {
+	if (options.namespace in stores) {
+		throw new Error(` The store namespace "${options.namespace}" already exists.`);
+	}
 	if(!options.namespace) {
 		throw new Error("A lux store must have a namespace value provided");
 	}
@@ -35,17 +38,12 @@ class Store {
 	constructor(options) {
 		ensureStoreOptions(options);
 		var namespace = options.namespace;
-		if (namespace in stores) {
-			throw new Error(` The store namespace "${namespace}" already exists.`);
-		} else {
-			stores[namespace] = this;
-		}
 		var stateProp = options.stateProp || "state";
 		var state = options[stateProp] || {};
 		var handlers = transformHandlers( this, state, options.handlers );
+		stores[namespace] = this;
 		delete options.handlers;
 		delete options.state;
-		this.changedKeys = [];
 		Object.assign(this, options);
 		this.inDispatch = false;
 		this.hasChanged = false;
@@ -56,13 +54,9 @@ class Store {
 
 		this.flush = function flush() {
 			this.inDispatch = false;
-			if(true || this.hasChanged) { // TODO - integrated hasChanged
-				var changedKeys = Object.keys(this.changedKeys);
-				this.changedKeys = {};
+			if(this.hasChanged) {
 				this.hasChanged = false;
-				storeChannel.publish(`${this.namespace}.changed`, { changedKeys, state: state });
-			} else {
-				storeChannel.publish(`${this.namespace}.unchanged`);
+				storeChannel.publish(`${this.namespace}.changed`);
 			}
 		};
 
@@ -74,7 +68,8 @@ class Store {
 			handlerFn: function(data, envelope) {
 				if (handlers.hasOwnProperty(data.actionType)) {
 					this.inDispatch = true;
-					handlers[data.actionType].call(this, data.actionArgs.concat(data.deps));
+					var res = handlers[data.actionType].call(this, data.actionArgs.concat(data.deps));
+					this.hasChanged = (res === false) ? false : true;
 					dispatcherChannel.publish(
 						`${this.namespace}.handled.${data.actionType}`,
 						{ hasChanged: this.hasChanged, namespace: this.namespace }

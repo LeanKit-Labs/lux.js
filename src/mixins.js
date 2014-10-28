@@ -1,5 +1,5 @@
 
-/* global storeChannel, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionCreatorFor, entries, configSubscription, luxActionChannel */
+/* global storeChannel, pluck, actionCreators, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionCreatorFor, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -7,7 +7,7 @@
 **********************************************/
 function gateKeeper(store, data) {
 	var payload = {};
-	payload[store] = data;
+	payload[store] = true;
 	var __lux = this.__lux;
 
 	var found = __lux.waitFor.indexOf( store );
@@ -17,7 +17,6 @@ function gateKeeper(store, data) {
 		__lux.heardFrom.push( payload );
 
 		if ( __lux.waitFor.length === 0 ) {
-			payload = Object.assign( {}, ...__lux.heardFrom);
 			__lux.heardFrom = [];
 			this.stores.onChange.call(this, payload);
 		}
@@ -37,22 +36,16 @@ var luxStoreMixin = {
 		var __lux = ensureLuxProp(this);
 		var stores = this.stores = (this.stores || {});
 		var listenTo = typeof stores.listenTo === "string" ? [stores.listenTo] : stores.listenTo;
-		var genericStateChangeHandler = function(stores) {
-			if ( typeof this.setState === "function" ) {
-				var newState = {};
-				for( var [k,v] of entries(stores) ) {
-					newState[ k ] = v.state;
-				}
-				this.setState( newState );
-			}
+		var noChangeHandlerImplemented = function() {
+			throw new Error(`A component was told to listen to the following store(s): ${listenTo} but no onChange handler was implemented`);
 		};
 		__lux.waitFor = [];
 		__lux.heardFrom = [];
 
-		stores.onChange = stores.onChange || genericStateChangeHandler;
+		stores.onChange = stores.onChange || noChangeHandlerImplemented;
 
 		listenTo.forEach((store) => {
-			__lux.subscriptions[`${store}.changed`] = storeChannel.subscribe(`${store}.changed`, (data) => gateKeeper.call(this, store, data));
+			__lux.subscriptions[`${store}.changed`] = storeChannel.subscribe(`${store}.changed`, () => gateKeeper.call(this, store));
 		});
 
 		__lux.subscriptions.prenotify = dispatcherChannel.subscribe("prenotify", (data) => handlePreNotify.call(this, data));
@@ -82,13 +75,21 @@ var luxActionDispatcherMixin = {
 	setup: function () {
 		this.getActionsFor = this.getActionsFor || [];
 		this.getActions = this.getActions || [];
-		this.getActionsFor.forEach(function(store) {
-			for(var [k, v] of entries(getActionCreatorFor(store))) {
-				if(!this[k]) {
+		var addActionIfNotPreset = (k, v) => {
+			if(!this[k]) {
 					this[k] = v;
 				}
+		};
+		this.getActionsFor.forEach((group) => {
+			for(var [k, v] of entries(getActionCreatorFor(group))) {
+				addActionIfNotPreset(k, v);
 			}
-		}.bind(this));
+		});
+		if(this.getActions.length) {
+			for(var [key, val] of entries(pluck(actionCreators, this.getActions))) {
+				addActionIfNotPreset(key, val);
+			}
+		}
 	}
 };
 
