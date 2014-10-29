@@ -43,21 +43,29 @@ define( [
 		var boardStore = new lux.Store( {
 			namespace: "board",
 			handlers: {
-				toggleLaneSelection: function( state, boardId, laneId ) {
-					var target = state[ boardId ] && state[ boardId ].lookup[ laneId ];
+				toggleLaneSelection: function( boardId, laneId ) {
+					var newState = this.getState();
+					var target = newState[ boardId ] && newState[ boardId ].lookup[ laneId ];
 					if ( target ) {
 						target.isActive = !target.isActive;
-						toggleAncestors( state[ boardId ].lookup, target );
+						toggleAncestors( newState[ boardId ].lookup, target );
 						toggleDescendants( target );
+						this.setState(newState);
 					}
 				},
-				boardLoaded: function( state, boardId, board ) {
-					state[ boardId ] = parser.transform( board );
+				boardLoaded: function( boardId, board ) {
+					var newState = this.getState();
+					newState[ boardId ] = parser.transform( board );
+					newState._currentBoardId = boardId;
+					this.setState(newState);
 				}
 			},
-			handleActionError: function() {
-				console.log( "OHSNAP!" );
-				console.log( arguments );
+			getCurrentBoard: function() {
+				var state = this.getState();
+				return state[state._currentBoardId];
+			},
+			getBoard: function(id) {
+				return this.getState()[id];
 			}
 		} );
 

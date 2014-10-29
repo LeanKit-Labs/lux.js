@@ -5,10 +5,10 @@ define( [
 
 		var lookup = {};
 
-		var updateState = function( state ) {
+		var getNotice = function() {
 			var key = loggingStore.getLastMsg() || "Unknown";
 			lookup[ key ] = ( lookup[ key ] || 0 ) + 1;
-			state.notice = "'" + key + "' (notification has been published " +
+			return "'" + key + "' (notification has been published " +
 					lookup[ key ] + ( lookup[ key ] > 1 ? " times" : " time" ) + ")";
 		};
 
@@ -16,15 +16,14 @@ define( [
 			namespace: "fakeNotification",
 			handlers: {
 				toggleLaneSelection: {
-					handler: function( state, boardId, laneId ) {
-						console.log(arguments);
-						return updateState( state );
+					handler: function( boardId, laneId ) {
+						this.setState({ notice: getNotice() });
 					},
 					waitFor: [ "pointlessActionCounting", "logging" ]
 				},
 				loadBoard: {
-					handler: function( state, boardId ) {
-						return updateState( state );
+					handler: function( boardId ) {
+						this.setState({ notice: getNotice() });
 					},
 					waitFor: [ "pointlessActionCounting", "logging" ]
 				}

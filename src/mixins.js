@@ -166,7 +166,7 @@ var luxMixinCleanup = function () {
 
 function mixin(context, ...mixins) {
 	if(mixins.length === 0) {
-		mixins = [luxStoreMixin, luxActionDispatcherMixin, luxActionListenerMixin];
+		mixins = [luxStoreMixin, luxActionDispatcherMixin];
 	}
 
 	mixins.forEach((mixin) => {

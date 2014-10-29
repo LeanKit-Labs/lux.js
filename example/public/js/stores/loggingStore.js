@@ -6,14 +6,16 @@ define( [
 			namespace: "logging",
 			handlers: {
 				toggleLaneSelection: {
-					handler: function( state, boardId, laneId ) {
+					handler: function( boardId, laneId ) {
+						var newState = this.getState();
 						var msg = "Lane " + laneId + " toggled on board " + boardId;
-						state.msgs = (state.msgs || []).concat( [ msg ] );
+						newState.msgs = (newState.msgs || []).concat( [ msg ] );
+						this.setState(newState);
 					},
 					waitFor: [ "board" ]
 				},
 				loadBoard: {
-					handler: function( state, boardId ) {
+					handler: function( boardId ) {
 						var msg = "Loaded board " + boardId;
 						this.setState( {
 							msgs: ( this.getState().msgs || [] ).concat( [ msg ] )

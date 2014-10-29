@@ -1,18 +1,17 @@
 /* global entries, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator */
 /* jshint -W098 */
 
-function transformHandler(store, state, target, key, handler) {
+function transformHandler(store, target, key, handler) {
 	target[key] = function(...args) {
-		return handler.apply(store, [state].concat(...args));
+		return handler.apply(store, ...args);
 	};
 }
 
-function transformHandlers(store, state, handlers) {
+function transformHandlers(store, handlers) {
 	var target = {};
 	for (var [key, handler] of entries(handlers)) {
 		transformHandler(
 			store,
-			state,
 			target,
 			key,
 			typeof handler === "object" ? handler.handler : handler
@@ -40,20 +39,27 @@ class Store {
 		var namespace = options.namespace;
 		var stateProp = options.stateProp || "state";
 		var state = options[stateProp] || {};
-		var handlers = transformHandlers( this, state, options.handlers );
+		var handlers = transformHandlers( this, options.handlers );
 		stores[namespace] = this;
 		delete options.handlers;
 		delete options.state;
 		Object.assign(this, options);
-		this.inDispatch = false;
+		var inDispatch = false;
 		this.hasChanged = false;
 
 		this.getState = function() {
 			return state;
 		};
 
+		this.setState = function(newState) {
+			if(!inDispatch) {
+				throw new Error("setState can only be called during a dispatch cycle from a store action handler.");
+			}
+			state = Object.assign(state, newState);
+		};
+
 		this.flush = function flush() {
-			this.inDispatch = false;
+			inDispatch = false;
 			if(this.hasChanged) {
 				this.hasChanged = false;
 				storeChannel.publish(`${this.namespace}.changed`);
@@ -67,7 +73,7 @@ class Store {
 			handlers: handlers,
 			handlerFn: function(data, envelope) {
 				if (handlers.hasOwnProperty(data.actionType)) {
-					this.inDispatch = true;
+					inDispatch = true;
 					var res = handlers[data.actionType].call(this, data.actionArgs.concat(data.deps));
 					this.hasChanged = (res === false) ? false : true;
 					dispatcherChannel.publish(
@@ -79,7 +85,7 @@ class Store {
 		}));
 
 		this.__subscription = {
-			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
+			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).withConstraint(() => inDispatch),
 		};
 
 		generateActionCreator(Object.keys(handlers));

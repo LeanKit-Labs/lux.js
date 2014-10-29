@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "0.2.3",
+  "version": "0.3.0-RC1",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
@@ -32,12 +32,9 @@
     "test": "./node_modules/mocha/bin/mocha -r spec/helpers/node-setup.js spec"
   },
   "dependencies": {
-    "conduitjs": "^0.3.3",
     "postal": "^0.10.3",
-    "postal.request-response": "^0.3.0",
     "react": "^0.11.1",
-    "traceur": "0.0.58",
-    "when": "^3.4.5"
+    "traceur": "0.0.58"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",

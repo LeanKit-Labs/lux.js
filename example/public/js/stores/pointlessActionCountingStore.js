@@ -2,22 +2,22 @@ define( [
 	"lux"
 ], function( lux ) {
 
-		function updateState( state ) {
-			state.count = ( state.count || 0 ) + 1;
+		function getCount( state ) {
+			return ( state.count || 0 ) + 1;
 		}
 
 		var pointlessActionCountingStore = new lux.Store( {
 			namespace: "pointlessActionCounting",
 			handlers: {
 				toggleLaneSelection: {
-					handler: function( state, boardId, laneId ) {
-						return updateState( state );
+					handler: function( boardId, laneId ) {
+						this.setState({ count: getCount( this.getState() ) });
 					},
 					waitFor: [ "board", "logging" ]
 				},
 				loadBoard: {
-					handler: function( state, boardId ) {
-						return updateState( state );
+					handler: function( boardId ) {
+						this.setState({ count: getCount( this.getState() ) });
 					},
 					waitFor: [ "board", "logging" ]
 				}

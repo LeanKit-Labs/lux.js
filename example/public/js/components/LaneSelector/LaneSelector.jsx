@@ -17,8 +17,8 @@ define( [
 		getActionsFor: ["board.api"],
 		stores: {
 			listenTo: ["board"],
-			onChange: function(stores) {
-				var newState = boardStore.getState()[this.props.boardId];
+			onChange: function() {
+				var newState = boardStore.getBoard(this.props.boardId);
 				this.setState(newState);
 			},
 			immediate: true
@@ -26,16 +26,6 @@ define( [
 		getInitialState: function() {
 			return { lanes: [] };
 		},
-		// loadBoard: function(id) {
-		// 	postal.publish({
-		// 		channel: "lux.action",
-		// 		topic: "boardLoad",
-		// 		data: {
-		// 			actionType: "boardLoad",
-		// 			actionArgs: [id],
-		// 		}
-		// 	});
-		// },
 		componentWillMount: function() {
 			window.laneSelector = this;
 			this.loadBoard( this.props.boardId );
