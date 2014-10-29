@@ -1,4 +1,4 @@
-/* global entries, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator */
+/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator */
 /* jshint -W098 */
 
 function transformHandler(store, target, key, handler) {
@@ -90,7 +90,7 @@ class Store {
 
 		generateActionCreator(Object.keys(handlers));
 
-		lux.dispatcher.registerStore(
+		dispatcher.registerStore(
 			{
 				namespace,
 				actions: buildActionList(handlers)
