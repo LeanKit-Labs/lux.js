@@ -16,7 +16,7 @@ define([
 		return classSet;
 	}
 
-	var Lane = lux.createComponent({
+	var Lane = lux.component({
 
 		displayName: "Lane",
 

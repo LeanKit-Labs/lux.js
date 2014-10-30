@@ -5,7 +5,7 @@ define([
 	"fakeNotificationStore"
 ], function(lux, React, fakeNotificationStore) {
 
-	var Notification = lux.createControllerView({
+	var Notification = lux.controllerView({
 
 		displayName: "Notification",
 

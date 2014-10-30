@@ -67,11 +67,12 @@
 	return {
 		actionCreators,
 		createActionGroup,
-		createComponent,
-		createControllerView,
+		component,
+		controllerView,
 		customActionCreator,
 		dispatcher,
 		getActionCreatorFor,
+		makeActionListener,
 		mixin: mixin,
 		removeStore,
 		Store

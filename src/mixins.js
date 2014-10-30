@@ -1,5 +1,5 @@
 
-/* global storeChannel, pluck, actionCreators, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionCreatorFor, entries, configSubscription, luxActionChannel */
+/* global storeChannel, pluck, generateActionCreator, actionCreators, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionCreatorFor, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -128,6 +128,7 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 					context,
 					channel.subscribe( topic, handlerFn )
 				);
+			generateActionCreator(Object.keys(handlers));
 		},
 		teardown() {
 			this.__lux.subscriptions.actionListener.unsubscribe();
@@ -138,7 +139,7 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 /*********************************************
 *   React Component Versions of Above Mixin  *
 **********************************************/
-function createControllerView(options) {
+function controllerView(options) {
 	var opt = {
 		mixins: [luxStoreReactMixin, luxActionDispatcherReactMixin].concat(options.mixins || [])
 	};
@@ -146,7 +147,7 @@ function createControllerView(options) {
 	return React.createClass(Object.assign(opt, options));
 }
 
-function createComponent(options) {
+function component(options) {
 	var opt = {
 		mixins: [luxActionDispatcherReactMixin].concat(options.mixins || [])
 	};
@@ -177,7 +178,9 @@ function mixin(context, ...mixins) {
 			Object.assign(context, mixin.mixin);
 		}
 		mixin.setup.call(context);
-		context.__lux.cleanup.push( mixin.teardown );
+		if(mixin.teardown) {
+			context.__lux.cleanup.push( mixin.teardown );
+		}
 	});
 	context.luxCleanup = luxMixinCleanup;
 }
@@ -185,3 +188,13 @@ function mixin(context, ...mixins) {
 mixin.store = luxStoreMixin;
 mixin.actionDispatcher = luxActionDispatcherMixin;
 mixin.actionListener = luxActionListenerMixin;
+
+function makeActionListener(target) {
+	mixin( target, luxActionListenerMixin );
+	return target;
+}
+
+function makeActionDispatcher(target) {
+	mixin( target, luxActionDispatcherMixin );
+	return target;
+}

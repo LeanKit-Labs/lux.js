@@ -5,7 +5,7 @@ define([
 	"pointlessActionCountingStore"
 ], function(lux, React, pointlessActionCountingStore) {
 
-	var ActionCounter = lux.createControllerView({
+	var ActionCounter = lux.controllerView({
 
 		displayName: "ActionCounter",
 
