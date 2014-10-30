@@ -1,5 +1,8 @@
 /* global entries, actionChannel, pluck */
 /* jshint -W098 */
+var actionCreators = Object.create(null);
+var actionGroups = {};
+
 function buildActionList(handlers) {
 	var actionList = [];
 	for (var [key, handler] of entries(handlers)) {
@@ -9,13 +12,6 @@ function buildActionList(handlers) {
 		});
 	}
 	return actionList;
-}
-
-var actionCreators = {};
-var actionGroups = {};
-
-function getActionCreatorFor( group ) {
-	return actionGroups[group] ? pluck(actionCreators, actionGroups[group]) : {};
 }
 
 function generateActionCreator(actionList) {
@@ -36,10 +32,23 @@ function generateActionCreator(actionList) {
 	});
 }
 
+function getActionGroup( group ) {
+	return actionGroups[group] ? pluck(actionCreators, actionGroups[group]) : {};
+}
+
 function customActionCreator(action) {
 	actionCreators = Object.assign(actionCreators, action);
 }
 
-function createActionGroup(groupName, actions) {
-	actionGroups[groupName] = actions;
+function addToActionGroup(groupName, actions) {
+	var group = actionGroups[groupName];
+	if(!group) {
+		group = actionGroups[groupName] = [];
+	}
+	actions = typeof actions === "string" ? [actions] : actions;
+	actions.forEach(function(action){
+		if(group.indexOf(action) === -1 ) {
+			group.push(action);
+		}
+	});
 }

@@ -1,5 +1,5 @@
 
-/* global storeChannel, pluck, generateActionCreator, actionCreators, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionCreatorFor, entries, configSubscription, luxActionChannel */
+/* global storeChannel, pluck, generateActionCreator, actionCreators, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -73,15 +73,15 @@ var luxStoreReactMixin = {
 
 var luxActionDispatcherMixin = {
 	setup: function () {
-		this.getActionsFor = this.getActionsFor || [];
+		this.getActionGroup = this.getActionGroup || [];
 		this.getActions = this.getActions || [];
 		var addActionIfNotPreset = (k, v) => {
 			if(!this[k]) {
 					this[k] = v;
 				}
 		};
-		this.getActionsFor.forEach((group) => {
-			for(var [k, v] of entries(getActionCreatorFor(group))) {
+		this.getActionGroup.forEach((group) => {
+			for(var [k, v] of entries(getActionGroup(group))) {
 				addActionIfNotPreset(k, v);
 			}
 		});
@@ -89,6 +89,17 @@ var luxActionDispatcherMixin = {
 			for(var [key, val] of entries(pluck(actionCreators, this.getActions))) {
 				addActionIfNotPreset(key, val);
 			}
+		}
+	},
+	mixin: {
+		dispatchAction: function(action, ...args) {
+			actionChannel.publish({
+				topic: `execute.${action}`,
+				data: {
+					actionType: action,
+					actionArgs: args
+				}
+			});
 		}
 	}
 };
