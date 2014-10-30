@@ -62,6 +62,7 @@
 	//import("./store.js");
 	//import("./actionCoordinator.js");
 	//import("./dispatcher.js");
+	//import("./utils.js");
 
 	// jshint ignore: start
 	return {
@@ -77,7 +78,8 @@
 		mixin: mixin,
 		removeStore,
 		Store,
-		stores
+		stores,
+		utils
 	};
 	// jshint ignore: end
 

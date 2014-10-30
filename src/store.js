@@ -41,9 +41,6 @@ class Store {
 		var state = options[stateProp] || {};
 		var handlers = transformHandlers( this, options.handlers );
 		stores[namespace] = this;
-		delete options.handlers;
-		delete options.state;
-		Object.assign(this, options);
 		var inDispatch = false;
 		this.hasChanged = false;
 
@@ -93,9 +90,12 @@ class Store {
 		dispatcher.registerStore(
 			{
 				namespace,
-				actions: buildActionList(handlers)
+				actions: buildActionList(options.handlers)
 			}
 		);
+		delete options.handlers;
+		delete options.state;
+		Object.assign(this, options);
 	}
 
 	// Need to build in behavior to remove this store

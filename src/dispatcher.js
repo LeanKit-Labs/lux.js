@@ -1,25 +1,31 @@
 /* global entries, machina, ActionCoordinator, configSubscription, actionChannel, storeChannel */
 /* jshint -W098 */
-function calculateGen(store, lookup, gen) {
-	gen = gen || 0;
+function calculateGen(store, lookup, gen, actionType) {
 	var calcdGen = gen;
 	if (store.waitFor && store.waitFor.length) {
 		store.waitFor.forEach(function(dep) {
 			var depStore = lookup[dep];
-			var thisGen = calculateGen(depStore, lookup, gen + 1);
-			if (thisGen > calcdGen) {
-				calcdGen = thisGen;
-			}
+			if(depStore) {
+				var thisGen = calculateGen(depStore, lookup, gen + 1);
+				if (thisGen > calcdGen) {
+					calcdGen = thisGen;
+				}
+			} /*else {
+				// TODO: add console.warn on debug build
+				// noting that a store action specifies another store
+				// as a dependency that does NOT participate in the action
+				// this is why actionType is an arg here....
+			}*/
 		});
 	}
 	return calcdGen;
 }
 
-function buildGenerations(stores) {
+function buildGenerations( stores, actionType ) {
 	var tree = [];
 	var lookup = {};
 	stores.forEach((store) => lookup[store.namespace] = store);
-	stores.forEach((store) => store.gen = calculateGen(store, lookup));
+	stores.forEach((store) => store.gen = calculateGen(store, lookup, 0, actionType));
 	for (var [key, item] of entries(lookup)) {
 		tree[item.gen] = tree[item.gen] || [];
 		tree[item.gen].push(item);
@@ -59,8 +65,9 @@ class Dispatcher extends machina.Fsm {
 				},
 				preparing: {
 					_onEnter: function() {
-						var stores = this.luxAction.stores = this.actionMap[this.luxAction.action.actionType] || [];
-						this.luxAction.generations = buildGenerations(stores);
+						var handling = this.getStoresHandling(this.luxAction.action.actionType);
+						this.luxAction.stores = handling.stores;
+						this.luxAction.generations = handling.tree;
 						this.transition(this.luxAction.generations.length ? "dispatching" : "ready");
 					},
 					"*": function() {
@@ -82,6 +89,13 @@ class Dispatcher extends machina.Fsm {
 					}
 				},
 				stopped: {}
+			},
+			getStoresHandling(actionType) {
+				var stores = this.actionMap[actionType];
+				return {
+					stores,
+					tree: buildGenerations( stores, actionType )
+				};
 			}
 		});
 		this.__subscriptions = [
