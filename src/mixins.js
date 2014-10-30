@@ -189,12 +189,12 @@ mixin.store = luxStoreMixin;
 mixin.actionDispatcher = luxActionDispatcherMixin;
 mixin.actionListener = luxActionListenerMixin;
 
-function makeActionListener(target) {
+function actionListener(target) {
 	mixin( target, luxActionListenerMixin );
 	return target;
 }
 
-function makeActionDispatcher(target) {
+function actionDispatcher(target) {
 	mixin( target, luxActionDispatcherMixin );
 	return target;
 }

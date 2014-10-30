@@ -72,8 +72,8 @@
 		customActionCreator,
 		dispatcher,
 		getActionCreatorFor,
-		makeActionDispatcher,
-		makeActionListener,
+		actionDispatcher,
+		actionListener,
 		mixin: mixin,
 		removeStore,
 		Store
