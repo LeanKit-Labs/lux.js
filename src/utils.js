@@ -1,7 +1,7 @@
 /*global actionCreators, dispatcher */
 /* jshint -W098 */
-// NOTE - these will eventually live in their own add-on lib or in a debug build of lux
 
+// NOTE - these will eventually live in their own add-on lib or in a debug build of lux
 var utils = {
 	printActions() {
 		var actions = Object.keys(actionCreators)

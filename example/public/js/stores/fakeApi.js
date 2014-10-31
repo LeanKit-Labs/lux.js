@@ -1,28 +1,23 @@
 define([
 	"./boardData.json",
-	"postal",
 	"lux"
-], function(mockData, postal, lux){
+], function(mockData, lux){
 
-	var ch = postal.channel("lux.action");
-
-	var fakeness = {
+	var http = lux.actionListener({
 		handlers: {
 			loadBoard: function(boardId) {
+				// simulate an http response
 				setTimeout(function(){
 					var board = mockData.boards.find(function(x) {
 						return x.boardId.toString() === boardId.toString();
 					});
-					ch.publish("execute.boardLoaded", {
-						actionType: "boardLoaded",
-						actionArgs: [boardId, board]
-					});
-				}, 0);
+					this.dispatchAction("boardLoaded", boardId, board);
+				}.bind(this), 200);
 			}
 		}
-	};
+	});
 
-	lux.mixin(fakeness, lux.mixin.actionListener);
+	lux.mixin(http, lux.mixin.actionDispatcher);
 
-	return fakeness;
+	return http;
 });
