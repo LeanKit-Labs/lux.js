@@ -91,7 +91,7 @@ class Dispatcher extends machina.Fsm {
 				stopped: {}
 			},
 			getStoresHandling(actionType) {
-				var stores = this.actionMap[actionType];
+				var stores = this.actionMap[actionType] || [];
 				return {
 					stores,
 					tree: buildGenerations( stores, actionType )
