@@ -6,7 +6,6 @@ var actionGroups = {};
 function buildActionList(handlers) {
 	var actionList = [];
 	for (var [key, handler] of entries(handlers)) {
-		console.log(key, handler);
 		actionList.push({
 			actionType: key,
 			waitFor: handler.waitFor || []
