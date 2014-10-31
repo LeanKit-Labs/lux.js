@@ -6,7 +6,7 @@ describe( "luxJS - Controller Views", function() {
 		var innerRef;
 		var mocked;
 		before(function(){
-    		Component = lux.createControllerView({
+    		Component = lux.controllerView({
     			displayName: "testControllerView",
     			stores: {
     				listenTo: "testytesttest",
@@ -23,13 +23,5 @@ describe( "luxJS - Controller Views", function() {
     		});
 			mocked = utils.renderIntoDocument( Component() );
 		});
-    	it("Should publish expected message when invoking loadState method", function(done) {
-    		luxStoreCh.subscribe("testytesttest.state", function(data, env) {
-    			env.should.have.property("reply");
-    			env.reply(null, { changedKeys: [], state: {} });
-    			done();
-    		}).once();
-    		innerRef.loadState();
-    	});
 	});
 });

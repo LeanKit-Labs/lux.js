@@ -11,10 +11,11 @@ describe( "luxJS - components", function() {
 				}
 			}
 		});
+		lux.addToActionGroup("testyactiongroup", [ "doYourLuxThing" ]);
 	});
-	describe( "When Calling getActionCreatorFor", function(){
-		it("should return expected actions for given store", function() {
-			lux.getActionCreatorFor("testytesttest").should.have.property("doYourLuxThing");
+	describe( "When Calling getActionGroup", function(){
+		it("should return expected actions for given action group", function() {
+			lux.getActionGroup("testyactiongroup").should.have.property("doYourLuxThing");
 		});
 	} );
     describe( "When Instantiating a lux Component", function() {
@@ -22,9 +23,9 @@ describe( "luxJS - components", function() {
     	var innerRef;
     	var mocked;
     	before(function(){
-    		Component = lux.createComponent({
+    		Component = lux.component({
     			displayName: "testComponent",
-    			getActionsFor: ["testytesttest"],
+    			getActionGroup: ["testyactiongroup"],
     			componentWillMount: function() {
     				innerRef = this;
     			},
@@ -43,8 +44,6 @@ describe( "luxJS - components", function() {
     			data.should.have.property("actionArgs");
     			data.actionArgs[0].should.eql("foo");
     			data.actionArgs[1].should.eql(8675309);
-    			data.should.have.property("component", "testComponent");
-    			data.should.have.property("rootNodeID");
     			done();
     		}).once();
     		innerRef.doYourLuxThing("foo", 8675309);
