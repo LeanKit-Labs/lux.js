@@ -36,10 +36,10 @@ describe( "luxJS - Controller Views", function() {
 	    		});
 				mocked = utils.renderIntoDocument( Component() );
 			});
-			it("Should invoke onChange when the store updates", function() {});
+			it("Should invoke onChange when the store updates" );
 		});
 		describe( "When Listening to Multiple Stores", function() {
-			it("Should invoke onChange when a store updates", function() {});
+			it("Should invoke onChange when a store updates" );
 		});
 	});
 });
