@@ -94,7 +94,7 @@ class Store {
 			}
 		);
 		delete options.handlers;
-		delete options.state;
+		delete options[ stateProp ];
 		Object.assign(this, options);
 	}
 

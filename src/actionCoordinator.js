@@ -89,16 +89,16 @@ class ActionCoordinator extends machina.Fsm {
 	success(fn) {
 		this.on("success", fn);
 		if (!this._started) {
-			setTimeout(() => this.handle("start"), 0);
 			this._started = true;
+			this.handle("start");
 		}
 		return this;
 	}
 	failure(fn) {
 		this.on("error", fn);
 		if (!this._started) {
-			setTimeout(() => this.handle("start"), 0);
 			this._started = true;
+			this.handle("start");
 		}
 		return this;
 	}
