@@ -26,8 +26,9 @@ describe( "luxJS - Mixins", function() {
 			it( "Should look at getActionGroup and create methods for each action in the group" );
 			it( "Should look at getActions and create methods for each action" );
 
-			// Or do we want to throw an error, or add it anyway?
-			it( "Should not create methods for actions that do not exist" );
+			it( "Should throw an error when requested a group that does not exist" );
+			it( "Should throw an error when requested an action that does not exist" );
+
 			it( "Should add a dispatchAction method" );
 			it( "Should publish a correctly formed action when dispatchAction is called" );
 		});
