@@ -49,7 +49,6 @@ class ActionCoordinator extends machina.Fsm {
 							[for (generation of config.generations) processGeneration.call(this, generation, config.action)];
 						} catch(ex) {
 							this.err = ex;
-							console.log(ex);
 							this.transition("failure");
 						}
 						this.transition("success");
@@ -86,20 +85,8 @@ class ActionCoordinator extends machina.Fsm {
 			}
 		});
 	}
-	success(fn) {
-		this.on("success", fn);
-		if (!this._started) {
-			this._started = true;
-			this.handle("start");
-		}
-		return this;
-	}
-	failure(fn) {
-		this.on("error", fn);
-		if (!this._started) {
-			this._started = true;
-			this.handle("start");
-		}
-		return this;
+
+	start() {
+		this.handle("start");
 	}
 }

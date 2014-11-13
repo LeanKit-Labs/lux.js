@@ -76,13 +76,13 @@ class Dispatcher extends machina.Fsm {
 				},
 				dispatching: {
 					_onEnter: function() {
-						var coordinator = this.luxAction.coordinator = new ActionCoordinator({
+						// This is all sync...hence the transition call below.
+						var coordinator = new ActionCoordinator({
 							generations: this.luxAction.generations,
 							action: this.luxAction.action
 						});
-						coordinator
-							.success(() => this.transition("ready"))
-							.failure(() => this.transition("ready"));
+						coordinator.start();
+						this.transition("ready");
 					},
 					"*": function() {
 						this.deferUntilTransition("ready");
