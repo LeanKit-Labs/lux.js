@@ -15,6 +15,7 @@ global.utils = global.React.addons.TestUtils;
 
 global.postal = require("postal");
 global.machina = require("machina");
+global.sinon = require("sinon");
 
 global.luxStoreCh = global.postal.channel("lux.store");
 global.luxActionCh = global.postal.channel("lux.action");
