@@ -1,4 +1,4 @@
-/* global describe, it, before, after, beforeEach, lux, utils, postal, React, sinon, luxStoreCh */
+/* global describe, it, before, after, beforeEach, lux, utils, React, sinon, luxStoreCh */
 
 describe( "luxJS - Controller Views", function() {
 	var fakeStore, fakeStore2;
@@ -25,7 +25,6 @@ describe( "luxJS - Controller Views", function() {
 	after(function () {
 		fakeStore.dispose();
 		fakeStore2.dispose();
-		postal.reset();
 	});
 	describe( "When Instantiating a lux Controller View", function() {
 		var ControllerView;

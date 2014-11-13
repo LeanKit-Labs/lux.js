@@ -1,29 +1,227 @@
-/* global describe, it, before, lux, utils, luxStoreCh */
+/* global describe, it, before, afterEach, lux, utils, luxStoreCh, sinon, postal */
 
 describe( "luxJS - Store", function() {
+	var store;
+	function storeFactory( options ) {
+		options = Object.assign({
+			namespace: "storeOne",
+			handlers: {
+				one: function () {}
+			}
+		}, options || {} );
+		store = new lux.Store( options );
+	}
+	afterEach( function (){
+		if ( store ) {
+			store.dispose();
+			store = undefined;
+		}
+	});
 	describe( "When creating a Store", function() {
 		describe( "When validating options", function () {
-			it( "Should throw an error if the namespace is already used" );
-			it( "Should throw an error if the namespace is not provided" );
-			it( "Should throw an error if there are no action handlers" );
+			it( "Should throw an error if the namespace is already used", function () {
+				storeFactory();
+				(function () {
+					var secondStore = new lux.Store({
+						namespace: "storeOne",
+						handlers: {
+							one: function () {}
+						}
+					});
+				}).should.throw( /already exists/ );
+			});
+			it( "Should throw an error if the namespace is not provided", function () {
+				(function () {
+					var tmpStore = new lux.Store({
+						handlers: {
+							one: function () {}
+						}
+					});
+				}).should.throw(/must have a namespace/);
+			});
+			it( "Should throw an error if there are no action handlers", function () {
+				(function () {
+					var tmpStore = new lux.Store({
+						namespace: "storeOne"
+					});
+				}).should.throw(/must have action/);
+			} );
 		});
 		describe( "When initializing", function () {
-			it( "Should allow a custom state prop to be used" );
-			it( "Should use state passed into the constructor as initial state" );
-			it( "Should pass along any extra property or method names to the new object" );
-			it( "Should make action creator methods for each handler" );
-			it( "Should remove action handlers from public object" );
-			it( "Should remove direct access to state" );
+			it( "Should use state passed into the constructor as initial state", function (){
+				storeFactory({
+					state: { something: true }
+				});
+
+				store.getState().should.eql({ something: true });
+			} );
+			it( "Should allow a custom state prop to be used", function () {
+				storeFactory({
+					stateProp: "data",
+					data: { something: true }
+				});
+
+				store.getState().should.eql({ something: true });
+			});
+			it( "Should pass along any extra property or method names to the new object", function () {
+				storeFactory({
+					getSomethingCool: function () {
+						return true;
+					}
+				});
+
+				store.should.have.property( "getSomethingCool" ).which.is.a.Function;
+				store.getSomethingCool().should.be.true;
+			});
+			it( "Should make action creator methods for each handler", function () {
+				storeFactory({
+					handlers: {
+						one: function () {},
+						two: function () {},
+					}
+				});
+				var creator = lux.actionDispatcher({
+					getActions: [ "one", "two" ]
+				});
+
+				creator.should.have.property( "one" ).which.is.a.Function;
+				creator.should.have.property( "two" ).which.is.a.Function;
+			});
+			it( "Should remove action handlers from public object", function () {
+				storeFactory();
+				store.should.not.have.property( "handlers" );
+			});
+			it( "Should remove direct access to state", function () {
+				storeFactory();
+				store.should.not.have.property( "state" );
+			});
+			it( "Should remove direct access to state when using a custom state property", function () {
+				storeFactory({
+					stateProp: "data",
+					data: { special: true }
+				});
+				store.should.not.have.property( "data" );
+			});
 		});
 	});
 	describe( "When using a Store", function () {
-		it( "Should only allow setState while handling an action" );
-		it( "Should wait for other stores to update before dependent action is handled" );
-		it( "Should assume there were changes unless a handler explicitly returns `false`");
-		it( "Should publish a 'changed' message when flush is called and there are changes" );
+		it( "Should only allow setState while handling an action", function () {
+			storeFactory({
+				state: {
+					flag: false
+				},
+				handlers: {
+					anAction: function () {
+						console.log( "an action" );
+						this.setState({ flag: true });
+					}
+				}
+			});
+
+			(function () {
+				store.setState({ flag: true });
+			}).should.throw(/during a dispatch cycle/);
+
+			var creator = lux.actionDispatcher({
+				getActions: [ "anAction" ]
+			});
+
+			store.getState().flag.should.be.false;
+
+			creator.anAction();
+
+			store.getState().flag.should.be.true;
+		});
+		it( "Should wait for other stores to update before dependent action is handled", function () {
+			var storeOne = sinon.spy();
+			var storeTwo = sinon.spy();
+			var otherStore = new lux.Store({
+				namespace: "store2",
+				handlers: {
+					myTest: {
+						waitFor: [ "storeOne" ],
+						handler: function () {
+							storeOne.calledOnce.should.be.true;
+							storeTwo();
+						}
+					}
+				}
+			});
+
+			storeFactory({
+				handlers: {
+					myTest: storeOne
+				}
+			});
+
+			var creator = lux.actionDispatcher({
+				getActions: [ "myTest" ]
+			});
+
+			creator.myTest();
+			storeOne.calledOnce.should.be.true;
+			storeTwo.calledOnce.should.be.true;
+		} );
+		it( "Should assume there were changes unless a handler explicitly returns `false`", function () {
+			storeFactory({
+				handlers: {
+					change: function () {
+						this.setState({ newVal: true });
+					},
+					inferredChange: function () {},
+					noChange: function () { return false }
+				}
+			});
+			var onChange = sinon.spy();
+			var listener = {
+				stores: {
+					listenTo: "storeOne",
+					onChange: onChange
+				}
+			};
+			lux.mixin( listener, lux.mixin.store );
+			var creator = lux.actionDispatcher({
+				getActions: [ "change", "inferredChange", "noChange" ]
+			});
+
+			creator.change();
+			onChange.callCount.should.equal(1);
+			creator.inferredChange();
+			onChange.callCount.should.equal(2);
+			creator.noChange();
+			onChange.callCount.should.equal(2);
+
+		});
+		it( "Should publish a 'changed' message when flush is called and there are changes", function () {
+			var handler = sinon.spy();
+			postal.subscribe({
+				channel: "lux.store",
+				topic: "storeOne.changed",
+				callback: handler
+			}).once();
+
+			storeFactory();
+			var creator = lux.actionDispatcher({
+				getActions: [ "one" ]
+			});
+			creator.one();
+			handler.calledOnce.should.be.true;
+		});
 	});
 	describe( "When removing a Store", function() {
-		it( "Should remove all subscriptions" );
-		it( "Should remove the namespace from the stores cache" );
+		it( "Should remove all subscriptions", function () {
+			storeFactory();
+			postal.subscriptions[ 'lux.store' ].should.have.property( "storeOne.changed" );
+			store.dispose();
+			store = undefined;
+		});
+		it( "Should remove the namespace from the stores cache", function () {
+			storeFactory();
+			store.dispose();
+			store = undefined;
+			// Since actual namespaces are in a hidden variable, we simply try to create a new one
+			storeFactory();
+			// It will throw an error if still defined as a namespace (Unit test for throwing the error is above)
+		});
 	});
 });
