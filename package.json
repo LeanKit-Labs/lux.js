@@ -31,12 +31,16 @@
     "build": "gulp",
     "test": "./node_modules/mocha/bin/mocha -r spec/helpers/node-setup.js spec"
   },
+  "peerDependencies" : {
+    "react": ">=0.12.0"
+  },
   "dependencies": {
     "postal": "^0.10.3",
-    "react": "^0.11.1",
-    "traceur": "0.0.58"
+    "traceur": "0.0.58",
+    "machina": "^0.4.0-1"
   },
   "devDependencies": {
+    "react": ">=0.12.0",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.8",
     "gulp-header": "^1.0.5",
@@ -58,7 +62,6 @@
     "karma-story-reporter": "^0.2.2",
     "karma-webpack": "^1.3.1",
     "lodash": "^2.4.1",
-    "machina": "^0.4.0-1",
     "mocha": "^1.21.4",
     "should": "^4.0.4",
     "sinon": "^1.11.1",

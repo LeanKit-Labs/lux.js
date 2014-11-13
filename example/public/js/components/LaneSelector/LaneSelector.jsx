@@ -39,6 +39,7 @@ define( [
 						this.state.lanes.map( function( item ) {
 							return <Lane
 									key={item.id}
+									id={item.id}
 									name={item.name}
 									items={item.items}
 									depth={0}

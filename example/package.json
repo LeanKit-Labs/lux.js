@@ -15,8 +15,7 @@
     "lodash": "^2.4.1",
     "machina": "^0.4.0-1",
     "postal": "^0.10.3",
-    "postal.request-response": "git://github.com/postaljs/postal.request-response.git#err-reply",
-    "react": "^0.11.1",
+    "react": ">=0.12.0",
     "traceur": "0.0.58",
     "when": "^3.4.5"
   },
