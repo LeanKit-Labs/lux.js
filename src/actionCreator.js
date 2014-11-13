@@ -1,6 +1,6 @@
 /* global entries, actionChannel, pluck */
 /* jshint -W098 */
-var actionCreators = Object.create(null);
+var actions = Object.create(null);
 var actionGroups = {};
 
 function buildActionList(handlers) {
@@ -17,8 +17,8 @@ function buildActionList(handlers) {
 function generateActionCreator(actionList) {
 	actionList = (typeof actionList === "string") ? [actionList] : actionList;
 	actionList.forEach(function(action) {
-		if(!actionCreators[action]) {
-			actionCreators[action] = function() {
+		if(!actions[action]) {
+			actions[action] = function() {
 				var args = Array.from(arguments);
 				actionChannel.publish({
 					topic: `execute.${action}`,
@@ -33,20 +33,20 @@ function generateActionCreator(actionList) {
 }
 
 function getActionGroup( group ) {
-	return actionGroups[group] ? pluck(actionCreators, actionGroups[group]) : {};
+	return actionGroups[group] ? pluck(actions, actionGroups[group]) : {};
 }
 
 function customActionCreator(action) {
-	actionCreators = Object.assign(actionCreators, action);
+	actions = Object.assign(actions, action);
 }
 
-function addToActionGroup(groupName, actions) {
+function addToActionGroup(groupName, actionList) {
 	var group = actionGroups[groupName];
 	if(!group) {
 		group = actionGroups[groupName] = [];
 	}
-	actions = typeof actions === "string" ? [actions] : actions;
-	actions.forEach(function(action){
+	actionList = typeof actionList === "string" ? [actionList] : actionList;
+	actionList.forEach(function(action){
 		if(group.indexOf(action) === -1 ) {
 			group.push(action);
 		}

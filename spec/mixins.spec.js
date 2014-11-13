@@ -2,7 +2,7 @@
 
 describe( "luxJS - Mixins", function() {
 	describe( "When calling lux.mixin with no mixins specified", function() {
-		it( "Should mixin both luxStoreMixin and luxActionDispatcherMixin" );
+		it( "Should mixin both luxStoreMixin and luxActionCreatorMixin" );
 		it( "Should add a luxCleanup method" );
 		it( "Should prepare to handle cleanup on the luxStoreMixin" );
 	});
@@ -21,7 +21,7 @@ describe( "luxJS - Mixins", function() {
 			it( "Should cleanup during componentWillUnmount" );
 		});
 	});
-	describe( "When Using the Dispatcher Mixin", function() {
+	describe( "When Using the Creator Mixin", function() {
 		describe( "When using with lux.mixin", function () {
 			it( "Should look at getActionGroup and create methods for each action in the group" );
 			it( "Should look at getActions and create methods for each action" );
@@ -29,8 +29,8 @@ describe( "luxJS - Mixins", function() {
 			it( "Should throw an error when requested a group that does not exist" );
 			it( "Should throw an error when requested an action that does not exist" );
 
-			it( "Should add a dispatchAction method" );
-			it( "Should publish a correctly formed action when dispatchAction is called" );
+			it( "Should add a publishAction method" );
+			it( "Should publish a correctly formed action when publishAction is called" );
 		});
 
 		describe( "When using the React mixin", function () {

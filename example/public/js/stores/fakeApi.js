@@ -3,7 +3,7 @@ define([
 	"lux"
 ], function(mockData, lux){
 
-	var http = lux.actionListener({
+	var http = lux.actionCreatorListener({
 		handlers: {
 			loadBoard: function(boardId) {
 				// simulate an http response
@@ -11,13 +11,10 @@ define([
 					var board = mockData.boards.find(function(x) {
 						return x.boardId.toString() === boardId.toString();
 					});
-					this.dispatchAction("boardLoaded", boardId, board);
+					this.publishAction("boardLoaded", boardId, board);
 				}.bind(this), 200);
 			}
 		}
 	});
-
-	lux.mixin(http, lux.mixin.actionDispatcher);
-
 	return http;
 });

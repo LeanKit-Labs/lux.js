@@ -1,10 +1,10 @@
-/*global actionCreators, dispatcher */
+/*global actions, dispatcher */
 /* jshint -W098 */
 
 // NOTE - these will eventually live in their own add-on lib or in a debug build of lux
 var utils = {
 	printActions() {
-		var actions = Object.keys(actionCreators)
+		var actions = Object.keys(actions)
 			.map(function(x) {
 				return {
 					"action name" : x,
@@ -24,7 +24,7 @@ var utils = {
 		var tree = [];
 		actionType = typeof actionType === "string" ? [actionType] : actionType;
 		if(!actionType) {
-			actionType = Object.keys(actionCreators);
+			actionType = Object.keys(actions);
 		}
 		actionType.forEach(function(at){
 			dispatcher.getStoresHandling(at)

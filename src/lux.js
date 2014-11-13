@@ -66,14 +66,15 @@
 
 	// jshint ignore: start
 	return {
-		actionCreators,
+		actions,
 		addToActionGroup,
 		component,
 		controllerView,
 		customActionCreator,
 		dispatcher,
 		getActionGroup,
-		actionDispatcher,
+		actionCreatorListener,
+		actionCreator,
 		actionListener,
 		mixin: mixin,
 		removeStore,

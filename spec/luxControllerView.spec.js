@@ -48,7 +48,7 @@ describe( "luxJS - Controller Views", function() {
 		}
 
 		before( function () {
-			creator = lux.actionDispatcher({});
+			creator = lux.actionCreator({});
 		});
 
 		describe( "When Listening to One Store", function() {
@@ -63,11 +63,11 @@ describe( "luxJS - Controller Views", function() {
 				});
 			});
 			it("Should invoke onChange when a store updates", function () {
-				creator.dispatchAction( "doYourControllerViewThing" );
+				creator.publishAction( "doYourControllerViewThing" );
 				onChange.calledOnce.should.be.true;
 			});
 			it("Should not invoke onChange if the store has not changed", function () {
-				creator.dispatchAction( "dontChange" );
+				creator.publishAction( "dontChange" );
 				onChange.calledOnce.should.be.false;
 			});
 		});
@@ -83,15 +83,15 @@ describe( "luxJS - Controller Views", function() {
 				});
 			});
 			it("Should invoke onChange once after both stores have updated", function () {
-				creator.dispatchAction( "doYourControllerViewThing" );
+				creator.publishAction( "doYourControllerViewThing" );
 				onChange.calledOnce.should.be.true;
 			});
 			it("Should invoke onChange if only one store is affected by an action", function () {
-				creator.dispatchAction( "doYourFakeStoreThing" );
+				creator.publishAction( "doYourFakeStoreThing" );
 				onChange.calledOnce.should.be.true;
 			});
 			it("Should not invoke onChange if neither store changed", function () {
-				creator.dispatchAction( "dontChange" );
+				creator.publishAction( "dontChange" );
 				onChange.calledOnce.should.be.false;
 			});
 		});

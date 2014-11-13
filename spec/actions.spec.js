@@ -19,8 +19,8 @@ describe( "luxJS - Actions", function() {
 	describe( "When calling getActionGroup", function() {
 		it( "Should return all actions in specified group" );
 	});
-	describe( "When calling actionDispatcher", function() {
-		it( "Should take input object and add luxActionDispatchMixin" );
+	describe( "When calling actionCreator", function() {
+		it( "Should take input object and add luxActionCreatorMixin" );
 	});
 	describe( "When calling actionListener", function() {
 		it( "Should take input object and add luxActionListenerMixin" );

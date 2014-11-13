@@ -1,5 +1,5 @@
 
-/* global storeChannel, pluck, generateActionCreator, actionCreators, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
+/* global storeChannel, pluck, generateActionCreator, actions, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -71,7 +71,7 @@ var luxStoreReactMixin = {
 *           Action Dispatcher Mixin          *
 **********************************************/
 
-var luxActionDispatcherMixin = {
+var luxActionCreatorMixin = {
 	setup: function () {
 		this.getActionGroup = this.getActionGroup || [];
 		this.getActions = this.getActions || [];
@@ -86,13 +86,13 @@ var luxActionDispatcherMixin = {
 			}
 		});
 		if(this.getActions.length) {
-			for(var [key, val] of entries(pluck(actionCreators, this.getActions))) {
+			for(var [key, val] of entries(pluck(actions, this.getActions))) {
 				addActionIfNotPreset(key, val);
 			}
 		}
 	},
 	mixin: {
-		dispatchAction: function(action, ...args) {
+		publishAction: function(action, ...args) {
 			actionChannel.publish({
 				topic: `execute.${action}`,
 				data: {
@@ -104,8 +104,8 @@ var luxActionDispatcherMixin = {
 	}
 };
 
-var luxActionDispatcherReactMixin = {
-	componentWillMount: luxActionDispatcherMixin.setup
+var luxActionCreatorReactMixin = {
+	componentWillMount: luxActionCreatorMixin.setup
 };
 
 /*********************************************
@@ -152,7 +152,7 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 **********************************************/
 function controllerView(options) {
 	var opt = {
-		mixins: [luxStoreReactMixin, luxActionDispatcherReactMixin].concat(options.mixins || [])
+		mixins: [luxStoreReactMixin, luxActionCreatorReactMixin].concat(options.mixins || [])
 	};
 	delete options.mixins;
 	return React.createClass(Object.assign(opt, options));
@@ -160,7 +160,7 @@ function controllerView(options) {
 
 function component(options) {
 	var opt = {
-		mixins: [luxActionDispatcherReactMixin].concat(options.mixins || [])
+		mixins: [luxActionCreatorReactMixin].concat(options.mixins || [])
 	};
 	delete options.mixins;
 	return React.createClass(Object.assign(opt, options));
@@ -178,7 +178,7 @@ var luxMixinCleanup = function () {
 
 function mixin(context, ...mixins) {
 	if(mixins.length === 0) {
-		mixins = [luxStoreMixin, luxActionDispatcherMixin];
+		mixins = [luxStoreMixin, luxActionCreatorMixin];
 	}
 
 	mixins.forEach((mixin) => {
@@ -194,18 +194,21 @@ function mixin(context, ...mixins) {
 		}
 	});
 	context.luxCleanup = luxMixinCleanup;
+	return context;
 }
 
 mixin.store = luxStoreMixin;
-mixin.actionDispatcher = luxActionDispatcherMixin;
+mixin.actionCreator = luxActionCreatorMixin;
 mixin.actionListener = luxActionListenerMixin;
 
 function actionListener(target) {
-	mixin( target, luxActionListenerMixin );
-	return target;
+	return mixin( target, luxActionListenerMixin );
 }
 
-function actionDispatcher(target) {
-	mixin( target, luxActionDispatcherMixin );
-	return target;
+function actionCreator(target) {
+	return mixin( target, luxActionCreatorMixin );
+}
+
+function actionCreatorListener(target) {
+	return actionCreator( actionListener( target ));
 }

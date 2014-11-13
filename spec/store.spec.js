@@ -80,7 +80,7 @@ describe( "luxJS - Store", function() {
 						two: function () {},
 					}
 				});
-				var creator = lux.actionDispatcher({
+				var creator = lux.actionCreator({
 					getActions: [ "one", "two" ]
 				});
 
@@ -121,7 +121,7 @@ describe( "luxJS - Store", function() {
 				store.setState({ flag: true });
 			}).should.throw(/during a dispatch cycle/);
 
-			var creator = lux.actionDispatcher({
+			var creator = lux.actionCreator({
 				getActions: [ "anAction" ]
 			});
 
@@ -153,7 +153,7 @@ describe( "luxJS - Store", function() {
 				}
 			});
 
-			var creator = lux.actionDispatcher({
+			var creator = lux.actionCreator({
 				getActions: [ "myTest" ]
 			});
 
@@ -179,7 +179,7 @@ describe( "luxJS - Store", function() {
 				}
 			};
 			lux.mixin( listener, lux.mixin.store );
-			var creator = lux.actionDispatcher({
+			var creator = lux.actionCreator({
 				getActions: [ "change", "inferredChange", "noChange" ]
 			});
 
@@ -200,7 +200,7 @@ describe( "luxJS - Store", function() {
 			}).once();
 
 			storeFactory();
-			var creator = lux.actionDispatcher({
+			var creator = lux.actionCreator({
 				getActions: [ "one" ]
 			});
 			creator.one();
