@@ -112,7 +112,6 @@ describe( "luxJS - Store", function() {
 				},
 				handlers: {
 					anAction: function () {
-						console.log( "an action" );
 						this.setState({ flag: true });
 					}
 				}
