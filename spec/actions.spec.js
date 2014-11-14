@@ -25,4 +25,7 @@ describe( "luxJS - Actions", function() {
 	describe( "When calling actionListener", function() {
 		it( "Should take input object and add luxActionListenerMixin" );
 	});
+	describe( "When calling actionCreatorListener", function() {
+		it( "Should take input object and add both luxActionListenerMixin and luxActionCreator" );
+	});
 });
