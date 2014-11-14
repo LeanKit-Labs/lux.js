@@ -41,8 +41,6 @@ define( [
 			});
 		}
 	});
-	lux.addToActionGroup("board.api", ["loadBoard"]);
-	lux.addToActionGroup("lane.selector", ["toggleLaneSelection"]);
 
 	require( [
 		"boardStore",

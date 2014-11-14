@@ -404,6 +404,21 @@ describe( "luxJS - Mixins", function() {
 				});
 				creator.fireMyHandler();
 			});
+			it( "Should auto-generate action group if a namespace is provided", function () {
+				var handler = sinon.spy();
+				var obj = {
+					namespace: "nameynamename",
+					handlers: {
+						fireMyHandler: handler
+					}
+				};
+				lux.mixin( obj, lux.mixin.actionListener );
+				// This will throw an error if the action isn't found
+				var creator = lux.actionCreator({
+					getActionGroup: ["nameynamename"]
+				});
+				creator.fireMyHandler();
+			});
 			it( "Should cleanup when teardown is called", function () {
 				var obj = {
 					handlers: {

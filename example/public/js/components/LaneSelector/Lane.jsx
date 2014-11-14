@@ -20,7 +20,7 @@ define([
 
 		displayName: "Lane",
 
-    	getActionGroup: ["lane.selector"],
+    	getActionGroup: ["board"],
 
 		getInitialState: function() {
 			return {

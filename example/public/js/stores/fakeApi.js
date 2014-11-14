@@ -4,6 +4,7 @@ define([
 ], function(mockData, lux){
 
 	var http = lux.actionCreatorListener({
+		namespace: "api",
 		handlers: {
 			loadBoard: function(boardId) {
 				// simulate an http response

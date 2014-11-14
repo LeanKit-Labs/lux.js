@@ -14,7 +14,7 @@ define( [
  function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane, postal, boardStore ) {
 	var LaneSelector = lux.controllerView( {
 		displayName: "LaneSelector",
-		getActionGroup: ["board.api"],
+		getActionGroup: ["api"],
 		stores: {
 			listenTo: ["board"],
 			onChange: function() {
