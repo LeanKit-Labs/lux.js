@@ -53,7 +53,7 @@ var luxStoreMixin = {
 	teardown: function () {
 		for(var [key, sub] of entries(this.__lux.subscriptions)) {
 			var split;
-			if(key === "prenotify" || ( split = key.split(".") && split[1] === "changed" )) {
+			if(key === "prenotify" || (( split = key.split(".")) && split[1] === "changed" )) {
 				sub.unsubscribe();
 			}
 		}
