@@ -35,14 +35,19 @@ var luxStoreMixin = {
 	setup: function () {
 		var __lux = ensureLuxProp(this);
 		var stores = this.stores = (this.stores || {});
+
+		if ( !stores.listenTo ) {
+			throw new Error(`listenTo must contain at least one store namespace`);
+		}
+
 		var listenTo = typeof stores.listenTo === "string" ? [stores.listenTo] : stores.listenTo;
-		var noChangeHandlerImplemented = function() {
+
+		if ( !stores.onChange ) {
 			throw new Error(`A component was told to listen to the following store(s): ${listenTo} but no onChange handler was implemented`);
-		};
+		}
+
 		__lux.waitFor = [];
 		__lux.heardFrom = [];
-
-		stores.onChange = stores.onChange || noChangeHandlerImplemented;
 
 		listenTo.forEach((store) => {
 			__lux.subscriptions[`${store}.changed`] = storeChannel.subscribe(`${store}.changed`, () => gateKeeper.call(this, store));
@@ -75,6 +80,15 @@ var luxActionCreatorMixin = {
 	setup: function () {
 		this.getActionGroup = this.getActionGroup || [];
 		this.getActions = this.getActions || [];
+
+		if ( typeof this.getActionGroup === "string" ) {
+			this.getActionGroup = [ this.getActionGroup ];
+		}
+
+		if ( typeof this.getActions === "string" ) {
+			this.getActions = [ this.getActions ];
+		}
+
 		var addActionIfNotPreset = (k, v) => {
 			if(!this[k]) {
 					this[k] = v;
@@ -85,10 +99,16 @@ var luxActionCreatorMixin = {
 				addActionIfNotPreset(k, v);
 			}
 		});
+
 		if(this.getActions.length) {
-			for(var [key, val] of entries(pluck(actions, this.getActions))) {
-				addActionIfNotPreset(key, val);
-			}
+			this.getActions.forEach( function ( key ) {
+				var val = actions[ key ];
+				if ( val ) {
+					addActionIfNotPreset(key, val);
+				} else {
+					throw new Error( `There is no action named '${key}'` );
+				}
+			});
 		}
 	},
 	mixin: {
@@ -105,7 +125,8 @@ var luxActionCreatorMixin = {
 };
 
 var luxActionCreatorReactMixin = {
-	componentWillMount: luxActionCreatorMixin.setup
+	componentWillMount: luxActionCreatorMixin.setup,
+	publishAction: luxActionCreatorMixin.mixin.publishAction
 };
 
 /*********************************************
@@ -126,12 +147,11 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 					handler.apply(context, data.actionArgs);
 				}
 			});
-			if(!handlers || (subs && subs.actionListener)) {
+			if(!handlers || !Object.keys(handlers).length ) {
+				throw new Error( "You must have at least one action handler in the handlers property" );
+			} else if ( subs && subs.actionListener ) {
 				// TODO: add console warn in debug builds
-				// first part of check means no handlers action
-				// (but we tried to add the mixin....pointless)
-				// second part of check indicates we already
-				// ran the mixin on this context
+				// since we ran the mixin on this context already
 				return;
 			}
 			subs.actionListener =

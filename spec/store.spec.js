@@ -45,6 +45,13 @@ describe( "luxJS - Store", function() {
 						namespace: "storeOne"
 					});
 				}).should.throw(/must have action/);
+
+				(function () {
+					var tmpStore = new lux.Store({
+						namespace: "storeOne",
+						handlers: []
+					});
+				}).should.throw(/must have action/);
 			} );
 		});
 		describe( "When initializing", function () {

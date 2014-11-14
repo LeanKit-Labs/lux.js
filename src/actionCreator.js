@@ -33,7 +33,11 @@ function generateActionCreator(actionList) {
 }
 
 function getActionGroup( group ) {
-	return actionGroups[group] ? pluck(actions, actionGroups[group]) : {};
+	if ( actionGroups[group] ) {
+		return pluck(actions, actionGroups[group]);
+	} else {
+		throw new Error( `There is no action group named '${group}'`);
+	}
 }
 
 function customActionCreator(action) {

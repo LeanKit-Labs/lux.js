@@ -27,7 +27,7 @@ function ensureStoreOptions(options) {
 	if(!options.namespace) {
 		throw new Error("A lux store must have a namespace value provided");
 	}
-	if(!options.handlers) {
+	if(!options.handlers || !Object.keys(options.handlers).length) {
 		throw new Error("A lux store must have action handler methods provided");
 	}
 }
