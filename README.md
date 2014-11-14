@@ -1,4 +1,4 @@
-#luxJS (v0.3.0-RC1)
+#luxJS (v0.3.0)
 
 ##What Is It
 luxJS is an *opinionated* implementation of a [Flux](http://facebook.github.io/flux/docs/overview.html) architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
@@ -15,7 +15,7 @@ luxJS is an *opinionated* implementation of a [Flux](http://facebook.github.io/f
 
 ###The Pieces
 ####ControllerViews
-A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.mixin.actionDispatcher` and `lux.mixin.store` (see the section on mixins below for more information on the mixins' API). The `actionDispatcher` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
+A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.mixin.actionCreator` and `lux.mixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
 
 You get an instance of a ControllerView by calling `lux.controllerView()`. For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
 
@@ -27,7 +27,7 @@ var LaneSelector = lux.controllerView({
 	// at least one action called "loadBoard". Any actions
 	// under the "board" action group get added as top level
 	// methods to this react element.
-    getActionsFor: ["board"],
+    getActionGroup: ["board"],
 
     stores: {
     	// `listenTo` can also be an array of store namespaces
@@ -73,7 +73,7 @@ For components that need an ActionCreator API (i.e. - they need to dispatch acti
 ```javascript
 var Lane = lux.component({
 
-	getActionsFor: ["board"],
+	getActionGroup: ["board"],
 
 	getInitialState: function() {
 		return {
@@ -153,7 +153,7 @@ var boardStore = new lux.Store( {
 ```
 
 ####ActionCreator APIs
-Components don't talk to stores directly. Instead, they use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores (and any other instance that uses the `lux.mixin.actionListener` mixin) are created. If you use the `actionDispatcher` mixin (or use a ControllerView or lux Component), action creator APIs will appear as top level methods on your component. The auto-generated ActionCreator APIs use the same method names as the corresponding action type names. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API method - either at the component level, or globally. Implementing a method on your component that matches the name of an action allows for a component-specific override, or you can use `lux.customActionCreator` to implement your own global overrides of how an action is dispatched. You just have to honor the message contracts (see the source for information on that now....more documentation later).
+Components don't talk to stores directly. Instead, they use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores (and any other instance that uses the `lux.mixin.actionListener` mixin) are created. If you use the `actionCreator` mixin (or use a ControllerView or lux Component), action creator APIs will appear as top level methods on your component. The auto-generated ActionCreator APIs use the same method names as the corresponding action type names. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API method - either at the component level, or globally. Implementing a method on your component that matches the name of an action allows for a component-specific override, or you can use `lux.customActionCreator` to implement your own global overrides of how an action is dispatched. You just have to honor the message contracts (see the source for information on that now....more documentation later).
 
 You can group actions together under a "label" (known as an action group) by using the `lux.addToActionGroup` method:
 
@@ -176,8 +176,8 @@ lux.customActionCreator({
 });
 ```
 
-####lux.mixin.actionDispatcher mixin
-The `actionDispatcher` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names.
+####lux.mixin.actionCreator mixin
+The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names.
 
 ####lux.mixin.store mixin
 The `store` mixin (which is provided automatically when you call `lux.createControllerView`) will look for a `stores` property on your component options. This property should be an object with a `listenTo` array containing the list of store namespaces your component wants state from, and an `onChange` handler for when any of those stores publish state changes. You will need to include the store(s) as module dependencies to access their state from within the handler.
@@ -216,11 +216,11 @@ var http = lux.actionListener({
 });
 ```
 
-#####Quickly Create an Action Dispatcher
+#####Quickly Create an Action Creator
 In this example, we're creating an instance of a plain object (not a lux component or controller view) that will have any actions associated with the "board" action group:
 
 ```javascript
-var boardActions = lux.actionDispatcher({
+var boardActions = lux.actionCreator({
 	getActionGroup: [ "board" ]
 });
 
@@ -246,7 +246,7 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 
 ##Dependencies
 
-* [ReactJS](http://facebook.github.io/react/)
+* [ReactJS](http://facebook.github.io/react/) (NOTE: ReactJS is a *peer depedency*. You will need to make sure you include it in your project's dependencies.)
 * [traceur](https://github.com/google/traceur-compiler) (lux is written in ES6, so it depends on the traceur runtime lib for non-ES6 environments)
 * [postal](https://github.com/postaljs/postal.js)
 * [machina](https://github.com/ifandelse/machina.js)
@@ -258,6 +258,11 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 * navigate to root of project and run `npm install`
 * type `gulp` in the console.
 * built files appear under `/lib` in the project root.
+
+###To Run Tests:
+* `npm test` runs a console test suite
+* `npm run coverage` runs istanbul coverage reporter in console (and generates an .html report)
+* `npm run show-coverage` opens the above coverage report in your browser (if you're on a Mac)
 
 ### To run the example:
 * navigate to the `/example` directory

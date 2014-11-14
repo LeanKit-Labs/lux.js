@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "0.3.0-RC1",
+  "version": "0.3.0",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
@@ -29,9 +29,11 @@
   ],
   "scripts": {
     "build": "gulp",
-    "test": "./node_modules/mocha/bin/mocha -r spec/helpers/node-setup.js spec"
+    "test": "./node_modules/mocha/bin/mocha -r spec/helpers/node-setup.js spec",
+     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -x 'spec/**/*'  -- -r spec/helpers/node-setup.js spec spec/*.spec.js",
+     "show-coverage" : "open ./coverage/lcov-report/index.html"
   },
-  "peerDependencies" : {
+  "peerDependencies": {
     "react": ">=0.12.0"
   },
   "dependencies": {
@@ -40,7 +42,6 @@
     "machina": "^0.4.0-1"
   },
   "devDependencies": {
-    "react": ">=0.12.0",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.8",
     "gulp-header": "^1.0.5",
@@ -55,6 +56,7 @@
     "jsdom": "^1.0.3",
     "karma": "^0.12.24",
     "karma-chrome-launcher": "^0.1.5",
+    "karma-coverage": "^0.2.6",
     "karma-firefox-launcher": "^0.1.3",
     "karma-mocha": "^0.1.9",
     "karma-phantomjs-launcher": "^0.1.4",
@@ -63,6 +65,7 @@
     "karma-webpack": "^1.3.1",
     "lodash": "^2.4.1",
     "mocha": "^1.21.4",
+    "react": ">=0.12.0",
     "should": "^4.0.4",
     "sinon": "^1.11.1",
     "source-map-loader": "^0.1.3",
