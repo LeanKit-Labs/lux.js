@@ -61,6 +61,17 @@ class Dispatcher extends machina.Fsm {
 							action = this.actionMap[actionName] = this.actionMap[actionName] || [];
 							action.push(actionMeta);
 						}
+					},
+					"remove.store" : function(namespace) {
+						var isThisNameSpace = function(meta) {
+							return meta.namespace === namespace;
+						};
+						for(var [k, v] of entries(this.actionMap)) {
+							var idx = v.findIndex(isThisNameSpace);
+							if(idx !== -1) {
+								v.splice(idx, 1);
+							}
+						}
 					}
 				},
 				preparing: {
@@ -115,6 +126,10 @@ class Dispatcher extends machina.Fsm {
 
 	registerStore(config) {
 		this.handle("register.store", config);
+	}
+
+	removeStore( namespace ) {
+		this.handle("remove.store", namespace);
 	}
 
 	dispose() {

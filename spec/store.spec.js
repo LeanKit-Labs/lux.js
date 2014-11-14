@@ -222,5 +222,25 @@ describe( "luxJS - Store", function() {
 			storeFactory();
 			// It will throw an error if still defined as a namespace (Unit test for throwing the error is above)
 		});
+		it( "Should remove the store from the Dispatcher action map", function() {
+			var storeIsInActionMap = function() {
+				var actionMap = lux.dispatcher.actionMap;
+				var isPresent = false;
+				for(var action in actionMap) {
+					if(actionMap[action].filter(function(x){
+						return x.namespace === "storeOne";
+					}).length) {
+						isPresent = true;
+						break;
+					}
+				}
+				return isPresent;
+			}
+			storeFactory();
+			storeIsInActionMap().should.be.true;
+			store.dispose();
+			store = undefined;
+			storeIsInActionMap().should.be.false;
+		});
 	});
 });

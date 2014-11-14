@@ -105,6 +105,7 @@ class Store {
 			subscription.unsubscribe();
 		}
 		delete stores[this.namespace];
+		dispatcher.removeStore(this.namespace);
 	}
 }
 
