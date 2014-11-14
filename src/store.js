@@ -39,7 +39,11 @@ class Store {
 		var namespace = options.namespace;
 		var stateProp = options.stateProp || "state";
 		var state = options[stateProp] || {};
-		var handlers = transformHandlers( this, options.handlers );
+		var origHandlers = options.handlers;
+		delete options.handlers;
+		delete options[ stateProp ];
+		Object.assign(this, options);
+		var handlers = transformHandlers( this, origHandlers );
 		stores[namespace] = this;
 		var inDispatch = false;
 		this.hasChanged = false;
@@ -85,17 +89,12 @@ class Store {
 			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).withConstraint(() => inDispatch),
 		};
 
-		generateActionCreator(Object.keys(handlers));
-
 		dispatcher.registerStore(
 			{
 				namespace,
-				actions: buildActionList(options.handlers)
+				actions: buildActionList(origHandlers)
 			}
 		);
-		delete options.handlers;
-		delete options[ stateProp ];
-		Object.assign(this, options);
 	}
 
 	// Need to build in behavior to remove this store

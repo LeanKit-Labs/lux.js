@@ -68,7 +68,7 @@ var luxStoreReactMixin = {
 };
 
 /*********************************************
-*           Action Dispatcher Mixin          *
+*           Action Creator Mixin          *
 **********************************************/
 
 var luxActionCreatorMixin = {
@@ -139,7 +139,11 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 					context,
 					channel.subscribe( topic, handlerFn )
 				);
-			generateActionCreator(Object.keys(handlers));
+			var handlerKeys = Object.keys(handlers);
+			generateActionCreator(handlerKeys);
+			if(context.namespace) {
+				addToActionGroup(context.namespace, handlerKeys);
+			}
 		},
 		teardown() {
 			this.__lux.subscriptions.actionListener.unsubscribe();

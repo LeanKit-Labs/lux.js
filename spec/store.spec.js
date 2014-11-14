@@ -87,6 +87,20 @@ describe( "luxJS - Store", function() {
 				creator.should.have.property( "one" ).which.is.a.Function;
 				creator.should.have.property( "two" ).which.is.a.Function;
 			});
+			it( "Should create an action group for all handlers", function() {
+				storeFactory({
+					handlers: {
+						one: function () {},
+						two: function () {},
+					}
+				});
+				var creator = lux.actionCreator({
+					getActionGroup: [ "storeOne" ]
+				});
+
+				creator.should.have.property( "one" ).which.is.a.Function;
+				creator.should.have.property( "two" ).which.is.a.Function;
+			});
 			it( "Should remove action handlers from public object", function () {
 				storeFactory();
 				store.should.not.have.property( "handlers" );
