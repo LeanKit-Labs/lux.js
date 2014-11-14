@@ -7,16 +7,18 @@ define( [
 	"LaneSelectorRow",
 	"LaneSelectorCell",
 	"Lane",
+	"postal",
+	"boardStore",
 	"./lane-selector.css"
  ],
- function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane ) {
-	var LaneSelector = lux.createControllerView( {
+ function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane, postal, boardStore ) {
+	var LaneSelector = lux.controllerView( {
 		displayName: "LaneSelector",
-		getActionsFor: ["board"],
+		getActionGroup: ["api"],
 		stores: {
 			listenTo: ["board"],
-			onChange: function(stores) {
-				var newState = stores.board.state[this.props.boardId];
+			onChange: function() {
+				var newState = boardStore.getBoard(this.props.boardId);
 				this.setState(newState);
 			},
 			immediate: true
@@ -37,6 +39,7 @@ define( [
 						this.state.lanes.map( function( item ) {
 							return <Lane
 									key={item.id}
+									id={item.id}
 									name={item.name}
 									items={item.items}
 									depth={0}

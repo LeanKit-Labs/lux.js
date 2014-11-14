@@ -1,17 +1,18 @@
 /** @jsx React.DOM */
 define([
 	"lux",
-	"react"
-], function(lux, React) {
+	"react",
+	"fakeNotificationStore"
+], function(lux, React, fakeNotificationStore) {
 
-	var Notification = lux.createControllerView({
+	var Notification = lux.controllerView({
 
 		displayName: "Notification",
 
 		stores: {
-      		listenTo: "fakeNotification",
-      		onChange: function(data) {
-      			this.setState({ notice: data.fakeNotification.state });
+      		listenTo: ["fakeNotification", "pointlessActionCounting"],
+      		onChange: function() {
+      			this.setState({ notice: fakeNotificationStore.getState() });
 	      	}
       	},
 

@@ -16,11 +16,11 @@ define([
 		return classSet;
 	}
 
-	var Lane = lux.createComponent({
+	var Lane = lux.component({
 
 		displayName: "Lane",
 
-    	getActionsFor: ["board"],
+    	getActionGroup: ["board"],
 
 		getInitialState: function() {
 			return {
@@ -39,7 +39,7 @@ define([
 
 		toggleActive: function(e) {
 			e.stopPropagation();
-			this.toggleLaneSelection(304355117, this.props.key);
+			this.toggleLaneSelection(304355117, this.props.id);
 		},
 
 		render: function() {
@@ -104,6 +104,7 @@ define([
 					this.props.items.map(function(item){
 						return <LaneSelectorRow key={item.id} className="lane-sel-vertical">
 							<Lane key={item.id}
+								  id={item.id}
 								  name={item.name}
 								  items={item.items}
 								  depth={depth}
@@ -134,6 +135,7 @@ define([
 				{
 					this.props.items.map(function(item){
 						return <Lane key={item.id}
+									 id={item.id}
 									 name={item.name}
 									 items={item.items}
 									 depth={depth}

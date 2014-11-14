@@ -1,15 +1,19 @@
 /** @jsx React.DOM */
 define([
 	"lux",
-	"react"
-], function(lux, React) {
+	"react",
+	"pointlessActionCountingStore"
+], function(lux, React, pointlessActionCountingStore) {
 
-	var ActionCounter = lux.createControllerView({
+	var ActionCounter = lux.controllerView({
 
 		displayName: "ActionCounter",
 
 		stores: {
-      		listenTo: "pointlessActionCounting"
+      		listenTo: "pointlessActionCounting",
+      		onChange: function() {
+      			this.setState({count: pointlessActionCountingStore.getState().count});
+      		}
       	},
 
 		getInitialState: function() {
@@ -20,7 +24,7 @@ define([
 
 		render: function() {
 			return <div>
-				<h2>Actions Taken So Far:&nbsp;{this.state.pointlessActionCounting}</h2>
+				<h2>Actions Taken So Far:&nbsp;{this.state.count}</h2>
 			</div>;
 		}
 	});

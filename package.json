@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
@@ -29,27 +29,48 @@
   ],
   "scripts": {
     "build": "gulp",
-    "test": "mocha ./spec/*.js"
+    "test": "./node_modules/mocha/bin/mocha -r spec/helpers/node-setup.js spec",
+     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -x 'spec/**/*'  -- -r spec/helpers/node-setup.js spec spec/*.spec.js",
+     "show-coverage" : "open ./coverage/lcov-report/index.html"
+  },
+  "peerDependencies": {
+    "react": ">=0.12.0"
   },
   "dependencies": {
-    "conduitjs": "^0.3.3",
     "postal": "^0.10.3",
-    "postal.request-response": "^0.3.0",
-    "react": "^0.11.1",
     "traceur": "0.0.58",
-    "when": "^3.4.5"
+    "machina": "^0.4.0-1"
   },
   "devDependencies": {
+    "expect.js": "^0.3.1",
     "gulp": "^3.8.8",
+    "gulp-header": "^1.0.5",
+    "gulp-hint-not": "0.0.3",
     "gulp-imports": "0.0.2",
     "gulp-rename": "^1.2.0",
     "gulp-sourcemaps": "^1.1.1",
+    "gulp-spawn-mocha": "^0.4.1",
     "gulp-traceur": "^0.13.0",
     "gulp-uglify": "^1.0.1",
-    "gulp-header": "^1.0.5",
-    "gulp-hint-not": "0.0.3",
+    "istanbul": "^0.3.2",
+    "jsdom": "^1.0.3",
+    "karma": "^0.12.24",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-coverage": "^0.2.6",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-mocha": "^0.1.9",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-safari-launcher": "^0.1.1",
+    "karma-story-reporter": "^0.2.2",
+    "karma-webpack": "^1.3.1",
+    "lodash": "^2.4.1",
     "mocha": "^1.21.4",
-    "should": "^4.0.4"
+    "react": ">=0.12.0",
+    "should": "^4.0.4",
+    "sinon": "^1.11.1",
+    "source-map-loader": "^0.1.3",
+    "webpack": "^1.4.8",
+    "webpack-dev-server": "^1.6.5"
   },
   "engines": {
     "node": ">=0.10.0"

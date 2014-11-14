@@ -1,43 +1,27 @@
-/* global parallel,luxCh, machina, pipeline, LUX_CHANNEL */
+/* global dispatcherChannel, machina */
 /* jshint -W117, -W098 */
-function pluck(obj, keys) {
-	var res = keys.reduce((accum, key) => {
-		accum[key] = obj[key];
-		return accum;
-	}, {});
-	return res;
-}
 
 function processGeneration(generation, action) {
-		return () => parallel(
-			generation.map((store) => {
-				return () => {
-					var data = Object.assign({
-						deps: pluck(this.stores, store.waitFor)
-					}, action);
-					return luxCh.request({
-						topic: `dispatch.${store.namespace}`,
-						replyChannel: LUX_CHANNEL,
-						data: data
-					}).then((response) => {
-						this.stores[store.namespace] = response;
-						if(response.hasChanged) {
-							this.updated.push(store.namespace);
-						}
-					});
-				};
-			})).then(() => this.stores);
-	}
-	/*
-		Example of `config` argument:
-		{
-			generations: [],
-			action : {
-				actionType: "",
-				actionArgs: []
-			}
+	generation.map((store) => {
+		var data = Object.assign({
+			deps: pluck(this.stores, store.waitFor)
+		}, action);
+		dispatcherChannel.publish(
+			`${store.namespace}.handle.${action.actionType}`,
+			data
+		);
+	});
+}
+/*
+	Example of `config` argument:
+	{
+		generations: [],
+		action : {
+			actionType: "",
+			actionArgs: []
 		}
-	*/
+	}
+*/
 class ActionCoordinator extends machina.Fsm {
 	constructor(config) {
 		Object.assign(this, {
@@ -45,6 +29,14 @@ class ActionCoordinator extends machina.Fsm {
 			stores: {},
 			updated: []
 		}, config);
+
+		this.__subscriptions = {
+			handled: dispatcherChannel.subscribe(
+				"*.handled.*",
+				(data) => this.handle("action.handled", data)
+			)
+		};
+
 		super({
 			initialState: "uninitialized",
 			states: {
@@ -53,22 +45,26 @@ class ActionCoordinator extends machina.Fsm {
 				},
 				dispatching: {
 					_onEnter() {
-							pipeline(
-								[for (generation of config.generations) processGeneration.call(this, generation, config.action)]
-							).then(function(...results) {
-								this.transition("success");
-							}.bind(this), function(err) {
-								this.err = err;
-								this.transition("failure");
-							}.bind(this));
-						},
-						_onExit: function() {
-							luxCh.publish("prenotify", { stores: this.updated });
+						try {
+							[for (generation of config.generations) processGeneration.call(this, generation, config.action)];
+						} catch(ex) {
+							this.err = ex;
+							this.transition("failure");
 						}
+						this.transition("success");
+					},
+					"action.handled": function(data) {
+						if(data.hasChanged) {
+							this.updated.push(data.namespace);
+						}
+					},
+					_onExit: function() {
+						dispatcherChannel.publish("prenotify", { stores: this.updated });
+					}
 				},
 				success: {
 					_onEnter: function() {
-						luxCh.publish("notify", {
+						dispatcherChannel.publish("notify", {
 							action: this.action
 						});
 						this.emit("success");
@@ -76,10 +72,10 @@ class ActionCoordinator extends machina.Fsm {
 				},
 				failure: {
 					_onEnter: function() {
-						luxCh.publish("notify", {
+						dispatcherChannel.publish("notify", {
 							action: this.action
 						});
-						luxCh.publish("failure.action", {
+						dispatcherChannel.publish("action.failure", {
 							action: this.action,
 							err: this.err
 						});
@@ -89,20 +85,8 @@ class ActionCoordinator extends machina.Fsm {
 			}
 		});
 	}
-	success(fn) {
-		this.on("success", fn);
-		if (!this._started) {
-			setTimeout(() => this.handle("start"), 0);
-			this._started = true;
-		}
-		return this;
-	}
-	failure(fn) {
-		this.on("error", fn);
-		if (!this._started) {
-			setTimeout(() => this.handle("start"), 0);
-			this._started = true;
-		}
-		return this;
+
+	start() {
+		this.handle("start");
 	}
 }

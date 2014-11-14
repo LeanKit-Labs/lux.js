@@ -5,7 +5,7 @@ define(["lux"], function ( lux ) {
 
 	OtherLogger.prototype = {
 		constructor: OtherLogger,
-		getActionsFor: ["board"],
+		getActionGroup: ["api"],
 		stores: {
 			listenTo: [ "board", "logging" ],
 			onChange: function( data ) {

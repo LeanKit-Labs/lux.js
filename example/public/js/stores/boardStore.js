@@ -1,9 +1,8 @@
 define( [
 	"lux",
 	"lodash",
-	"laneParser",
-	"jquery"
-], function( lux, _, parser, $ ) {
+	"laneParser"
+], function( lux, _, parser) {
 
 		function toggleAncestors( lookup, target ) {
 			var parentId = target.parentLaneId;
@@ -45,35 +44,28 @@ define( [
 			namespace: "board",
 			handlers: {
 				toggleLaneSelection: function( boardId, laneId ) {
-					//throw new Error("BECAUSE I SAID SO!!!!");
-					var boards = this.getState();
-					var target = boards[ boardId ] && boards[ boardId ].lookup[ laneId ];
+					var newState = this.getState();
+					var target = newState[ boardId ] && newState[ boardId ].lookup[ laneId ];
 					if ( target ) {
 						target.isActive = !target.isActive;
-						toggleAncestors( boards[ boardId ].lookup, target );
+						toggleAncestors( newState[ boardId ].lookup, target );
 						toggleDescendants( target );
-						this.setState(boards);
-						return target;
+						this.setState(newState);
 					}
 				},
-				loadBoard: function( boardId ) {
-					return $.ajax( {
-						url: "/board/" + boardId,
-						dataType: "json"
-					} ).then( function( resp ) {
-						var placeholder = {};
-						placeholder[ boardId ] = parser.transform( resp );
-						this.setState( placeholder );
-						return placeholder[ boardId ];
-					}.bind( this ), function( err ) {
-							console.log( err );
-						}
-					);
+				boardLoaded: function( boardId, board ) {
+					var newState = this.getState();
+					newState[ boardId ] = parser.transform( board );
+					newState._currentBoardId = boardId;
+					this.setState(newState);
 				}
 			},
-			handleActionError: function() {
-				console.log( "OHSNAP!" );
-				console.log( arguments );
+			getCurrentBoard: function() {
+				var state = this.getState();
+				return state[state._currentBoardId];
+			},
+			getBoard: function(id) {
+				return this.getState()[id];
 			}
 		} );
 

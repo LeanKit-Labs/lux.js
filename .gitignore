@@ -16,3 +16,4 @@ report/
 bower/
 public/js/lib/
 js-dist/
+coverage/

@@ -7,8 +7,7 @@ module.exports = {
   output: {
     path: path.join( __dirname, "./public/js-dist" ),
     publicPath: "./js-dist/",
-    filename: "main.js",
-    chunkFilename: "[hash]/js/[id].js"
+    filename: "main.js"
   },
   module: {
     loaders: [

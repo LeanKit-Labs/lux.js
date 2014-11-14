@@ -1,30 +1,9 @@
-/* global configSubscription, luxCh, buildActionList, entries, when, actionCreators, buildActionCreatorFrom */
+/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator */
 /* jshint -W098 */
 
 function transformHandler(store, target, key, handler) {
-	target[key] = function(data) {
-		return when(handler.apply(store, data.actionArgs.concat([data.deps])))
-			.then(
-				function(x){ return [null, x]; },
-				function(err){ return [err]; }
-			).then(function(values){
-				var result = values[1];
-				var error = values[0];
-				if(error && typeof store.handleActionError === "function") {
-					return when.join( error, result, store.handleActionError(key, error));
-				} else {
-					return when.join( error, result );
-				}
-			}).then(function(values){
-				var res = values[1];
-				var err = values[0];
-				return when({
-					hasChanged: store.hasChanged,
-					result: res,
-					error: err,
-					state: store.getState()
-				});
-			});
+	target[key] = function(...args) {
+		return handler.apply(store, ...args);
 	};
 }
 
@@ -42,100 +21,90 @@ function transformHandlers(store, handlers) {
 }
 
 function ensureStoreOptions(options) {
+	if (options.namespace in stores) {
+		throw new Error(` The store namespace "${options.namespace}" already exists.`);
+	}
 	if(!options.namespace) {
 		throw new Error("A lux store must have a namespace value provided");
 	}
-	if(!options.handlers) {
+	if(!options.handlers || !Object.keys(options.handlers).length) {
 		throw new Error("A lux store must have action handler methods provided");
 	}
 }
 
-var stores = {};
-
 class Store {
+
 	constructor(options) {
 		ensureStoreOptions(options);
 		var namespace = options.namespace;
-		if (namespace in stores) {
-			throw new Error(` The store namespace "${namespace}" already exists.`);
-		} else {
-			stores[namespace] = this;
-		}
-		this.changedKeys = [];
-		this.actionHandlers = transformHandlers(this, options.handlers);
-		actionCreators[namespace] = buildActionCreatorFrom(Object.keys(options.handlers));
+		var stateProp = options.stateProp || "state";
+		var state = options[stateProp] || {};
+		var origHandlers = options.handlers;
+		delete options.handlers;
+		delete options[ stateProp ];
 		Object.assign(this, options);
-		this.inDispatch = false;
+		var handlers = transformHandlers( this, origHandlers );
+		stores[namespace] = this;
+		var inDispatch = false;
 		this.hasChanged = false;
-		this.state = options.state || {};
-		this.__subscription = {
-			dispatch: configSubscription(this, luxCh.subscribe(`dispatch.${namespace}`, this.handlePayload)),
-			notify: configSubscription(this, luxCh.subscribe(`notify`, this.flush)).withConstraint(() => this.inDispatch),
-			scopedNotify: configSubscription(
-				this,
-				luxCh.subscribe(
-					`notify.${namespace}`,
-					(data, env) => env.reply(null, { changedKeys: [], state: this.state })
-				)
-			)
+
+		this.getState = function() {
+			return state;
 		};
-		luxCh.publish("register", {
-			namespace,
-			actions: buildActionList(options.handlers)
-		});
+
+		this.setState = function(newState) {
+			if(!inDispatch) {
+				throw new Error("setState can only be called during a dispatch cycle from a store action handler.");
+			}
+			state = Object.assign(state, newState);
+		};
+
+		this.flush = function flush() {
+			inDispatch = false;
+			if(this.hasChanged) {
+				this.hasChanged = false;
+				storeChannel.publish(`${this.namespace}.changed`);
+			}
+		};
+
+		mixin(this, luxActionListenerMixin({
+			context: this,
+			channel: dispatcherChannel,
+			topic: `${namespace}.handle.*`,
+			handlers: handlers,
+			handlerFn: function(data, envelope) {
+				if (handlers.hasOwnProperty(data.actionType)) {
+					inDispatch = true;
+					var res = handlers[data.actionType].call(this, data.actionArgs.concat(data.deps));
+					this.hasChanged = (res === false) ? false : true;
+					dispatcherChannel.publish(
+						`${this.namespace}.handled.${data.actionType}`,
+						{ hasChanged: this.hasChanged, namespace: this.namespace }
+					);
+				}
+			}.bind(this)
+		}));
+
+		this.__subscription = {
+			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).withConstraint(() => inDispatch),
+		};
+
+		dispatcher.registerStore(
+			{
+				namespace,
+				actions: buildActionList(origHandlers)
+			}
+		);
 	}
 
+	// Need to build in behavior to remove this store
+	// from the dispatcher's actionMap as well!
 	dispose() {
 		for (var [k, subscription] of entries(this.__subscription)) {
 			subscription.unsubscribe();
 		}
 		delete stores[this.namespace];
-	}
-
-	getState() {
-		return this.state;
-	}
-
-	setState(newState) {
-		this.hasChanged = true;
-		Object.keys(newState).forEach((key) => {
-			this.changedKeys[key] = true;
-		});
-		return (this.state = Object.assign(this.state, newState));
-	}
-
-	replaceState(newState) {
-		this.hasChanged = true;
-		Object.keys(newState).forEach((key) => {
-			this.changedKeys[key] = true;
-		});
-		return (this.state = newState);
-	}
-
-	flush() {
-		this.inDispatch = false;
-		if(this.hasChanged) {
-			var changedKeys = Object.keys(this.changedKeys);
-			this.changedKeys = {};
-			this.hasChanged = false;
-			luxCh.publish(`notification.${this.namespace}`, { changedKeys, state: this.state });
-		} else {
-			luxCh.publish(`nochange.${this.namespace}`);
-		}
-
-	}
-
-	handlePayload(data, envelope) {
-		var namespace = this.namespace;
-		if (this.actionHandlers.hasOwnProperty(data.actionType)) {
-			this.inDispatch = true;
-			this.actionHandlers[data.actionType]
-				.call(this, data)
-				.then(
-					(result) => envelope.reply(null, result),
-					(err) => envelope.reply(err)
-				);
-		}
+		dispatcher.removeStore(this.namespace);
 	}
 }
 
