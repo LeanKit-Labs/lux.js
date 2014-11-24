@@ -10,6 +10,9 @@ module.exports = {
 				test: /\.js$/,
 				loader: "source-map-loader"
 			}
+		],
+		loaders: [
+			{ test: /sinon.*\.js/, loader: "imports?define=>false" }
 		]
 	},
 	resolve: {
@@ -18,7 +21,7 @@ module.exports = {
 			"when.pipeline": "when/pipeline",
 			react          : "react/dist/react-with-addons.js",
 			traceur        : "traceur/bin/traceur-runtime",
-			lux            : path.join( __dirname, "./lib/lux.js"),
+			lux            : path.join( __dirname, "./lib/lux.js")
 		}
 	}
 };
