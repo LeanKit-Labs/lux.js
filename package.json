@@ -18,6 +18,11 @@
       "name": "Doug Neiner",
       "email": "doug@dougneiner.com",
       "url": "http://code.dougneiner.com"
+    },
+    {
+      "name": "Ryan Niemeyer",
+      "email": "ryan@knockmeout.net",
+      "url": "http://knockmeout.net"
     }
   ],
   "main": "./lib/lux.js",
