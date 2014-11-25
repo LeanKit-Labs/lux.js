@@ -47,11 +47,11 @@ class ActionCoordinator extends machina.Fsm {
 					_onEnter() {
 						try {
 							[for (generation of config.generations) processGeneration.call(this, generation, config.action)];
+							this.transition("success");
 						} catch(ex) {
 							this.err = ex;
 							this.transition("failure");
 						}
-						this.transition("success");
 					},
 					"action.handled": function(data) {
 						if(data.hasChanged) {
