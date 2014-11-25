@@ -153,7 +153,9 @@ describe( "luxJS - Dispatcher", function() {
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 	} );
 
-	it( "should properly finish a failed action cycle by publishing a failure message", function() {
+	it( "should properly finish a failed action cycle by publishing a failure and a notify message", function() {
+		var notifyHandler = sinon.spy();
+
 		dispatcher.registerStore( {
 			namespace: "alpha",
 			actions: [
@@ -162,16 +164,22 @@ describe( "luxJS - Dispatcher", function() {
 		} );
 
 		var subscription = dispatcherChannel.subscribe( "action.failure", handler );
+		var notifySubscription = dispatcherChannel.subscribe( "notify", notifyHandler );
 
 		dispatcher.handleActionDispatch( {
 			actionType: testAction
 		} );
 
 		subscription.unsubscribe();
+		notifySubscription.unsubscribe();
 
 		handler.calledOnce.should.be.true;
 		handler.lastCall.args[ 0 ].action.actionType.should.equal( testAction );
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 		handler.lastCall.args[ 0 ].should.have.property( "err" );
+
+		notifyHandler.calledOnce.should.be.true;
+		notifyHandler.lastCall.args[ 0 ].action.actionType.should.equal( testAction );
+		notifyHandler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 	} );
 } );
