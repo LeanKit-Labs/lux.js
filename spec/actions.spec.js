@@ -77,11 +77,12 @@ describe( "luxJS - Actions", function() {
 
 		it( "Should overwrite any existing action", function() {
 			var actionName = "overwrite-custom-action";
-			var customAction = {};
 			var handlerOne = function() {};
 			var handlerTwo = function() {};
+			var customAction = {
+				[ actionName ]: handlerOne
+			};
 
-			customAction[ actionName ] = handlerOne;
 			lux.customActionCreator( customAction );
 
 			// overwrite action
