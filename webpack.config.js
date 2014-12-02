@@ -13,7 +13,7 @@ module.exports = {
 		],
 		loaders: [
 			{ test: /sinon.*\.js/, loader: "imports?define=>false" },
-			{ test: /\.spec.js/, loader: "traceur" }
+			{ test: /\.spec.js/, loader: "webpack-traceur?sourceMaps" }
 		]
 	},
 	resolve: {

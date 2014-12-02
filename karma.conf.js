@@ -8,7 +8,7 @@ _.extend( webpackConfig, {
 	cache: true,
 	watch: false,
 	debug: true,
-	devtool: "inline-sourcemaps"
+	devtool: "inline-source-map"
 });
 
 var reporters = [ "story" ];
@@ -44,8 +44,8 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-		"spec/**/*.spec.*": [ "webpack" ],
-		"spec/helpers/karma-setup.js": [ "webpack" ]
+		"spec/**/*.spec.*": [ "webpack", "sourcemap" ],
+		"spec/helpers/karma-setup.js": [ "webpack", "sourcemap" ]
 	},
 
 	webpack: webpackConfig,
