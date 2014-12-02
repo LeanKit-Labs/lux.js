@@ -67,6 +67,7 @@
     "karma-mocha": "^0.1.9",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-safari-launcher": "^0.1.1",
+    "karma-sourcemap-loader": "^0.3.0",
     "karma-story-reporter": "^0.2.2",
     "karma-webpack": "^1.3.1",
     "lodash": "^2.4.1",
@@ -76,7 +77,8 @@
     "sinon": "~1.11.0",
     "source-map-loader": "^0.1.3",
     "webpack": "^1.4.8",
-    "webpack-dev-server": "^1.6.5"
+    "webpack-dev-server": "^1.6.5",
+    "webpack-traceur-loader": "^0.3.0"
   },
   "engines": {
     "node": ">=0.10.0"
