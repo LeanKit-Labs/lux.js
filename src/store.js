@@ -86,7 +86,7 @@ class Store {
 		}));
 
 		this.__subscription = {
-			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).withConstraint(() => inDispatch),
+			notify: configSubscription(this, dispatcherChannel.subscribe(`notify`, this.flush)).constraint(() => inDispatch),
 		};
 
 		dispatcher.registerStore(

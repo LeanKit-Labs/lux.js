@@ -43,8 +43,8 @@
 	}
 
 	function configSubscription(context, subscription) {
-		return subscription.withContext(context)
-		                   .withConstraint(function(data, envelope){
+		return subscription.context(context)
+		                   .constraint(function(data, envelope){
 		                       return !(envelope.hasOwnProperty("originId")) ||
 		                          (envelope.originId === postal.instanceId());
 		                   });
