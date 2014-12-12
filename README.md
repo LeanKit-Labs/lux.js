@@ -1,4 +1,4 @@
-#luxJS (v0.3.0)
+#luxJS (v0.3.2)
 
 ##What Is It
 luxJS is an *opinionated* implementation of a [Flux](http://facebook.github.io/flux/docs/overview.html) architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
