@@ -23,6 +23,11 @@
       "name": "Ryan Niemeyer",
       "email": "ryan@knockmeout.net",
       "url": "http://knockmeout.net"
+    },
+    {
+      "name": "Alex Robson",
+      "email": "WhyNotJustComment@OnMyBlog.com",
+      "url": "http://nerdventure.io/"
     }
   ],
   "main": "./lib/lux.js",
