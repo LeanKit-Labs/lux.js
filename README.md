@@ -152,6 +152,17 @@ var boardStore = new lux.Store( {
 } );
 ```
 
+It's possible to pass multiple "mixins" to the `Store` constructor, should the need arise. They will be deep-merged (though arrays follow a last-write-wins approach):
+
+```javascript
+var boardStore = new lux.Store(
+	{ namespace: "board" },
+	boardLoadedMixin,
+	laneSelectionMixin,
+	apiLoadedMixin
+);
+```
+
 ####ActionCreator APIs
 Components don't talk to stores directly. Instead, they use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores (and any other instance that uses the `lux.mixin.actionListener` mixin) are created. If you use the `actionCreator` mixin (or use a ControllerView or lux Component), action creator APIs will appear as top level methods on your component. The auto-generated ActionCreator APIs use the same method names as the corresponding action type names. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API method - either at the component level, or globally. Implementing a method on your component that matches the name of an action allows for a component-specific override, or you can use `lux.customActionCreator` to implement your own global overrides of how an action is dispatched. You just have to honor the message contracts (see the source for information on that now....more documentation later).
 

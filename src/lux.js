@@ -42,6 +42,45 @@
 		return res;
 	}
 
+	var mergeBehavior = {
+        "*": function (obj, sourcePropKey, sourcePropVal) {
+            obj[sourcePropKey] = sourcePropVal;
+        },
+        "object": function (obj, sourcePropKey, sourcePropVal) {
+            obj[sourcePropKey] = merge({}, obj[sourcePropKey] || {}, sourcePropVal);
+        },
+        "array": function (obj, sourcePropKey, sourcePropVal) {
+            obj[sourcePropKey] = [];
+            sourcePropVal.forEach( function (item, idx) {
+                mergeBehavior[getHandlerName(item)](obj[sourcePropKey], idx, item);
+            }, this);
+        }
+    };
+
+    function getHandlerName(val) {
+    	var propType = getType(val);
+    	return mergeBehavior[propType] ? propType : "*";
+    }
+
+	function getType(val) {
+		if (Array.isArray(val)) {
+		    return "array";
+		}
+		return typeof val;
+	}
+
+	function merge() {
+		var sources = Array.from(arguments);
+		var target = sources.shift();
+		var nextSource;
+		while(nextSource = sources.shift()) {
+			for(var [k,v] of entries( nextSource )) {
+				mergeBehavior[getHandlerName(v)](target, k, v);
+			}
+		}
+		return target;
+	}
+
 	function configSubscription(context, subscription) {
 		return subscription.context(context)
 		                   .constraint(function(data, envelope){

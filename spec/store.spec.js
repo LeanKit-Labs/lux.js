@@ -2,14 +2,14 @@
 
 describe( "luxJS - Store", function() {
 	var store;
-	function storeFactory( options ) {
+	function storeFactory( options, m1, m2, m3, m4, m5, m6, m7 ) {
 		options = Object.assign({
 			namespace: "storeOne",
 			handlers: {
 				one: function () {}
 			}
 		}, options || {} );
-		store = new lux.Store( options );
+		store = new lux.Store( options, m1, m2, m3, m4, m5, m6, m7 );
 	}
 	afterEach( function (){
 		if ( store ) {
@@ -122,6 +122,67 @@ describe( "luxJS - Store", function() {
 					data: { special: true }
 				});
 				store.should.not.have.property( "data" );
+			});
+		});
+		describe( "When initializing with multiple mixins", function() {
+			it("Should blend state passed into intial state", function(){
+				storeFactory(
+					{ state: { something: true } },
+					{ state: { anotherThing: "yep" } },
+					{ state: { nested: { doc: "Great Scot!" } } },
+					{ state: { nested: { marty: "It's Heavy." } } }
+				);
+				store.getState().should.eql({
+					something: true,
+					anotherThing: "yep",
+					nested: {
+						doc: "Great Scot!",
+						marty: "It's Heavy."
+					}
+				});
+			});
+			it("Should blend any extra props or methods onto the store instance", function(){
+				storeFactory(
+					{
+						getSomethingCool: function () {
+							return true;
+						}
+					},
+					{
+						getSomethingEvenCooler: function() {
+							return "Truer than true";
+						}
+					}
+				);
+
+				store.should.have.property( "getSomethingCool" ).which.is.a.Function;
+				store.should.have.property( "getSomethingEvenCooler" ).which.is.a.Function;
+				store.getSomethingCool().should.be.true;
+				store.getSomethingEvenCooler().should.equal("Truer than true");
+			});
+			it("Should create an action group for all handlers", function(){
+				storeFactory(
+					{
+						handlers: {
+							one: function () {},
+							two: function () {},
+						}
+					},
+					{
+						handlers: {
+							three: function () {},
+							four: function () {},
+						}
+					}
+				);
+				var creator = lux.actionCreator({
+					getActionGroup: [ "storeOne" ]
+				});
+
+				creator.should.have.property( "one" ).which.is.a.Function;
+				creator.should.have.property( "two" ).which.is.a.Function;
+				creator.should.have.property( "three" ).which.is.a.Function;
+				creator.should.have.property( "four" ).which.is.a.Function;
 			});
 		});
 	});
