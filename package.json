@@ -23,6 +23,11 @@
       "name": "Ryan Niemeyer",
       "email": "ryan@knockmeout.net",
       "url": "http://knockmeout.net"
+    },
+    {
+      "name": "Alex Robson",
+      "email": "WhyNotJustComment@OnMyBlog.com",
+      "url": "http://nerdventure.io/"
     }
   ],
   "main": "./lib/lux.js",
@@ -39,11 +44,11 @@
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {
-    "react": ">=0.12.0"
+    "react": ">=0.12.2"
   },
   "dependencies": {
     "postal": "^0.12.0",
-    "traceur": "0.0.79",
+    "traceur": "0.0.81",
     "machina": "^0.4.0-2"
   },
   "devDependencies": {
@@ -51,15 +56,15 @@
     "gulp": "^3.8.8",
     "gulp-header": "^1.0.5",
     "gulp-hint-not": "0.0.3",
-    "gulp-imports": "0.0.2",
+    "gulp-imports": "0.0.3",
     "gulp-rename": "^1.2.0",
     "gulp-sourcemaps": "^1.1.1",
-    "gulp-spawn-mocha": "^0.4.1",
-    "gulp-traceur": "^0.14.0",
+    "gulp-spawn-mocha": "^0.5.2",
+    "gulp-traceur": "^0.15.0",
     "gulp-uglify": "^1.0.1",
     "imports-loader": "^0.6.3",
     "istanbul": "^0.3.2",
-    "jsdom": "^1.0.3",
+    "jsdom": "^2.0.0",
     "karma": "^0.12.24",
     "karma-chrome-launcher": "^0.1.5",
     "karma-coverage": "^0.2.6",
@@ -71,8 +76,8 @@
     "karma-story-reporter": "^0.2.2",
     "karma-webpack": "^1.3.1",
     "lodash": "^2.4.1",
-    "mocha": "^1.21.4",
-    "react": ">=0.12.0",
+    "mocha": "^2.1.0",
+    "react": ">=0.12.2",
     "should": "^4.0.4",
     "sinon": "~1.11.0",
     "source-map-loader": "^0.1.3",
@@ -80,7 +85,7 @@
     "traceur-source-maps": "^1.0.6",
     "webpack": "^1.4.8",
     "webpack-dev-server": "^1.6.5",
-    "webpack-traceur-loader": "^0.3.3"
+    "webpack-traceur-loader": "^0.3.0"
   },
   "engines": {
     "node": ">=0.10.0"

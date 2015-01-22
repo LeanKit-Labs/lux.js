@@ -1,4 +1,4 @@
-/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator */
+/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator, merge */
 /* jshint -W098 */
 
 function transformHandler(store, target, key, handler) {
@@ -34,7 +34,8 @@ function ensureStoreOptions(options) {
 
 class Store {
 
-	constructor(options) {
+	constructor(...opt) {
+		var options = merge(...opt);
 		ensureStoreOptions(options);
 		var namespace = options.namespace;
 		var stateProp = options.stateProp || "state";
