@@ -1,19 +1,19 @@
 define([
 	"./boardData.json",
 	"lux"
-], function(mockData, lux){
+], function( mockData, lux ){
 
 	var http = lux.actionCreatorListener({
 		namespace: "api",
 		handlers: {
-			loadBoard: function(boardId) {
+			loadBoard: function( boardId ) {
 				// simulate an http response
-				setTimeout(function(){
-					var board = mockData.boards.find(function(x) {
+				setTimeout( function(){
+					var board = mockData.boards.find( function( x ) {
 						return x.boardId.toString() === boardId.toString();
 					});
-					this.publishAction("boardLoaded", boardId, board);
-				}.bind(this), 200);
+					this.publishAction( "boardLoaded", boardId, board );
+				}.bind( this ), 200 );
 			}
 		}
 	});

@@ -3,20 +3,21 @@
 ( function( root, factory ) {
 	if ( typeof define === "function" && define.amd ) {
 		// AMD. Register as an anonymous module.
-		define( [ "traceur", "react", "postal", "machina" ], factory );
+		define( [ "traceur", "react", "postal", "machina", "lodash" ], factory );
 	} else if ( typeof module === "object" && module.exports ) {
 		// Node, or CommonJS-Like environments
-		module.exports = function( postal, machina, React ) {
+		module.exports = function( React, postal, machina, lodash ) {
 			return factory(
 				require("traceur"),
 				React || require("react"),
-				postal,
-				machina);
+				postal || require("postal"),
+				machina || require("machina"),
+				lodash || require("lodash"));
 		};
 	} else {
 		throw new Error("Sorry - luxJS only support AMD or CommonJS module environments.");
 	}
-}( this, function( traceur, React, postal, machina ) {
+}( this, function( traceur, React, postal, machina, _ ) {
 
 	var actionChannel = postal.channel("lux.action");
 	var storeChannel = postal.channel("lux.store");
@@ -25,7 +26,7 @@
 
 	// jshint ignore:start
 	function* entries(obj) {
-		if(typeof obj !== "object") {
+		if([ "object", "function" ].indexOf(typeof obj) === -1) {
 			obj = {};
 		}
 		for(var k of Object.keys(obj)) {
@@ -42,45 +43,6 @@
 		return res;
 	}
 
-	var mergeBehavior = {
-        "*": function (obj, sourcePropKey, sourcePropVal) {
-            obj[sourcePropKey] = sourcePropVal;
-        },
-        "object": function (obj, sourcePropKey, sourcePropVal) {
-            obj[sourcePropKey] = merge({}, obj[sourcePropKey] || {}, sourcePropVal);
-        },
-        "array": function (obj, sourcePropKey, sourcePropVal) {
-            obj[sourcePropKey] = [];
-            sourcePropVal.forEach( function (item, idx) {
-                mergeBehavior[getHandlerName(item)](obj[sourcePropKey], idx, item);
-            }, this);
-        }
-    };
-
-    function getHandlerName(val) {
-    	var propType = getType(val);
-    	return mergeBehavior[propType] ? propType : "*";
-    }
-
-	function getType(val) {
-		if (Array.isArray(val)) {
-		    return "array";
-		}
-		return typeof val;
-	}
-
-	function merge() {
-		var sources = Array.from(arguments);
-		var target = sources.shift();
-		var nextSource;
-		while(nextSource = sources.shift()) {
-			for(var [k,v] of entries( nextSource )) {
-				mergeBehavior[getHandlerName(v)](target, k, v);
-			}
-		}
-		return target;
-	}
-
 	function configSubscription(context, subscription) {
 		return subscription.context(context)
 		                   .constraint(function(data, envelope){
@@ -95,6 +57,59 @@
 		var subscriptions = __lux.subscriptions = (__lux.subscriptions || {});
 		return __lux;
 	}
+
+	var extend = function( ...options ) {
+		var parent = this;
+		var store; // placeholder for instance constructor
+		var storeObj = {}; // object used to hold initialState & states from prototype for instance-level merging
+		var ctor = function() {}; // placeholder ctor function used to insert level in prototype chain
+
+		// First - separate mixins from prototype props
+		var mixins = [];
+		for( var opt of options ) {
+			mixins.push( _.pick( opt, [ "handlers", "state" ] ) );
+			delete opt.handlers;
+			delete opt.state;
+		}
+
+		var protoProps = _.merge.apply( this, [ {} ].concat( options ) );
+
+		// The constructor function for the new subclass is either defined by you
+		// (the "constructor" property in your `extend` definition), or defaulted
+		// by us to simply call the parent's constructor.
+		if ( protoProps && protoProps.hasOwnProperty( "constructor" ) ) {
+			store = protoProps.constructor;
+		} else {
+			store = function() {
+				var args = Array.from( arguments );
+				args[ 0 ] = args[ 0 ] || {};
+				parent.apply( this, store.mixins.concat( args ) );
+			};
+		}
+
+		store.mixins = mixins;
+
+		// Inherit class (static) properties from parent.
+		_.merge( store, parent );
+
+		// Set the prototype chain to inherit from `parent`, without calling
+		// `parent`'s constructor function.
+		ctor.prototype = parent.prototype;
+		store.prototype = new ctor();
+
+		// Add prototype properties (instance properties) to the subclass,
+		// if supplied.
+		if ( protoProps ) {
+			_.extend( store.prototype, protoProps );
+		}
+
+		// Correctly set child's `prototype.constructor`.
+		store.prototype.constructor = store;
+
+		// Set a convenience property in case the parent's prototype is needed later.
+		store.__super__ = parent.prototype;
+		return store;
+	};
 
 	//import("./actionCreator.js");
 	//import("./mixins.js");
