@@ -1,50 +1,86 @@
-/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator, merge */
+/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator, merge, extend */
 /* jshint -W098 */
 
-function transformHandler(store, target, key, handler) {
-	target[key] = function(...args) {
-		return handler.apply(store, ...args);
-	};
-}
-
-function transformHandlers(store, handlers) {
-	var target = {};
-	for (var [key, handler] of entries(handlers)) {
-		transformHandler(
-			store,
-			target,
-			key,
-			typeof handler === "object" ? handler.handler : handler
-		);
+function ensureStoreOptions(options, handlers, store) {
+	var namespace = (options && options.namespace) || store.namespace;
+	if (namespace in stores) {
+		throw new Error(` The store namespace "${namespace}" already exists.`);
 	}
-	return target;
-}
-
-function ensureStoreOptions(options) {
-	if (options.namespace in stores) {
-		throw new Error(` The store namespace "${options.namespace}" already exists.`);
-	}
-	if(!options.namespace) {
+	if(!namespace) {
 		throw new Error("A lux store must have a namespace value provided");
 	}
-	if(!options.handlers || !Object.keys(options.handlers).length) {
+	if(!handlers || !Object.keys(handlers).length) {
 		throw new Error("A lux store must have action handler methods provided");
 	}
+}
+
+function getHandlerObject( handlers, key, listeners ) {
+	return {
+		waitFor: [],
+		handler: function() {
+			var changed = 0;
+			var args = Array.from( arguments );
+			listeners[ key ].forEach( function( listener ){
+				changed += ( listener.apply( this, args ) === false ? 0 : 1 );
+			}.bind( this ) );
+			return changed > 0;
+		}
+	}
+}
+
+function updateWaitFor( source, handlerObject ) {
+	if( source.waitFor ){
+		source.waitFor.forEach( function( dep ) {
+			if( handlerObject.waitFor.indexOf( dep ) === -1 ) {
+				handlerObject.waitFor.push( dep );
+			}
+		});
+	}
+}
+
+function addListeners( listeners, key, handler ) {
+	listeners[ key ] = listeners[ key ] || [];
+	listeners[ key ].push( handler.handler || handler );
+}
+
+function processStoreArgs(...options) {
+	var listeners = {};
+	var handlers = {};
+	var state = {};
+	var otherOpts = {};
+	options.forEach( function( o ) {
+		var opt;
+		if( o ) {
+			opt = _.clone(o);
+			_.merge( state, opt.state );
+			if( opt.handlers ) {
+				Object.keys( opt.handlers ).forEach( function( key ) {
+					var handler = opt.handlers[ key ];
+					// set up the actual handler method that will be executed
+					// as the store handles a dispatched action
+					handlers[ key ] = handlers[ key ] || getHandlerObject( handlers, key, listeners );
+					// ensure that the handler definition has a list of all stores
+					// being waited upon
+					updateWaitFor( handler, handlers[ key ] );
+					// Add the original handler method(s) to the listeners queue
+					addListeners( listeners, key, handler )
+				});
+			}
+			delete opt.handlers;
+			delete opt.state;
+			_.merge( otherOpts, opt );
+		}
+	});
+	return [ state, handlers, otherOpts ];
 }
 
 class Store {
 
 	constructor(...opt) {
-		var options = merge(...opt);
-		ensureStoreOptions(options);
-		var namespace = options.namespace;
-		var stateProp = options.stateProp || "state";
-		var state = options[stateProp] || {};
-		var origHandlers = options.handlers;
-		delete options.handlers;
-		delete options[ stateProp ];
+		var [ state, handlers, options ] = processStoreArgs( ...opt );
+		ensureStoreOptions( options, handlers, this );
+		var namespace = options.namespace || this.namespace;
 		Object.assign(this, options);
-		var handlers = transformHandlers( this, origHandlers );
 		stores[namespace] = this;
 		var inDispatch = false;
 		this.hasChanged = false;
@@ -76,7 +112,7 @@ class Store {
 			handlerFn: function(data, envelope) {
 				if (handlers.hasOwnProperty(data.actionType)) {
 					inDispatch = true;
-					var res = handlers[data.actionType].call(this, data.actionArgs.concat(data.deps));
+					var res = handlers[data.actionType].handler.apply(this, data.actionArgs.concat(data.deps));
 					this.hasChanged = (res === false) ? false : true;
 					dispatcherChannel.publish(
 						`${this.namespace}.handled.${data.actionType}`,
@@ -93,7 +129,7 @@ class Store {
 		dispatcher.registerStore(
 			{
 				namespace,
-				actions: buildActionList(origHandlers)
+				actions: buildActionList(handlers)
 			}
 		);
 	}
@@ -108,6 +144,8 @@ class Store {
 		dispatcher.removeStore(this.namespace);
 	}
 }
+
+Store.extend = extend;
 
 function removeStore(namespace) {
 	stores[namespace].dispose();

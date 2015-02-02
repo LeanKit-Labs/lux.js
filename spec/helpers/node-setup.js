@@ -20,9 +20,10 @@ global.utils = global.React.addons.TestUtils;
 
 global.postal = require( "postal" );
 global.machina = require( "machina" );
+global._ = require( "lodash" );
 global.sinon = require( "sinon" );
 
 global.luxStoreCh = global.postal.channel( "lux.store" );
 global.luxActionCh = global.postal.channel( "lux.action" );
 
-global.lux = require( "../../lib/lux.js" )( postal, machina, React );
+global.lux = require( "../../lib/lux.js" )( React, postal, machina, _ );
