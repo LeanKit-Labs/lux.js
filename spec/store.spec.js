@@ -406,9 +406,8 @@ describe( "luxJS - Store", function() {
 						}
 					}
 				};
-				var storeA = storeFactory({}, mixin);
-				var storeB = storeFactory({}, mixin, { namespace: "WAT" });
-
+				var storeA = new lux.Store({ namespace: "yep" }, mixin);
+				var storeB = new lux.Store({}, mixin, { namespace: "WAT" });
 				storeB.getState().should.eql({
 					danglingMixin: true
 				});
