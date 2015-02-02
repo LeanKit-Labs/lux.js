@@ -394,6 +394,49 @@ describe( "luxJS - Store", function() {
 				listenToEasterEggsInvoked.should.be.true;
 				keyInTardisInvoked.should.be.true;
 			} );
+			it( "Should not mutate original mixins as part of store construction", function() {
+				var handlerInvoked = false;
+				var mixin = {
+					state: {
+						danglingMixin: true
+					},
+					handlers: {
+						justStopIt: function() {
+							hanlderInvoked = true;
+						}
+					}
+				};
+				var storeA = storeFactory({}, mixin);
+				var storeB = storeFactory({}, mixin, { namespace: "WAT" });
+
+				storeB.getState().should.eql({
+					danglingMixin: true
+				});
+
+				storeA.dispose();
+				storeB.dispose();
+			} );
+			it( "Should be able to create, dispose and re-create a store", function() {
+				var mixin = {
+					state: {
+						danglingMixin: true
+					},
+					handlers: {
+						justStopIt: function() {
+							hanlderInvoked = true;
+						}
+					}
+				};
+				var Store = lux.Store.extend({ namespace: "wat" }, mixin);
+				var store = new Store();
+				store.dispose();
+				store = new Store();
+				store.getState().should.eql({
+					danglingMixin: true
+				});
+				store.dispose();
+
+			});
 		} );
 	} );
 	describe( "When using a Store", function() {
