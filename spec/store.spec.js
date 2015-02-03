@@ -10,12 +10,6 @@ describe( "luxJS - Store", function() {
 		}, options || {} );
 		return new lux.Store( options, m1, m2, m3, m4, m5, m6, m7 );
 	}
-	// afterEach( function() {
-	// 	if ( store ) {
-	// 		store.dispose();
-	// 		store = undefined;
-	// 	}
-	// } );
 	describe( "When creating a Store", function() {
 		describe( "When validating options", function() {
 			it( "Should throw an error if the namespace is already used", function() {
@@ -30,8 +24,8 @@ describe( "luxJS - Store", function() {
 					} );
 				} ).should.throw( /already exists/ );
 				store.dispose();
-				if(secondStore && secondStore.dipose) {
-					secondStore.dipose();
+				if ( secondStore && secondStore.dispose ) {
+					secondStore.dispose();
 				}
 			} );
 			it( "Should throw an error if the namespace is not provided", function() {
@@ -57,7 +51,7 @@ describe( "luxJS - Store", function() {
 						handlers: []
 					} );
 				} ).should.throw( /must have action/ );
-				if(tmpStore && tmpStore.dispose) {
+				if ( tmpStore && tmpStore.dispose ) {
 					tmpStore.dispose();
 				}
 			} );
@@ -318,10 +312,10 @@ describe( "luxJS - Store", function() {
 				store3.dispose();
 			} );
 		} );
-		describe( "When using extend to create an extended constructor function", function(){
+		describe( "When using extend to create an extended constructor function", function() {
 			it( "Should properly handle one level of inheritance", function() {
 				var handlerInvoked = false;
-				var MyStore = lux.Store.extend({
+				var MyStore = lux.Store.extend( {
 					state: {
 						dontblink: true,
 						angelsHavePhonebox: true
@@ -334,13 +328,13 @@ describe( "luxJS - Store", function() {
 					someCustomAccessor: function() {
 						return this.getState().angelsHavePhonebox;
 					}
-				});
-				var store = new MyStore({ namespace: "levelone" });
-				store.namespace.should.equal("levelone");
-				store.getState().should.eql({
+				} );
+				var store = new MyStore( { namespace: "levelone" } );
+				store.namespace.should.equal( "levelone" );
+				store.getState().should.eql( {
 					dontblink: true,
 					angelsHavePhonebox: true
-				});
+				} );
 				store.someCustomAccessor().should.be.ok;
 				var creator = lux.actionCreator( {
 					getActionGroup: [ "levelone" ]
@@ -354,7 +348,7 @@ describe( "luxJS - Store", function() {
 				var angelicTouchInvoked = false;
 				var listenToEasterEggsInvoked = false;
 				var keyInTardisInvoked = false;
-				var GrandparentStore = lux.Store.extend({
+				var GrandparentStore = lux.Store.extend( {
 					state: {
 						dontblink: true,
 						angelsHavePhonebox: true
@@ -367,8 +361,8 @@ describe( "luxJS - Store", function() {
 					someCustomAccessor: function() {
 						return this.getState().angelsHavePhonebox;
 					}
-				});
-				var ParentStore = GrandparentStore.extend({
+				} );
+				var ParentStore = GrandparentStore.extend( {
 					state: {
 						doctor: "wibbly-wobbly timey-wimey"
 					},
@@ -380,8 +374,8 @@ describe( "luxJS - Store", function() {
 					someOtherAccessor: function() {
 						return this.getState().doctor;
 					}
-				});
-				var ChildStore = ParentStore.extend({
+				} );
+				var ChildStore = ParentStore.extend( {
 					state: {
 						author: "Moffat"
 					},
@@ -393,15 +387,15 @@ describe( "luxJS - Store", function() {
 					andYetAnotherAccessor: function() {
 						return this.getState().author;
 					}
-				});
+				} );
 				var store = new ChildStore( { namespace: "weepingangels" } );
 				store.namespace.should.equal( "weepingangels" );
-				store.getState().should.eql({
+				store.getState().should.eql( {
 					dontblink: true,
 					angelsHavePhonebox: true,
 					doctor: "wibbly-wobbly timey-wimey",
 					author: "Moffat"
-				});
+				} );
 				store.someCustomAccessor().should.be.ok;
 				store.someOtherAccessor().should.equal( "wibbly-wobbly timey-wimey" );
 				store.andYetAnotherAccessor().should.equal( "Moffat" );
@@ -429,12 +423,12 @@ describe( "luxJS - Store", function() {
 						}
 					}
 				};
-				var storeA = storeFactory({}, mixin);
-				var storeB = storeFactory({}, mixin, { namespace: "WAT" });
+				var storeA = storeFactory( {}, mixin );
+				var storeB = storeFactory( {}, mixin, { namespace: "WAT" } );
 
-				storeB.getState().should.eql({
+				storeB.getState().should.eql( {
 					danglingMixin: true
-				});
+				} );
 
 				storeA.dispose();
 				storeB.dispose();
@@ -450,16 +444,16 @@ describe( "luxJS - Store", function() {
 						}
 					}
 				};
-				var Store = lux.Store.extend({ namespace: "wat" }, mixin);
+				var Store = lux.Store.extend( { namespace: "wat" }, mixin );
 				var store = new Store();
 				store.dispose();
 				store = new Store();
-				store.getState().should.eql({
+				store.getState().should.eql( {
 					danglingMixin: true
-				});
+				} );
 				store.dispose();
 
-			});
+			} );
 		} );
 	} );
 	describe( "When using a Store", function() {
@@ -539,8 +533,8 @@ describe( "luxJS - Store", function() {
 				stores: {
 					listenTo: "storeOne",
 					onChange: onChange
-					}
-				};
+				}
+			};
 			lux.mixin( listener, lux.mixin.store );
 			var creator = lux.actionCreator( {
 				getActions: [ "change", "inferredChange", "noChange" ]
@@ -598,8 +592,8 @@ describe( "luxJS - Store", function() {
 							} ).length ) {
 						isPresent = true;
 						break;
-						}
 					}
+				}
 				return isPresent;
 			}
 			var store = storeFactory();
