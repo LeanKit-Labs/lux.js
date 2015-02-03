@@ -1,0 +1,56 @@
+{
+  "name": "lux.js",
+  "version": "0.4.1",
+  "homepage": "https://github.com/LeanKit-Labs/lux.js",
+  "description": "Flux-based architecture for using ReactJS at LeanKit",
+  "author": "Jim Cowart",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/LeanKit-Labs/lux.js.git"
+  },
+  "contributors": [
+    {
+      "name": "Jim Cowart",
+      "email": "jim@ifandelse.com",
+      "url": "http://ifandelse.com"
+    },
+    {
+      "name": "Doug Neiner",
+      "email": "doug@dougneiner.com",
+      "url": "http://code.dougneiner.com"
+    },
+    {
+      "name": "Ryan Niemeyer",
+      "email": "ryan@knockmeout.net",
+      "url": "http://knockmeout.net"
+    },
+    {
+      "name": "Alex Robson",
+      "email": "WhyNotJustComment@OnMyBlog.com",
+      "url": "http://nerdventure.io/"
+    }
+  ],
+  "main": "./lib/lux.js",
+  "scripts": [
+	"lib/machina.js"
+  ],
+  "keywords": [
+    "react",
+    "ReactJS",
+    "flux",
+    "LeanKit"
+  ],
+  "dependencies": {
+    "react": ">=0.12.2",
+    "postal": "~0.12.3",
+    "traceur": "0.0.81",
+    "machina": "~1.0.0-1",
+    "lodash": "2.4.1"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ]
+}
