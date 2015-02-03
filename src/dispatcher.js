@@ -33,6 +33,8 @@ function buildGenerations( stores, actionType ) {
 	return tree;
 }
 
+var coordinator = new ActionCoordinator();
+
 class Dispatcher extends machina.Fsm {
 	constructor() {
 		super({
@@ -44,65 +46,68 @@ class Dispatcher extends machina.Fsm {
 					_onEnter: function() {
 						this.luxAction = {};
 					},
-					"action.dispatch": function(actionMeta) {
+					"action.dispatch": function( actionMeta ) {
 						this.luxAction = {
 							action: actionMeta
 						};
-						this.transition("preparing");
+						this.transition( "preparing" );
 					},
-					"register.store": function(storeMeta) {
-						for (var actionDef of storeMeta.actions) {
+					"register.store": function( storeMeta ) {
+						for ( var actionDef of storeMeta.actions ) {
 							var action;
 							var actionName = actionDef.actionType;
 							var actionMeta = {
 								namespace: storeMeta.namespace,
 								waitFor: actionDef.waitFor
 							};
-							action = this.actionMap[actionName] = this.actionMap[actionName] || [];
-							action.push(actionMeta);
+							action = this.actionMap[ actionName ] = this.actionMap[ actionName ] || [];
+							action.push( actionMeta );
 						}
 					},
-					"remove.store" : function(namespace) {
-						var isThisNameSpace = function(meta) {
+					"remove.store" : function( namespace ) {
+						var isThisNameSpace = function( meta ) {
 							return meta.namespace === namespace;
 						};
-						for(var [k, v] of entries(this.actionMap)) {
-							var idx = v.findIndex(isThisNameSpace);
-							if(idx !== -1) {
-								v.splice(idx, 1);
+						for( var [ k, v ] of entries( this.actionMap ) ) {
+							var idx = v.findIndex( isThisNameSpace );
+							if( idx !== -1 ) {
+								v.splice( idx, 1 );
 							}
 						}
 					}
 				},
 				preparing: {
 					_onEnter: function() {
-						var handling = this.getStoresHandling(this.luxAction.action.actionType);
+						var handling = this.getStoresHandling( this.luxAction.action.actionType );
 						this.luxAction.stores = handling.stores;
 						this.luxAction.generations = handling.tree;
-						this.transition(this.luxAction.generations.length ? "dispatching" : "ready");
+						this.transition( this.luxAction.generations.length ? "dispatching" : "ready" );
 					},
 					"*": function() {
-						this.deferUntilTransition("ready");
+						this.deferUntilTransition( "ready" );
 					}
 				},
 				dispatching: {
 					_onEnter: function() {
 						// This is all sync...hence the transition call below.
-						var coordinator = new ActionCoordinator({
+						var actionClient = {
 							generations: this.luxAction.generations,
-							action: this.luxAction.action
-						});
-						coordinator.start();
-						this.transition("ready");
+							action: this.luxAction.action,
+							generationIndex: 0,
+							stores: {},
+							updated: []
+						};
+						coordinator.start( actionClient );
+						this.transition( "ready" );
 					},
 					"*": function() {
-						this.deferUntilTransition("ready");
+						this.deferUntilTransition( "ready" );
 					}
 				},
 				stopped: {}
 			},
-			getStoresHandling(actionType) {
-				var stores = this.actionMap[actionType] || [];
+			getStoresHandling( actionType ) {
+				var stores = this.actionMap[ actionType ] || [];
 				return {
 					stores,
 					tree: buildGenerations( stores, actionType )
@@ -114,7 +119,7 @@ class Dispatcher extends machina.Fsm {
 				this,
 				actionChannel.subscribe(
 					"execute.*",
-					(data, env) => this.handleActionDispatch(data)
+					( data, env ) => this.handleActionDispatch( data )
 				)
 			)
 		];
