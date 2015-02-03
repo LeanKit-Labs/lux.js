@@ -12,7 +12,7 @@
   "dependencies": {
     "express": "^4.11.0",
     "lodash": "^2.4.1",
-    "machina": "^0.4.1",
+    "machina": "~1.0.0-1",
     "postal": "^0.12.3",
     "react": ">=0.12.2",
     "traceur": "0.0.81",

@@ -12,28 +12,15 @@ function processGeneration(generation, action) {
 		);
 	});
 }
-/*
-	Example of `config` argument:
-	{
-		generations: [],
-		action : {
-			actionType: "",
-			actionArgs: []
-		}
-	}
-*/
-class ActionCoordinator extends machina.Fsm {
-	constructor(config) {
-		Object.assign(this, {
-			generationIndex: 0,
-			stores: {},
-			updated: []
-		}, config);
+
+class ActionCoordinator extends machina.BehavioralFsm {
+	constructor() {
+		this.actionContext = {};
 
 		this.__subscriptions = {
 			handled: dispatcherChannel.subscribe(
 				"*.handled.*",
-				(data) => this.handle("action.handled", data)
+				( data ) => this.handle( this.actionContext, "action.handled", data )
 			)
 		};
 
@@ -41,52 +28,56 @@ class ActionCoordinator extends machina.Fsm {
 			initialState: "uninitialized",
 			states: {
 				uninitialized: {
-					start: "dispatching"
+					start: "dispatching",
+					_onExit: function( client ) {
+						this.actionContext = client;
+					}
 				},
 				dispatching: {
-					_onEnter() {
+					_onEnter( client ) {
 						try {
-							[for (generation of config.generations) processGeneration.call(this, generation, config.action)];
-							this.transition("success");
-						} catch(ex) {
-							this.err = ex;
-							this.transition("failure");
+							[for ( generation of client.generations ) processGeneration.call( client, generation, client.action )];
+							this.transition( client, "success" );
+						} catch( ex ) {
+							client.err = ex;
+							this.transition( client, "failure" );
 						}
 					},
-					"action.handled": function(data) {
-						if(data.hasChanged) {
-							this.updated.push(data.namespace);
+					"action.handled": function( client, data ) {
+						if( data.hasChanged ) {
+							client.updated.push( data.namespace );
 						}
 					},
-					_onExit: function() {
-						dispatcherChannel.publish("prenotify", { stores: this.updated });
+					_onExit: function( client ) {
+						dispatcherChannel.publish("prenotify", { stores: client.updated });
+						this.actionContext = undefined;
 					}
 				},
 				success: {
-					_onEnter: function() {
-						dispatcherChannel.publish("notify", {
-							action: this.action
+					_onEnter: function( client ) {
+						dispatcherChannel.publish( "notify", {
+							action: client.action
 						});
-						this.emit("success");
+						this.emit( "success" );
 					}
 				},
 				failure: {
-					_onEnter: function() {
-						dispatcherChannel.publish("notify", {
-							action: this.action
+					_onEnter: function( client ) {
+						dispatcherChannel.publish( "notify", {
+							action: client.action
 						});
-						dispatcherChannel.publish("action.failure", {
-							action: this.action,
-							err: this.err
+						dispatcherChannel.publish( "action.failure", {
+							action: client.action,
+							err: client.err
 						});
-						this.emit("failure");
+						this.emit( "failure" );
 					}
 				}
 			}
 		});
 	}
 
-	start() {
-		this.handle("start");
+	start( client ) {
+		this.handle( client, "start" );
 	}
 }
