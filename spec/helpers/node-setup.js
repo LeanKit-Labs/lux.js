@@ -9,6 +9,8 @@ global.navigator = { userAgent: "Not Chrom3" };
 
 require( "should/should" );
 
+require("6to5/register");
+
 global.React = require( "react/dist/react-with-addons" );
 global.utils = global.React.addons.TestUtils;
 

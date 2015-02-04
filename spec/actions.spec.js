@@ -5,7 +5,6 @@ describe( "luxJS - Actions", function() {
 		describe( "When creating a new action group", function() {
 			it( "Should create the action group", function() {
 				var groupName = "add-group-create";
-
 				lux.addToActionGroup( groupName, [] );
 				lux.getActionGroup( groupName ).should.be.an.Object;
 			} );
@@ -76,24 +75,25 @@ describe( "luxJS - Actions", function() {
 		} );
 
 		it( "Should overwrite any existing action", function() {
+			var actionName = "overwrite-custom-action";
 			var handlerOne = function() {};
 			var handlerTwo = function() {};
 			var customAction = {
-				"overwrite-custom-action": handlerOne
+				[ actionName ]: handlerOne
 			};
 
 			lux.customActionCreator( customAction );
 
 			// overwrite action
-			customAction[ "overwrite-custom-action" ] = handlerTwo;
+			customAction[ actionName ] = handlerTwo;
 			lux.customActionCreator( customAction );
 
 			var actionCreator = lux.actionCreator( {
-				getActions: "overwrite-custom-action"
+				getActions: actionName
 			} );
 
 			// ensure that the method is the newly overwritten one
-			actionCreator[ "overwrite-custom-action" ].should.equal( handlerTwo );
+			actionCreator[ actionName ].should.equal( handlerTwo );
 		} );
 
 		it( "Should not be overwritten by automatic action creation", function() {
