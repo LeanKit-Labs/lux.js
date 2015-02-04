@@ -10,7 +10,6 @@
 
 * Updated to support machina 1.0. ActionCoordinator is now a BehavioralFsm.
 * Updated readme to reflect ActionCoordinator changes
-* Updated version to v0.4.1 in package files
 * Updated bower.json to reflect postal.js as the dep name
 
 ## v0.4.0
