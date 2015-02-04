@@ -255,9 +255,11 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 ## Dependencies
 
 * [ReactJS](http://facebook.github.io/react/) (NOTE: ReactJS is a *peer dependency*. You will need to make sure you include it in your project's dependencies.)
-* [traceur](https://github.com/google/traceur-compiler) (lux is written in ES6, so it depends on the traceur runtime lib for non-ES6 environments)
 * [postal](https://github.com/postaljs/postal.js)
 * [machina](https://github.com/ifandelse/machina.js)
+* [6to5 polyfill](https://6to5.org/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the 6to5 polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) 6to5 is a peer dependency of lux.
+
+>NOTE: If you're using bower, you will need to grab the 6to5 polyfill and include it manually. If you're using npm, you will need to `npm install 6to5` in your project.
 
 ## Installation & Example
 

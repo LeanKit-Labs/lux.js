@@ -12,8 +12,7 @@ module.exports = {
 			}
 		],
 		loaders: [
-			{ test: /sinon.*\.js/, loader: "imports?define=>false" },
-			{ test: /\.spec.js/, loader: "webpack-traceur?sourceMaps" }
+			{ test: /sinon.*\.js/, loader: "imports?define=>false" }
 		]
 	},
 	resolve: {
@@ -21,7 +20,6 @@ module.exports = {
 			"when.parallel": "when/parallel",
 			"when.pipeline": "when/pipeline",
 			react          : "react/dist/react-with-addons.js",
-			traceur        : "traceur/bin/traceur-runtime",
 			lux            : path.join( __dirname, "./lib/lux.js")
 		}
 	}

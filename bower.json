@@ -40,7 +40,6 @@
   "dependencies": {
     "react": ">=0.12.2",
     "postal.js": "~0.12.3",
-    "traceur": "0.0.81",
     "machina": "~1.0.0-1",
     "lodash": "2.4.1"
   },

@@ -1,8 +1,6 @@
 {
   "name": "lux.js-example-app",
-  "publishConfig": {
-    "registry": "http://162.242.242.199:4873/"
-  },
+  "private": true,
   "version": "0.0.1",
   "description": "lux.js example application",
   "main": "src/index.js",
@@ -10,12 +8,12 @@
     "start": "gulp"
   },
   "dependencies": {
+    "6to5": "^3.3.10",
     "express": "^4.11.0",
     "lodash": "^2.4.1",
     "machina": "~1.0.0-1",
     "postal": "^0.12.3",
     "react": ">=0.12.2",
-    "traceur": "0.0.81",
     "when": "^3.6.4"
   },
   "devDependencies": {

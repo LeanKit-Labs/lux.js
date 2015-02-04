@@ -1,6 +1,5 @@
 var gulp = require( "gulp" );
 var sourcemaps = require( "gulp-sourcemaps" );
-var traceur = require( "gulp-traceur" );
 var rename = require( "gulp-rename" );
 var header = require( "gulp-header" );
 var imports = require( "gulp-imports" );
@@ -8,6 +7,7 @@ var pkg = require( "./package.json" );
 var hintNot = require( "gulp-hint-not" );
 var uglify = require( "gulp-uglify" );
 var _ = require("lodash");
+var to5 = require("gulp-6to5");
 
 var banner = [ "/**",
 	" * <%= pkg.name %> - <%= pkg.description %>",
@@ -22,17 +22,13 @@ gulp.task("default", function() {
 	return gulp.src( "src/lux.js" )
 		.pipe( imports() )
 		.pipe( hintNot() )
-		.pipe( sourcemaps.init() )
 		.pipe( header( banner, {
 			pkg: pkg
 		} ) )
 		.pipe( rename( "lux-es6.js" ) )
 		.pipe( gulp.dest( "lib/" ) )
-		.pipe( traceur( {
-			script: "lux",
-			outputLanguage: "es5",
-			arrayComprehension: true
-		} ) )
+		.pipe( sourcemaps.init() )
+		.pipe( to5( { experimental: true } ) )
 		.pipe( header( banner, {
 			pkg: pkg
 		} ) )

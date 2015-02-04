@@ -1,5 +1,5 @@
 // Setup for running Mocha via Node
-var traceur = require( "traceur" );
+require("6to5/polyfill");
 var jsdom = require( "jsdom" ).jsdom;
 global.document = jsdom( "<html><body></body></html>" );
 global.window = document.parentWindow;
@@ -8,12 +8,6 @@ global.window = document.parentWindow;
 global.navigator = { userAgent: "Not Chrom3" };
 
 require( "should/should" );
-
-require( "traceur-source-maps" ).install( traceur );
-traceur.require.makeDefault( function( filename ) {
-	// only transpile the spec files
-	return filename.indexOf( "node_modules" ) === -1 && filename.indexOf( "spec.js" ) > -1;
-} );
 
 global.React = require( "react/dist/react-with-addons" );
 global.utils = global.React.addons.TestUtils;

@@ -76,25 +76,24 @@ describe( "luxJS - Actions", function() {
 		} );
 
 		it( "Should overwrite any existing action", function() {
-			var actionName = "overwrite-custom-action";
 			var handlerOne = function() {};
 			var handlerTwo = function() {};
 			var customAction = {
-				[ actionName ]: handlerOne
+				"overwrite-custom-action": handlerOne
 			};
 
 			lux.customActionCreator( customAction );
 
 			// overwrite action
-			customAction[ actionName ] = handlerTwo;
+			customAction[ "overwrite-custom-action" ] = handlerTwo;
 			lux.customActionCreator( customAction );
 
 			var actionCreator = lux.actionCreator( {
-				getActions: actionName
+				getActions: "overwrite-custom-action"
 			} );
 
 			// ensure that the method is the newly overwritten one
-			actionCreator[ actionName ].should.equal( handlerTwo );
+			actionCreator[ "overwrite-custom-action" ].should.equal( handlerTwo );
 		} );
 
 		it( "Should not be overwritten by automatic action creation", function() {

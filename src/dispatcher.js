@@ -100,10 +100,9 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	handleActionDispatch( data ) {
-		var stuff = _.pick( this.getStoresHandling( data.actionType ), [ "stores", "generations" ]);
 		var luxAction = Object.assign(
 			{ action: data, generationIndex: 0, updated: [] },
-			stuff
+			this.getStoresHandling( data.actionType )
 		);
 		this.handle( luxAction, "action.dispatch" );
 	}
