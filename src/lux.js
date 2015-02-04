@@ -114,7 +114,6 @@
 	//import("./actionCreator.js");
 	//import("./mixins.js");
 	//import("./store.js");
-	//import("./actionCoordinator.js");
 	//import("./dispatcher.js");
 	//import("./utils.js");
 
