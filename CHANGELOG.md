@@ -1,3 +1,11 @@
+## v0.5.0
+
+* Removed ActionCoordinator, refactored Dispatcher to be a BehavioralFsm
+* Added test to verify that store handler exceptions are not swallowed by lux
+* Updated README to remove ActionCoordinator references
+* Using 6to5 now for ES5 transpiling
+* Updated README with info on 6to5 dependency.
+
 ## v0.4.1
 
 * Updated to support machina 1.0. ActionCoordinator is now a BehavioralFsm.
