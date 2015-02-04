@@ -18,7 +18,7 @@ var banner = [ "/**",
 	" */",
 	"" ].join( "\n" );
 
-gulp.task("default", function() {
+gulp.task( "build:es6", function () {
 	return gulp.src( "src/lux.js" )
 		.pipe( imports() )
 		.pipe( hintNot() )
@@ -27,6 +27,12 @@ gulp.task("default", function() {
 		} ) )
 		.pipe( rename( "lux-es6.js" ) )
 		.pipe( gulp.dest( "lib/" ) )
+});
+
+gulp.task("build:es5", function() {
+	return gulp.src( "src/lux.js" )
+		.pipe( imports() )
+		.pipe( hintNot() )
 		.pipe( sourcemaps.init() )
 		.pipe( to5( { experimental: true } ) )
 		.pipe( header( banner, {
@@ -46,6 +52,8 @@ gulp.task("default", function() {
 		.pipe( rename( "lux.min.js" ) )
 		.pipe( gulp.dest( "lib/" ) );
 });
+
+gulp.task( "default", [ "build:es6", "build:es5" ] );
 
 function runTests( options, done ) {
 	var karma = require( "karma" ).server;
