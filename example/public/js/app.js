@@ -1,6 +1,6 @@
 define( [
+	"6to5/polyfill",
 	"react",
-	"traceur",
 	"lux",
 	"postal",
 	"when",
@@ -8,7 +8,7 @@ define( [
 	"./stores/boardData.json",
 	"./stores/fakeApi",
 	"imports?jQuery=jquery!mockjax"
-], function( React, traceur, lux, postal, when, $, mockData) {
+], function( to5, React, lux, postal, when, $, mockData) {
 	// For Devtools, etc.
 	window.React = React;
 	window.lux = lux;

@@ -44,24 +44,24 @@
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {
+    "6to5": "~3.3.10",
     "react": ">=0.12.2"
   },
   "dependencies": {
-    "postal": "~0.12.3",
-    "traceur": "0.0.81",
+    "lodash": "2.4.1",
     "machina": "~1.0.0-1",
-    "lodash": "2.4.1"
+    "postal": "~0.12.3"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
     "gulp": "^3.8.8",
+    "gulp-6to5": "^3.0.0",
     "gulp-header": "^1.0.5",
     "gulp-hint-not": "0.0.3",
     "gulp-imports": "0.0.3",
     "gulp-rename": "^1.2.0",
     "gulp-sourcemaps": "^1.1.1",
     "gulp-spawn-mocha": "^0.5.2",
-    "gulp-traceur": "^0.15.0",
     "gulp-uglify": "^1.0.1",
     "imports-loader": "^0.6.3",
     "istanbul": "^0.3.2",
@@ -82,10 +82,8 @@
     "sinon": "~1.11.0",
     "source-map-loader": "^0.1.3",
     "source-map-support": "LeanKit-Labs/node-source-map-support#isbrowser-fix",
-    "traceur-source-maps": "^1.0.6",
     "webpack": "^1.4.8",
-    "webpack-dev-server": "^1.6.5",
-    "webpack-traceur-loader": "^0.3.0"
+    "webpack-dev-server": "^1.6.5"
   },
   "engines": {
     "node": ">=0.10.0"

@@ -27,7 +27,6 @@ module.exports = {
       conduitjs      : path.join( __dirname, "./node_modules/conduitjs/lib/conduit.js" ),
       postal         : path.join( __dirname, "./node_modules/postal/lib/postal.js" ),
       "postal.request-response" : path.join( __dirname, "./node_modules/postal.request-response/lib/postal.request-response.js" ),
-      traceur        : path.join( __dirname, "./node_modules/traceur/bin/traceur-runtime.js"),
       lux            : path.join( __dirname, "../lib/lux.js"),
       jquery         : path.join( __dirname, "./node_modules/jquery/dist/jquery.js"),
       mockjax        : path.join( __dirname, "./node_modules/jquery-mockjax/jquery.mockjax.js"),

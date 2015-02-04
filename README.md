@@ -9,8 +9,8 @@ luxJS is an *opinionated* implementation of a [Flux](http://facebook.github.io/f
 * Store state should never *ever* **EVER** be mutated directly. In fact, it's only possible to mutate store state inside a store's action handler. For mutable operations, you should ONLY communicate with a store via the Dispatcher (using an action creator API), or an equivalent message-capable API that follows the lux message contracts for these operations.
 * Stores can be used for read operations by other modules.
 * ActionCreator APIs generate message payloads that are routed to the Dispatcher, which coordinates when and how the stores are told to handle the actions.
-* The Dispatcher spins up an ActionCoordinator for any action being processed. The ActionCoordinator ensures that all stores involved in an action perform their tasks in the correct order.
-* Once all stores involved in processing an action have completed their tasks, the ActionCoordinator signals (via msg) that it's OK for the stores send change notifications.
+* The Dispatcher ensures that all stores involved in an action perform their tasks in the correct order.
+* Once all stores involved in processing an action have completed their tasks, the Dispatcher signals (via msg) that it's OK for the stores send change notifications.
 * ControllerViews (see below) that are wired up to listen to specific stores will receive their updates, etc.
 
 ### The Pieces
@@ -106,10 +106,7 @@ var Lane = lux.component({
 I'm glad you asked. We use normal React components for those concerns. Lux is there to *complement*, not take the place of nor hide React.
 
 #### Dispatcher
-The Dispatcher listens for actions that are dispatched by Components using ActionCreator APIs. Underneath, it's an FSM. You don't have to do anything special, lux creates a single dispatcher instance for you.
-
-#### ActionCoordinator
-The Dispatcher hands actions off to a single ActionCoordinator instance (it's a behavioral FSM, so it can be re-used for all actions). A tree structure of stores and other relevant action metadata is passed to the ActionCoordinator. The store action handlers are invoked in the correct order, based on any dependencies that might exist. Once complete, the ActionCoordinator tells the stores to notify any listening components of state changes. You do not have to create an ActionCoordinator, an instance will be created for you as lux is loaded.
+The Dispatcher listens for actions that are dispatched by Components using ActionCreator APIs. Underneath, it's a [`BehavioralFSM`](https://github.com/ifandelse/machina.js/wiki/machina.BehavioralFsm). You don't have to do anything special, lux creates a single dispatcher instance for you.
 
 #### Store
 A store should contain your data as well as any business logic related to that data. A lux Store can be created by using the Store constructor (i.e. - `var store = new lux.Store({ /* options */ })`. A store should always have a `namespace` (just a logical name for it) and it will have any number of action `handlers`. What you name an action handler on a store is important, as the same name will be used on the corresponding ActionCreator API. If a store action handler returns false explicitly, it tells the action coordinator that the state of the store didn't change. However, returning undefined or *any other value* will result in the action coordinator assuming a change to the store state occurred during the handler's operations. Stores contain the following methods:
@@ -258,9 +255,11 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 ## Dependencies
 
 * [ReactJS](http://facebook.github.io/react/) (NOTE: ReactJS is a *peer dependency*. You will need to make sure you include it in your project's dependencies.)
-* [traceur](https://github.com/google/traceur-compiler) (lux is written in ES6, so it depends on the traceur runtime lib for non-ES6 environments)
 * [postal](https://github.com/postaljs/postal.js)
 * [machina](https://github.com/ifandelse/machina.js)
+* [6to5 polyfill](https://6to5.org/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the 6to5 polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) 6to5 is a peer dependency of lux.
+
+>NOTE: If you're using bower, you will need to grab the 6to5 polyfill and include it manually. If you're using npm, you will need to `npm install 6to5` in your project.
 
 ## Installation & Example
 

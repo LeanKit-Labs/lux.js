@@ -3,12 +3,11 @@
 ( function( root, factory ) {
 	if ( typeof define === "function" && define.amd ) {
 		// AMD. Register as an anonymous module.
-		define( [ "traceur", "react", "postal", "machina", "lodash" ], factory );
+		define( [ "react", "postal", "machina", "lodash" ], factory );
 	} else if ( typeof module === "object" && module.exports ) {
 		// Node, or CommonJS-Like environments
 		module.exports = function( React, postal, machina, lodash ) {
 			return factory(
-				require("traceur"),
 				React || require("react"),
 				postal || require("postal"),
 				machina || require("machina"),
@@ -17,7 +16,11 @@
 	} else {
 		throw new Error("Sorry - luxJS only support AMD or CommonJS module environments.");
 	}
-}( this, function( traceur, React, postal, machina, _ ) {
+}( this, function( React, postal, machina, _ ) {
+
+	if ( !( typeof global === "undefined" ? window : global )._6to5Polyfill ) {
+		throw new Error("You must include the 6to5 polyfill on your page before lux is loaded. See https://6to5.org/docs/usage/polyfill/ for more details.");
+	}
 
 	var actionChannel = postal.channel("lux.action");
 	var storeChannel = postal.channel("lux.store");
@@ -25,7 +28,7 @@
 	var stores = {};
 
 	// jshint ignore:start
-	function* entries(obj) {
+	var entries = function* (obj) {
 		if([ "object", "function" ].indexOf(typeof obj) === -1) {
 			obj = {};
 		}
@@ -114,7 +117,6 @@
 	//import("./actionCreator.js");
 	//import("./mixins.js");
 	//import("./store.js");
-	//import("./actionCoordinator.js");
 	//import("./dispatcher.js");
 	//import("./utils.js");
 

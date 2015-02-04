@@ -547,7 +547,6 @@ describe( "luxJS - Store", function() {
 			creator.noChange();
 			onChange.callCount.should.equal( 2 );
 			store.dispose();
-
 		} );
 		it( "Should publish a 'changed' message when flush is called and there are changes", function() {
 			var handler = sinon.spy();
@@ -565,6 +564,24 @@ describe( "luxJS - Store", function() {
 			handler.calledOnce.should.be.true;
 			store.dispose();
 		} );
+		it( "Should not swallow exceptions if one occurs in a store handler", function() {
+			var store = storeFactory( {
+				handlers: {
+					taseMeBro: function() {
+						throw new Error("Don't Tase Me Bro!");
+					},
+				}
+			} );
+
+			var creator = lux.actionCreator( {
+				getActions: [ "taseMeBro" ]
+			} );
+
+			(function() {
+				creator.taseMeBro();
+			}).should.throw;
+			store.dispose();
+		});
 	} );
 	describe( "When removing a Store", function() {
 		it( "Should remove all subscriptions", function() {

@@ -5,7 +5,6 @@ describe( "luxJS - Actions", function() {
 		describe( "When creating a new action group", function() {
 			it( "Should create the action group", function() {
 				var groupName = "add-group-create";
-
 				lux.addToActionGroup( groupName, [] );
 				lux.getActionGroup( groupName ).should.be.an.Object;
 			} );
