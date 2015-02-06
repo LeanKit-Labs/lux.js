@@ -177,6 +177,25 @@ describe( "luxJS - Mixins", function() {
 				creator.publishAction( "one" );
 				onChange.callCount.should.equal( 1 );
 			});
+			it( "Should cleanup properly for a namespace that has dot-separated pieces, when teardown is called", function () {
+				storeFactory({ namespace: "teardown.store" })
+				var onChange = sinon.spy();
+				var obj = {
+					stores: {
+						listenTo: [ "teardown.store" ],
+						onChange: onChange
+					}
+				};
+				lux.mixin(obj, lux.mixin.store);
+
+				creator.publishAction( "one" );
+				onChange.callCount.should.equal( 1 );
+
+				obj.luxCleanup();
+
+				creator.publishAction( "one" );
+				onChange.callCount.should.equal( 1 );
+			});
 		});
 
 		describe( "When using the React mixin", function () {
