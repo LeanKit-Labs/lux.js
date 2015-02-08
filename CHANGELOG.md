@@ -1,3 +1,7 @@
+## v0.5.1
+
+* Fixed issue where subscriptions to changes for dot-separated store namespaces were not cleaned up properly.
+
 ## v0.5.0
 
 * Removed ActionCoordinator, refactored Dispatcher to be a BehavioralFsm

@@ -39,9 +39,9 @@
   ],
   "dependencies": {
     "react": ">=0.12.2",
-    "postal.js": "~0.12.3",
+    "postal.js": "~1.0.0",
     "machina": "~1.0.0-1",
-    "lodash": "2.4.1"
+    "lodash": "3.1.0"
   },
   "licenses": [
     {

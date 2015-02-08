@@ -48,9 +48,9 @@
     "react": ">=0.12.2"
   },
   "dependencies": {
-    "lodash": "2.4.1",
+    "lodash": "3.1.0",
     "machina": "~1.0.0-1",
-    "postal": "~0.12.3"
+    "postal": "~1.0.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
