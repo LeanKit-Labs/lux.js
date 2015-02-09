@@ -69,7 +69,7 @@ gulp.task( "test", function ( done ) {
 	// There are issues with the osx reporter keeping
 	// the node process running, so this forces the main
 	// test task to not show errors in a notification
-	runTests( { reporters: [ "story" ] }, function ( err ) {
+	runTests( { reporters: [ "spec" ] }, function ( err ) {
 		if ( err !== 0 ) {
 			// Exit with the error code
 			process.exit( err );

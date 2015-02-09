@@ -1,5 +1,6 @@
 // Setup for when running with Karma
 require( "should/should" );
+require( "6to5/polyfill" );
 window.React = require("react");
 window.utils = window.React.addons.TestUtils;
 window.postal = require("postal");
