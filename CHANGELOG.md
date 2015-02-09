@@ -1,3 +1,7 @@
+## v0.5.2
+
+* Update postal and lodash dependencies
+
 ## v0.5.1
 
 * Fixed issue where subscriptions to changes for dot-separated store namespaces were not cleaned up properly.
