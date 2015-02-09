@@ -133,7 +133,7 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	createSubscribers() {
-		if(!this.__subscriptions || !this.__subscriptions.length) {
+		if ( !this.__subscriptions || !this.__subscriptions.length ) {
 			this.__subscriptions = [
 				configSubscription(
 					this,
@@ -145,13 +145,16 @@ class Dispatcher extends machina.BehavioralFsm {
 				dispatcherChannel.subscribe(
 					"*.handled.*",
 					( data ) => this.handle( this.actionContext, "action.handled", data )
-				)
+				).constraint( () => !!this.actionContext )
 			];
 		}
 	}
 
 	dispose() {
-		this.__subscriptions.forEach( ( subscription ) => subscription.unsubscribe() );
+		if ( this.__subscriptions ) {
+			this.__subscriptions.forEach( ( subscription ) => subscription.unsubscribe() );
+			this.__subscriptions = null;
+		}
 	}
 }
 
