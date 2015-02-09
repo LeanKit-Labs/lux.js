@@ -13,6 +13,10 @@ describe( "luxJS - Dispatcher", function() {
 		handler.reset();
 	} );
 
+	afterEach( function() {
+		dispatcher.dispose();
+	} );
+
 	it( "should dispatch actions to store action listeners", function() {
 		dispatcher.registerStore( {
 			namespace: "alpha",
@@ -151,5 +155,23 @@ describe( "luxJS - Dispatcher", function() {
 		handler.calledOnce.should.be.true;
 		handler.lastCall.args[ 0 ].action.actionType.should.equal( testAction );
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
+	} );
+
+	it( "should ignore handled messages when there is no current actionContext", function() {
+		dispatcher.handle = sinon.spy();
+
+		dispatcherChannel.publish( "alpha.handled.test" )
+
+		dispatcher.handle.notCalled.should.be.ok;
+	} );
+
+	it( "should unsubscribe and remove all subscriptions when disposed", function() {
+		var subscriptions = dispatcher.__subscriptions.slice();
+
+		dispatcher.dispose();
+
+		subscriptions.forEach( ( sub ) => sub.inactive.should.be.ok );
+
+		( dispatcher.__subscriptions === null ).should.be.ok;
 	} );
 } );
