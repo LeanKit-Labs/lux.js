@@ -1,3 +1,9 @@
+## v0.5.3
+
+* Ignore handled messages when dispatcher does not have internal context.
+* Clear dispatcher subscriptions after unsubscribing in dispose.
+
+
 ## v0.5.2
 
 * Update postal and lodash dependencies
