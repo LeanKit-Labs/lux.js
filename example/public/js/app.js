@@ -29,18 +29,8 @@ define( [
 		}
 	});
 
-	lux.customActionCreator({
-		loadBoard: function(id) {
-			postal.publish({
-				channel: "lux.action",
-				topic: "execute.loadBoard",
-				data: {
-					actionType: "loadBoard",
-					actionArgs: [id],
-				}
-			});
-		}
-	});
+	var api = lux.actionCreator({ getActionGroup: ["api"] });
+	api.loadBoard( 304355117 );
 
 	require( [
 		"boardStore",
@@ -55,7 +45,7 @@ define( [
 		window.boardStore = boardStore;
 		window.logger = new OtherLogger();
 		React.renderComponent(
-			LaneSelector({ boardId: 304355117 }),
+			LaneSelector(),
 			document.getElementById( "lane-selector" )
 		);
 		React.renderComponent(
