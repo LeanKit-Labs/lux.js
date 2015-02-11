@@ -14,21 +14,15 @@ define( [
  function( React, lux, _, LaneSelectorTable, LaneSelectorRow, LaneSelectorCell, Lane, postal, boardStore ) {
 	var LaneSelector = lux.controllerView( {
 		displayName: "LaneSelector",
-		getActionGroup: ["api"],
 		stores: {
 			listenTo: ["board"],
 			onChange: function() {
-				var newState = boardStore.getBoard(this.props.boardId);
+				var newState = boardStore.getCurrentBoard();
 				this.setState(newState);
-			},
-			immediate: true
+			}
 		},
 		getInitialState: function() {
-			return { lanes: [] };
-		},
-		componentWillMount: function() {
-			window.laneSelector = this;
-			this.loadBoard( this.props.boardId );
+			return boardStore.getCurrentBoard() || { lanes: [] };
 		},
 		render: function() {
 			var siblingSize = this.state.lanes.length;

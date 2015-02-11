@@ -1,13 +1,13 @@
 /* global entries, machina, ActionCoordinator, configSubscription, actionChannel, storeChannel */
 /* jshint -W098 */
-function calculateGen(store, lookup, gen, actionType) {
+function calculateGen( store, lookup, gen, actionType ) {
 	var calcdGen = gen;
-	if (store.waitFor && store.waitFor.length) {
-		store.waitFor.forEach(function(dep) {
-			var depStore = lookup[dep];
-			if(depStore) {
-				var thisGen = calculateGen(depStore, lookup, gen + 1);
-				if (thisGen > calcdGen) {
+	if ( store.waitFor && store.waitFor.length ) {
+		store.waitFor.forEach( function( dep ) {
+			var depStore = lookup[ dep ];
+			if( depStore ) {
+				var thisGen = calculateGen( depStore, lookup, gen + 1 );
+				if ( thisGen > calcdGen ) {
 					calcdGen = thisGen;
 				}
 			} /*else {
@@ -24,20 +24,20 @@ function calculateGen(store, lookup, gen, actionType) {
 function buildGenerations( stores, actionType ) {
 	var tree = [];
 	var lookup = {};
-	stores.forEach((store) => lookup[store.namespace] = store);
-	stores.forEach((store) => store.gen = calculateGen(store, lookup, 0, actionType));
-	for (var [key, item] of entries(lookup)) {
-		tree[item.gen] = tree[item.gen] || [];
-		tree[item.gen].push(item);
+	stores.forEach( ( store ) => lookup[ store.namespace ] = store );
+	stores.forEach( ( store ) => store.gen = calculateGen( store, lookup, 0, actionType ) );
+	for ( var [ key, item ] of entries( lookup ) ) {
+		tree[ item.gen ] = tree[ item.gen ] || [];
+		tree[ item.gen ].push( item );
 	}
 	return tree;
 }
 
-function processGeneration(generation, action) {
-	generation.map((store) => {
-		var data = Object.assign({
-			deps: pluck(this.stores, store.waitFor)
-		}, action);
+function processGeneration( generation, action ) {
+	generation.map( ( store ) => {
+		var data = Object.assign( {
+			deps: _.pick( this.stores, store.waitFor )
+		}, action );
 		dispatcherChannel.publish(
 			`${store.namespace}.handle.${action.actionType}`,
 			data
@@ -48,7 +48,7 @@ function processGeneration(generation, action) {
 class Dispatcher extends machina.BehavioralFsm {
 	constructor() {
 		this.actionContext = undefined;
-		super({
+		super( {
 			initialState: "ready",
 			actionMap: {},
 			states: {
@@ -76,7 +76,7 @@ class Dispatcher extends machina.BehavioralFsm {
 						}
 					},
 					_onExit: function( luxAction ) {
-						dispatcherChannel.publish("prenotify", { stores: luxAction.updated });
+						dispatcherChannel.publish( "prenotify", { stores: luxAction.updated } );
 					}
 				},
 				notifying: {
@@ -133,7 +133,7 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	createSubscribers() {
-		if ( !this.__subscriptions || !this.__subscriptions.length ) {
+		if( !this.__subscriptions || !this.__subscriptions.length ) {
 			this.__subscriptions = [
 				configSubscription(
 					this,

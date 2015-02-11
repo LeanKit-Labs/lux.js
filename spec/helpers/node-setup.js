@@ -1,5 +1,5 @@
 // Setup for running Mocha via Node
-require("6to5/polyfill");
+require( "6to5/polyfill" );
 var jsdom = require( "jsdom" ).jsdom;
 global.document = jsdom( "<html><body></body></html>" );
 global.window = document.parentWindow;
@@ -9,7 +9,7 @@ global.navigator = { userAgent: "Not Chrom3" };
 
 require( "should/should" );
 
-require("6to5/register");
+require( "6to5/register" );
 
 global.React = require( "react/dist/react-with-addons" );
 global.utils = global.React.addons.TestUtils;

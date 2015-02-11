@@ -1,8 +1,20 @@
-/* global describe, it, before, sinon, lux, utils, luxStoreCh */
+/* global describe, it, before, after, sinon, lux, utils, luxStoreCh, _ */
 
 describe( "luxJS - Actions", function() {
 	describe( "When calling addToActionGroup", function() {
 		describe( "When creating a new action group", function() {
+			before( function() {
+				lux.customActionCreator({
+					one: function() {},
+					two: function() {},
+					three: function() {},
+				});
+			} );
+			after( function() {
+				_.each(lux.actions, function(v, k) {
+					delete lux.actions[k];
+				});
+			} );
 			it( "Should create the action group", function() {
 				var groupName = "add-group-create";
 				lux.addToActionGroup( groupName, [] );
@@ -22,11 +34,32 @@ describe( "luxJS - Actions", function() {
 				var groupName = "add-group-actions-string";
 
 				lux.addToActionGroup( groupName, actionList );
-				lux.getActionGroup( groupName ).should.have.properties( actionList )
+				lux.getActionGroup( groupName ).should.have.properties( actionList );
+			} );
+
+			it( "Should throw an exception if invalid action names are used", function() {
+				var actionList = [ "one", "two", "three", "shfifty" ];
+				var groupName = "Not-gonna-happen";
+
+				(function() {
+					lux.addToActionGroup( groupName, actionList );
+				}).should.throw();
 			} );
 		} );
 
 		describe( "When adding to an existing action group", function() {
+			before( function() {
+				lux.customActionCreator({
+					one: function() {},
+					two: function() {},
+					three: function() {},
+				});
+			} );
+			after( function() {
+				_.each(lux.actions, function(v, k) {
+					delete lux.actions[k];
+				});
+			} );
 			it( "Should add the actions to the group", function() {
 				var actionList = [ "one", "two", "three" ];
 				var groupName = "add-group-existing-actions-string";
@@ -52,6 +85,15 @@ describe( "luxJS - Actions", function() {
 				// based on how results are plucked, can't tell that existing action was ignored
 				// verify that all three actions are returned anyways
 				lux.getActionGroup( groupName ).should.have.properties( actionList );
+			} );
+
+			it( "Should throw an exception if invalid action names are used", function() {
+				var actionList = [ "one", "two", "three", "shfifty" ];
+				var groupName = "Not-gonna-happen";
+
+				(function() {
+					lux.addToActionGroup( groupName, actionList );
+				}).should.throw();
 			} );
 
 		} );

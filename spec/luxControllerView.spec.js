@@ -2,30 +2,34 @@
 
 describe( "luxJS - Controller Views", function() {
 	var fakeStore, fakeStore2;
-	before(function(){
-		fakeStore = new lux.Store({
+	before( function() {
+		fakeStore = new lux.Store( {
 			state: {},
 			namespace: "fakeStore",
 			handlers: {
-				doYourControllerViewThing: function() { },
-				doYourFakeStoreThing: function() { },
-				dontChange: function() { return false; }
+				doYourControllerViewThing: function() {},
+				doYourFakeStoreThing: function() {},
+				dontChange: function() {
+					return false;
+				}
 			}
-		});
-		fakeStore2 = new lux.Store({
+		} );
+		fakeStore2 = new lux.Store( {
 			state: {},
 			namespace: "fakeStore2",
 			handlers: {
-				doYourControllerViewThing: function() { },
-				dontChange: function() { return false; }
+				doYourControllerViewThing: function() {},
+				dontChange: function() {
+					return false;
+				}
 			}
-		});
-		lux.addToActionGroup("fakeyactiongroup", [ "doYourControllerViewThing" ]);
-	});
-	after(function () {
+		} );
+		lux.addToActionGroup( "fakeyactiongroup", [ "doYourControllerViewThing" ] );
+	} );
+	after( function() {
 		fakeStore.dispose();
 		fakeStore2.dispose();
-	});
+	} );
 	describe( "When Instantiating a lux Controller View", function() {
 		var ControllerView;
 		var innerRef;
@@ -47,53 +51,53 @@ describe( "luxJS - Controller Views", function() {
 			mocked = utils.renderIntoDocument( React.createElement( ControllerView ) );
 		}
 
-		before( function () {
-			creator = lux.actionCreator({});
-		});
+		before( function() {
+			creator = lux.actionCreator( {} );
+		} );
 
 		describe( "When Listening to One Store", function() {
 			var onChange;
-			beforeEach( function () {
+			beforeEach( function() {
 				onChange = sinon.spy();
-				controllerViewFactory({
+				controllerViewFactory( {
 					stores: {
 						listenTo: "fakeStore",
 						onChange: onChange
 					}
-				});
-			});
-			it("Should invoke onChange when a store updates", function () {
+				} );
+			} );
+			it( "Should invoke onChange when a store updates", function() {
 				creator.publishAction( "doYourControllerViewThing" );
 				onChange.calledOnce.should.be.true;
-			});
-			it("Should not invoke onChange if the store has not changed", function () {
+			} );
+			it( "Should not invoke onChange if the store has not changed", function() {
 				creator.publishAction( "dontChange" );
 				onChange.calledOnce.should.be.false;
-			});
-		});
+			} );
+		} );
 		describe( "When Listening to Multiple Stores", function() {
 			var onChange;
-			beforeEach( function () {
+			beforeEach( function() {
 				onChange = sinon.spy();
-				controllerViewFactory({
+				controllerViewFactory( {
 					stores: {
 						listenTo: [ "fakeStore", "fakeStore2" ],
 						onChange: onChange
 					}
-				});
-			});
-			it("Should invoke onChange once after both stores have updated", function () {
+				} );
+			} );
+			it( "Should invoke onChange once after both stores have updated", function() {
 				creator.publishAction( "doYourControllerViewThing" );
 				onChange.calledOnce.should.be.true;
-			});
-			it("Should invoke onChange if only one store is affected by an action", function () {
+			} );
+			it( "Should invoke onChange if only one store is affected by an action", function() {
 				creator.publishAction( "doYourFakeStoreThing" );
 				onChange.calledOnce.should.be.true;
-			});
-			it("Should not invoke onChange if neither store changed", function () {
+			} );
+			it( "Should not invoke onChange if neither store changed", function() {
 				creator.publishAction( "dontChange" );
 				onChange.calledOnce.should.be.false;
-			});
-		});
-	});
-});
+			} );
+		} );
+	} );
+} );

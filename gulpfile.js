@@ -26,7 +26,7 @@ gulp.task( "build:es6", function () {
 			pkg: pkg
 		} ) )
 		.pipe( rename( "lux-es6.js" ) )
-		.pipe( gulp.dest( "lib/" ) )
+		.pipe( gulp.dest( "lib/" ) );
 });
 
 gulp.task("build:es5", function() {

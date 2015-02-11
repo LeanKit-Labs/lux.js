@@ -1,13 +1,13 @@
 
-/* global storeChannel, pluck, generateActionCreator, actions, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
+/* global storeChannel, generateActionCreator, actions, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
 *                 Store Mixin                *
 **********************************************/
-function gateKeeper(store, data) {
+function gateKeeper( store, data ) {
 	var payload = {};
-	payload[store] = true;
+	payload[ store ] = true;
 	var __lux = this.__lux;
 
 	var found = __lux.waitFor.indexOf( store );
@@ -18,10 +18,10 @@ function gateKeeper(store, data) {
 
 		if ( __lux.waitFor.length === 0 ) {
 			__lux.heardFrom = [];
-			this.stores.onChange.call(this, payload);
+			this.stores.onChange.call( this, payload );
 		}
 	} else {
-		this.stores.onChange.call(this, payload);
+		this.stores.onChange.call( this, payload );
 	}
 }
 
@@ -33,32 +33,32 @@ function handlePreNotify( data ) {
 
 var luxStoreMixin = {
 	setup: function () {
-		var __lux = ensureLuxProp(this);
-		var stores = this.stores = (this.stores || {});
+		var __lux = ensureLuxProp( this );
+		var stores = this.stores = ( this.stores || {} );
 
 		if ( !stores.listenTo ) {
-			throw new Error(`listenTo must contain at least one store namespace`);
+			throw new Error( `listenTo must contain at least one store namespace` );
 		}
 
-		var listenTo = typeof stores.listenTo === "string" ? [stores.listenTo] : stores.listenTo;
+		var listenTo = typeof stores.listenTo === "string" ? [ stores.listenTo ] : stores.listenTo;
 
 		if ( !stores.onChange ) {
-			throw new Error(`A component was told to listen to the following store(s): ${listenTo} but no onChange handler was implemented`);
+			throw new Error( `A component was told to listen to the following store(s): ${listenTo} but no onChange handler was implemented` );
 		}
 
 		__lux.waitFor = [];
 		__lux.heardFrom = [];
 
-		listenTo.forEach((store) => {
-			__lux.subscriptions[`${store}.changed`] = storeChannel.subscribe(`${store}.changed`, () => gateKeeper.call(this, store));
+		listenTo.forEach( ( store ) => {
+			__lux.subscriptions[ `${store}.changed` ] = storeChannel.subscribe( `${store}.changed`, () => gateKeeper.call( this, store ) );
 		});
 
-		__lux.subscriptions.prenotify = dispatcherChannel.subscribe("prenotify", (data) => handlePreNotify.call(this, data));
+		__lux.subscriptions.prenotify = dispatcherChannel.subscribe( "prenotify", ( data ) => handlePreNotify.call( this, data ) );
 	},
 	teardown: function () {
-		for(var [key, sub] of entries(this.__lux.subscriptions)) {
+		for( var [ key, sub ] of entries( this.__lux.subscriptions ) ) {
 			var split;
-			if(key === "prenotify" || (( split = key.split(".")) && split.pop() === "changed" )) {
+			if( key === "prenotify" || ( ( split = key.split( "." ) ) && split.pop() === "changed" ) ) {
 				sub.unsubscribe();
 			}
 		}
@@ -89,22 +89,22 @@ var luxActionCreatorMixin = {
 			this.getActions = [ this.getActions ];
 		}
 
-		var addActionIfNotPreset = (k, v) => {
-			if(!this[k]) {
-					this[k] = v;
+		var addActionIfNotPresent = ( k, v ) => {
+			if( !this[ k ] ) {
+					this[ k ] = v;
 				}
 		};
-		this.getActionGroup.forEach((group) => {
-			for(var [k, v] of entries(getActionGroup(group))) {
-				addActionIfNotPreset(k, v);
+		this.getActionGroup.forEach( ( group ) => {
+			for( var [ k, v ] of entries( getActionGroup( group ) ) ) {
+				addActionIfNotPresent( k, v );
 			}
 		});
 
-		if(this.getActions.length) {
+		if( this.getActions.length ) {
 			this.getActions.forEach( function ( key ) {
 				var val = actions[ key ];
 				if ( val ) {
-					addActionIfNotPreset(key, val);
+					addActionIfNotPresent( key, val );
 				} else {
 					throw new Error( `There is no action named '${key}'` );
 				}
@@ -112,14 +112,14 @@ var luxActionCreatorMixin = {
 		}
 	},
 	mixin: {
-		publishAction: function(action, ...args) {
-			actionChannel.publish({
+		publishAction: function( action, ...args ) {
+			actionChannel.publish( {
 				topic: `execute.${action}`,
 				data: {
 					actionType: action,
 					actionArgs: args
 				}
-			});
+			} );
 		}
 	}
 };
@@ -132,22 +132,22 @@ var luxActionCreatorReactMixin = {
 /*********************************************
 *            Action Listener Mixin           *
 **********************************************/
-var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, topic } = {}) {
+var luxActionListenerMixin = function( { handlers, handlerFn, context, channel, topic } = {} ) {
 	return {
 		setup() {
 			context = context || this;
-			var __lux = ensureLuxProp(context);
+			var __lux = ensureLuxProp( context );
 			var subs = __lux.subscriptions;
 			handlers = handlers || context.handlers;
 			channel = channel || actionChannel;
 			topic = topic || "execute.*";
-			handlerFn = handlerFn || ((data, env) => {
+			handlerFn = handlerFn || ( ( data, env ) => {
 				var handler;
-				if(handler = handlers[data.actionType]) {
-					handler.apply(context, data.actionArgs);
+				if( handler = handlers[ data.actionType ] ) {
+					handler.apply( context, data.actionArgs );
 				}
-			});
-			if(!handlers || !Object.keys(handlers).length ) {
+			} );
+			if( !handlers || !Object.keys( handlers ).length ) {
 				throw new Error( "You must have at least one action handler in the handlers property" );
 			} else if ( subs && subs.actionListener ) {
 				// TODO: add console warn in debug builds
@@ -159,10 +159,10 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 					context,
 					channel.subscribe( topic, handlerFn )
 				);
-			var handlerKeys = Object.keys(handlers);
-			generateActionCreator(handlerKeys);
-			if(context.namespace) {
-				addToActionGroup(context.namespace, handlerKeys);
+			var handlerKeys = Object.keys( handlers );
+			generateActionCreator( handlerKeys );
+			if( context.namespace ) {
+				addToActionGroup( context.namespace, handlerKeys );
 			}
 		},
 		teardown() {
@@ -174,20 +174,20 @@ var luxActionListenerMixin = function({ handlers, handlerFn, context, channel, t
 /*********************************************
 *   React Component Versions of Above Mixin  *
 **********************************************/
-function controllerView(options) {
+function controllerView( options ) {
 	var opt = {
-		mixins: [luxStoreReactMixin, luxActionCreatorReactMixin].concat(options.mixins || [])
+		mixins: [ luxStoreReactMixin, luxActionCreatorReactMixin ].concat( options.mixins || [] )
 	};
 	delete options.mixins;
-	return React.createClass(Object.assign(opt, options));
+	return React.createClass( Object.assign( opt, options ) );
 }
 
-function component(options) {
+function component( options ) {
 	var opt = {
-		mixins: [luxActionCreatorReactMixin].concat(options.mixins || [])
+		mixins: [ luxActionCreatorReactMixin ].concat( options.mixins || [] )
 	};
 	delete options.mixins;
-	return React.createClass(Object.assign(opt, options));
+	return React.createClass( Object.assign( opt, options ) );
 }
 
 
@@ -195,25 +195,28 @@ function component(options) {
 *   Generalized Mixin Behavior for non-lux   *
 **********************************************/
 var luxMixinCleanup = function () {
-	this.__lux.cleanup.forEach( (method) => method.call(this) );
+	this.__lux.cleanup.forEach( ( method ) => method.call( this ) );
 	this.__lux.cleanup = undefined;
 	delete this.__lux.cleanup;
 };
 
-function mixin(context, ...mixins) {
-	if(mixins.length === 0) {
-		mixins = [luxStoreMixin, luxActionCreatorMixin];
+function mixin( context, ...mixins ) {
+	if( mixins.length === 0 ) {
+		mixins = [ luxStoreMixin, luxActionCreatorMixin ];
 	}
 
-	mixins.forEach((mixin) => {
-		if(typeof mixin === "function") {
+	mixins.forEach( ( mixin ) => {
+		if( typeof mixin === "function" ) {
 			mixin = mixin();
 		}
-		if(mixin.mixin) {
-			Object.assign(context, mixin.mixin);
+		if( mixin.mixin ) {
+			Object.assign( context, mixin.mixin );
 		}
-		mixin.setup.call(context);
-		if(mixin.teardown) {
+		if( typeof mixin.setup !== "function" ) {
+			throw new Error( "Lux mixins should have a setup method. Did you perhaps pass your mixins ahead of your target instance?" );
+		}
+		mixin.setup.call( context );
+		if( mixin.teardown ) {
 			context.__lux.cleanup.push( mixin.teardown );
 		}
 	});
@@ -225,14 +228,14 @@ mixin.store = luxStoreMixin;
 mixin.actionCreator = luxActionCreatorMixin;
 mixin.actionListener = luxActionListenerMixin;
 
-function actionListener(target) {
+function actionListener( target ) {
 	return mixin( target, luxActionListenerMixin );
 }
 
-function actionCreator(target) {
+function actionCreator( target ) {
 	return mixin( target, luxActionCreatorMixin );
 }
 
-function actionCreatorListener(target) {
+function actionCreatorListener( target ) {
 	return actionCreator( actionListener( target ));
 }
