@@ -38,14 +38,6 @@
 	}
 	// jshint ignore:end
 
-	function pluck(obj, keys) {
-		var res = keys.reduce((accum, key) => {
-			accum[key] = obj[key];
-			return accum;
-		}, {});
-		return res;
-	}
-
 	function configSubscription(context, subscription) {
 		return subscription.context(context)
 		                   .constraint(function(data, envelope){

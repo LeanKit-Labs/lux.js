@@ -1,4 +1,4 @@
-/* global entries, actionChannel, pluck */
+/* global entries, actionChannel, _ */
 /* jshint -W098 */
 var actions = Object.create(null);
 var actionGroups = {};
@@ -34,7 +34,7 @@ function generateActionCreator(actionList) {
 
 function getActionGroup( group ) {
 	if ( actionGroups[group] ) {
-		return pluck(actions, actionGroups[group]);
+		return _.pick(actions, actionGroups[group]);
 	} else {
 		throw new Error( `There is no action group named '${group}'`);
 	}
@@ -50,6 +50,10 @@ function addToActionGroup(groupName, actionList) {
 		group = actionGroups[groupName] = [];
 	}
 	actionList = typeof actionList === "string" ? [actionList] : actionList;
+	var diff = _.difference( actionList, Object.keys( actions ) );
+	if(diff.length) {
+		throw new Error(`The following actions do not exist: ${diff.join(", ")}`);
+	}
 	actionList.forEach(function(action){
 		if(group.indexOf(action) === -1 ) {
 			group.push(action);

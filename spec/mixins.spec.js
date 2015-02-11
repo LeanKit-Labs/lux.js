@@ -366,6 +366,21 @@ describe( "luxJS - Mixins", function() {
 
 				obj.publishAction( "publishTest" );
 			});
+			it( "Should throw an error if the target isn't passed as first arg", function () {
+				lux.customActionCreator({
+					group1: function (){},
+					group2: function (){}
+				});
+				lux.addToActionGroup( "grouped", [ "group1", "group2" ]);
+
+				var obj = {
+					getActionGroup: [ "grouped" ]
+				};
+
+				(function () {
+					lux.mixin( lux.mixin.actionCreator, obj );
+				}).should.throw(/Lux mixins should have a setup method/i);
+			});
 		});
 
 		describe( "When using the React mixin", function () {
@@ -447,6 +462,15 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.actionListener );
 				obj.luxCleanup();
 				obj.__lux.subscriptions.actionListener.inactive.should.be.true;
+			});
+			it( "Should throw an error if the target isn't passed as first arg", function () {
+				var obj = {
+					getActionGroup: [ "grouped" ]
+				};
+
+				(function () {
+					lux.mixin( lux.mixin.actionListener, obj );
+				}).should.throw(/Lux mixins should have a setup method/i);
 			});
 		});
 	});

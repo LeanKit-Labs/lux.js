@@ -1,5 +1,5 @@
 
-/* global storeChannel, pluck, generateActionCreator, actions, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
+/* global storeChannel, generateActionCreator, actions, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -89,14 +89,14 @@ var luxActionCreatorMixin = {
 			this.getActions = [ this.getActions ];
 		}
 
-		var addActionIfNotPreset = (k, v) => {
+		var addActionIfNotPresent = (k, v) => {
 			if(!this[k]) {
 					this[k] = v;
 				}
 		};
 		this.getActionGroup.forEach((group) => {
 			for(var [k, v] of entries(getActionGroup(group))) {
-				addActionIfNotPreset(k, v);
+				addActionIfNotPresent(k, v);
 			}
 		});
 
@@ -104,7 +104,7 @@ var luxActionCreatorMixin = {
 			this.getActions.forEach( function ( key ) {
 				var val = actions[ key ];
 				if ( val ) {
-					addActionIfNotPreset(key, val);
+					addActionIfNotPresent(key, val);
 				} else {
 					throw new Error( `There is no action named '${key}'` );
 				}
@@ -211,6 +211,9 @@ function mixin(context, ...mixins) {
 		}
 		if(mixin.mixin) {
 			Object.assign(context, mixin.mixin);
+		}
+		if(typeof mixin.setup !== "function") {
+			throw new Error( "Lux mixins should have a setup method. Did you perhaps pass your mixins ahead of your target instance?" );
 		}
 		mixin.setup.call(context);
 		if(mixin.teardown) {

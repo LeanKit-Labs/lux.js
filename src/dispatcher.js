@@ -36,7 +36,7 @@ function buildGenerations( stores, actionType ) {
 function processGeneration(generation, action) {
 	generation.map((store) => {
 		var data = Object.assign({
-			deps: pluck(this.stores, store.waitFor)
+			deps: _.pick(this.stores, store.waitFor)
 		}, action);
 		dispatcherChannel.publish(
 			`${store.namespace}.handle.${action.actionType}`,

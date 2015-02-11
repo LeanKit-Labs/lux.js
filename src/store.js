@@ -142,6 +142,7 @@ class Store {
 		}
 		delete stores[this.namespace];
 		dispatcher.removeStore(this.namespace);
+		this.luxCleanup();
 	}
 }
 
