@@ -8,48 +8,49 @@
 		// Node, or CommonJS-Like environments
 		module.exports = function( React, postal, machina, lodash ) {
 			return factory(
-				React || require("react"),
-				postal || require("postal"),
-				machina || require("machina"),
-				lodash || require("lodash"));
+				React || require( "react" ),
+				postal || require( "postal" ),
+				machina || require( "machina" ),
+				lodash || require( "lodash" ) );
 		};
 	} else {
-		throw new Error("Sorry - luxJS only support AMD or CommonJS module environments.");
+		throw new Error( "Sorry - luxJS only support AMD or CommonJS module environments." );
 	}
 }( this, function( React, postal, machina, _ ) {
 
+	/* istanbul ignore if */
 	if ( !( typeof global === "undefined" ? window : global )._6to5Polyfill ) {
 		throw new Error("You must include the 6to5 polyfill on your page before lux is loaded. See https://6to5.org/docs/usage/polyfill/ for more details.");
 	}
 
-	var actionChannel = postal.channel("lux.action");
-	var storeChannel = postal.channel("lux.store");
-	var dispatcherChannel = postal.channel("lux.dispatcher");
+	var actionChannel = postal.channel( "lux.action" );
+	var storeChannel = postal.channel( "lux.store" );
+	var dispatcherChannel = postal.channel( "lux.dispatcher" );
 	var stores = {};
 
 	// jshint ignore:start
-	var entries = function* (obj) {
-		if([ "object", "function" ].indexOf(typeof obj) === -1) {
+	var entries = function* ( obj ) {
+		if( [ "object", "function" ].indexOf( typeof obj ) === -1 ) {
 			obj = {};
 		}
-		for(var k of Object.keys(obj)) {
-			yield [k, obj[k]];
+		for( var k of Object.keys( obj ) ) {
+			yield [ k, obj[ k ] ];
 		}
 	}
 	// jshint ignore:end
 
-	function configSubscription(context, subscription) {
-		return subscription.context(context)
-		                   .constraint(function(data, envelope){
-		                       return !(envelope.hasOwnProperty("originId")) ||
-		                          (envelope.originId === postal.instanceId());
+	function configSubscription( context, subscription ) {
+		return subscription.context( context )
+		                   .constraint( function( data, envelope ){
+		                       return !( envelope.hasOwnProperty( "originId" ) ) ||
+		                          ( envelope.originId === postal.instanceId() );
 		                   });
 	}
 
-	function ensureLuxProp(context) {
-		var __lux = context.__lux = (context.__lux || {});
-		var cleanup = __lux.cleanup = (__lux.cleanup || []);
-		var subscriptions = __lux.subscriptions = (__lux.subscriptions || {});
+	function ensureLuxProp( context ) {
+		var __lux = context.__lux = ( context.__lux || {} );
+		var cleanup = __lux.cleanup = ( __lux.cleanup || [] );
+		var subscriptions = __lux.subscriptions = ( __lux.subscriptions || {} );
 		return __lux;
 	}
 

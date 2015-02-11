@@ -568,7 +568,7 @@ describe( "luxJS - Store", function() {
 			var store = storeFactory( {
 				handlers: {
 					taseMeBro: function() {
-						throw new Error("Don't Tase Me Bro!");
+						throw new Error( "Don't Tase Me Bro!" );
 					},
 				}
 			} );
@@ -577,11 +577,11 @@ describe( "luxJS - Store", function() {
 				getActions: [ "taseMeBro" ]
 			} );
 
-			(function() {
+			( function() {
 				creator.taseMeBro();
-			}).should.throw;
+			} ).should.throw;
 			store.dispose();
-		});
+		} );
 	} );
 	describe( "When removing a Store", function() {
 		it( "Should remove all subscriptions", function() {
