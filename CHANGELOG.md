@@ -1,8 +1,18 @@
+## v0.5.4
+
+* Fixed bug in store dispose method.
+* Replaced internal pluck function with lodash pick.
+* Added exception if mixin does not contain a setup method.
+* Added exception if invalid action names are used when adding actions to an action group.
+* Fixed mis-spelled internal function name.
+* Added tests to cover new exceptions.
+* Fixes to example app.
+* Fixing the store dep tree print util.
+
 ## v0.5.3
 
 * Ignore handled messages when dispatcher does not have internal context.
 * Clear dispatcher subscriptions after unsubscribing in dispose.
-
 
 ## v0.5.2
 
