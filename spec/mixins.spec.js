@@ -31,8 +31,8 @@ describe( "luxJS - Mixins", function() {
 			var storeStub = this.stub( lux.mixin.store, "setup", stubCallback );
 			var obj = lux.mixin( {} );
 
-			adStub.calledOnce.should.be.true;
-			storeStub.calledOnce.should.be.true;
+			adStub.should.be.calledOnce;
+			storeStub.should.be.calledOnce;
 		} ) );
 		it( "Should add a luxCleanup method", function() {
 			var obj = {
@@ -42,7 +42,8 @@ describe( "luxJS - Mixins", function() {
 				}
 			};
 			lux.mixin( obj );
-			obj.should.have.property( "luxCleanup" ).which.is.a.Function;
+			obj.should.contain.key( "luxCleanup" );
+			obj.luxCleanup.should.be.an.instanceOf( Function );
 		} );
 		it( "Calling luxCleanup should remove subscriptions", function() {
 			storeFactory( { namespace: "mixinStore" } );
@@ -87,8 +88,8 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( objOne, lux.mixin.store );
 				lux.mixin( objTwo, lux.mixin.store );
 				creator.publishAction( "one" );
-				onChangeOne.calledOnce.should.be.true;
-				onChangeTwo.calledOnce.should.be.true;
+				onChangeOne.should.be.calledOnce;
+				onChangeTwo.should.be.calledOnce;
 			} );
 			it( "Should throw an error when no change handler is provided", function() {
 				var objOne = {
@@ -101,7 +102,7 @@ describe( "luxJS - Mixins", function() {
 				} ).should.throw( /no onChange handler/ );
 			} );
 			it( "Should call onChange when a store is changed", function() {
-				storeFactory( { namespace: "shouldChange" } )
+				storeFactory( { namespace: "shouldChange" } );
 				var onChange = sinon.spy();
 				var obj = {
 					stores: {
@@ -112,7 +113,7 @@ describe( "luxJS - Mixins", function() {
 
 				lux.mixin( obj, lux.mixin.store );
 				creator.publishAction( "one" );
-				onChange.calledOnce.should.be.true;
+				onChange.should.be.calledOnce;
 			} );
 			it( "Should wait for all stores to update before calling the onChange", function() {
 
@@ -142,8 +143,8 @@ describe( "luxJS - Mixins", function() {
 					stores: {
 						listenTo: [ "waitAll", "waitExtra" ],
 						onChange: function() {
-							onActionOne.calledOnce.should.be.true;
-							onActionTwo.calledOnce.should.be.true;
+							onActionOne.should.be.calledOnce;
+							onActionTwo.should.be.calledOnce;
 							onChange();
 						}
 					}
@@ -152,14 +153,14 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.store );
 
 				creator.publishAction( "doAction" );
-				onChange.calledOnce.should.be.true;
+				onChange.should.be.calledOnce;
 
 				storeOne.dispose();
 				storeTwo.dispose();
 
 			} );
 			it( "Should cleanup when teardown is called", function() {
-				storeFactory( { namespace: "teardownStore" } )
+				storeFactory( { namespace: "teardownStore" } );
 				var onChange = sinon.spy();
 				var obj = {
 					stores: {
@@ -178,7 +179,7 @@ describe( "luxJS - Mixins", function() {
 				onChange.callCount.should.equal( 1 );
 			} );
 			it( "Should cleanup properly for a namespace that has dot-separated pieces, when teardown is called", function() {
-				storeFactory( { namespace: "teardown.store" } )
+				storeFactory( { namespace: "teardown.store" } );
 				var onChange = sinon.spy();
 				var obj = {
 					stores: {
@@ -216,11 +217,11 @@ describe( "luxJS - Mixins", function() {
 			it( "Should initialize during componentWillMount", function() {
 				controllerViewFactory( {
 					componentWillMount: function() {
-						this.should.have.property( "__lux" );
+						this.should.contain.key( "__lux" );
 
 						// Since there is no public API for this mixin, we have to detect
 						// an internal change only this component would add
-						this.__lux.should.have.properties( "waitFor", "heardFrom" );
+						this.__lux.should.contain.all.keys( "waitFor", "heardFrom" );
 					}
 				} );
 			} );
@@ -250,8 +251,10 @@ describe( "luxJS - Mixins", function() {
 
 				lux.mixin( obj, lux.mixin.actionCreator );
 
-				obj.should.have.property( "group1" ).which.is.a.Function;
-				obj.should.have.property( "group2" ).which.is.a.Function;
+				obj.should.contain.key( "group1" );
+				obj.group1.should.be.an.instanceOf( Function );
+				obj.should.contain.key( "group2" );
+				obj.group2.should.be.an.instanceOf( Function );
 			} );
 			it( "Should support using a string or array for getActionGroup", function() {
 				lux.customActionCreator( {
@@ -271,8 +274,8 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( objOne, lux.mixin.actionCreator );
 				lux.mixin( objTwo, lux.mixin.actionCreator );
 
-				objOne.should.have.properties( "group1", "group2" );
-				objTwo.should.have.properties( "group1", "group2" );
+				objOne.should.contain.all.keys( "group1", "group2" );
+				objTwo.should.contain.all.keys( "group1", "group2" );
 			} );
 			it( "Should look at getActions and create methods for each action", function() {
 				lux.customActionCreator( {
@@ -286,7 +289,7 @@ describe( "luxJS - Mixins", function() {
 
 				lux.mixin( obj, lux.mixin.actionCreator );
 
-				obj.should.have.properties( "action1", "action2" );
+				obj.should.contain.all.keys( "action1", "action2" );
 			} );
 
 			it( "Should support using a string or array for getActions", function() {
@@ -306,8 +309,8 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( objOne, lux.mixin.actionCreator );
 				lux.mixin( objTwo, lux.mixin.actionCreator );
 
-				objOne.should.have.property( "action1" );
-				objTwo.should.have.properties( "action1", "action2" );
+				objOne.should.contain.key( "action1" );
+				objTwo.should.contain.all.keys( "action1", "action2" );
 			} );
 
 			it( "Should throw an error when requested a group that does not exist", function() {
@@ -340,7 +343,7 @@ describe( "luxJS - Mixins", function() {
 
 				lux.mixin( obj, lux.mixin.actionCreator );
 
-				obj.should.have.property( "publishAction" );
+				obj.should.contain.key( "publishAction" );
 			} );
 			it( "Should publish a correctly formed action when publishAction is called", function() {
 				lux.customActionCreator( {
@@ -392,8 +395,7 @@ describe( "luxJS - Mixins", function() {
 				var Component = lux.component( {
 					getActions: "sample",
 					componentWillMount: function() {
-						this.should.have.property( "publishAction" );
-						this.should.have.property( "sample" );
+						this.should.contain.all.keys( "publishAction", "sample" );
 					},
 					render: function() {
 						return React.DOM.div();
@@ -421,8 +423,8 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.actionListener );
 				var creator = lux.actionCreator( {} );
 				creator.publishAction( "fireMyHandler", "testy" );
-				handler.calledOnce.should.be.true;
-				handler.calledWith( "testy" ).should.be.true;
+				handler.should.be.calledOnce;
+				handler.should.be.calledWith( "testy" );
 			} );
 			it( "Should auto-generate action creator methods", function() {
 				var handler = sinon.spy();

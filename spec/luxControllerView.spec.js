@@ -68,11 +68,11 @@ describe( "luxJS - Controller Views", function() {
 			} );
 			it( "Should invoke onChange when a store updates", function() {
 				creator.publishAction( "doYourControllerViewThing" );
-				onChange.calledOnce.should.be.true;
+				onChange.should.be.calledOnce;
 			} );
 			it( "Should not invoke onChange if the store has not changed", function() {
 				creator.publishAction( "dontChange" );
-				onChange.calledOnce.should.be.false;
+				onChange.should.not.be.called;
 			} );
 		} );
 		describe( "When Listening to Multiple Stores", function() {
@@ -88,15 +88,15 @@ describe( "luxJS - Controller Views", function() {
 			} );
 			it( "Should invoke onChange once after both stores have updated", function() {
 				creator.publishAction( "doYourControllerViewThing" );
-				onChange.calledOnce.should.be.true;
+				onChange.should.be.calledOnce;
 			} );
 			it( "Should invoke onChange if only one store is affected by an action", function() {
 				creator.publishAction( "doYourFakeStoreThing" );
-				onChange.calledOnce.should.be.true;
+				onChange.should.be.calledOnce;
 			} );
 			it( "Should not invoke onChange if neither store changed", function() {
 				creator.publishAction( "dontChange" );
-				onChange.calledOnce.should.be.false;
+				onChange.should.not.be.called;
 			} );
 		} );
 	} );

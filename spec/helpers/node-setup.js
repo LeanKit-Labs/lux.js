@@ -7,7 +7,9 @@ global.window = document.parentWindow;
 // For React (And its stupid console statement );
 global.navigator = { userAgent: "Not Chrom3" };
 
-require( "should/should" );
+var chai = require( "chai" );
+chai.use( require( "sinon-chai" ) );
+global.should = chai.should();
 
 require( "6to5/register" );
 

@@ -72,7 +72,8 @@ describe( "luxJS - Store", function() {
 					}
 				} );
 
-				store.should.have.property( "getSomethingCool" ).which.is.a.Function;
+				store.should.have.property( "getSomethingCool" );
+				store.getSomethingCool.should.be.an.instanceOf( Function );
 				store.getSomethingCool().should.be.true;
 				store.dispose();
 			} );
@@ -87,8 +88,10 @@ describe( "luxJS - Store", function() {
 					getActions: [ "one", "two" ]
 				} );
 
-				creator.should.have.property( "one" ).which.is.a.Function;
-				creator.should.have.property( "two" ).which.is.a.Function;
+				creator.should.have.property( "one" );
+				creator.one.should.be.an.instanceOf( Function );
+				creator.should.have.property( "two" );
+				creator.two.should.be.an.instanceOf( Function );
 				store.dispose();
 			} );
 			it( "Should create an action group for all handlers", function() {
@@ -102,8 +105,10 @@ describe( "luxJS - Store", function() {
 					getActionGroup: [ "storeOne" ]
 				} );
 
-				creator.should.have.property( "one" ).which.is.a.Function;
-				creator.should.have.property( "two" ).which.is.a.Function;
+				creator.should.have.property( "one" );
+				creator.one.should.be.an.instanceOf( Function );
+				creator.should.have.property( "two" );
+				creator.two.should.be.an.instanceOf( Function );
 				store.dispose();
 			} );
 			it( "Should remove action handlers from public object", function() {
@@ -149,9 +154,12 @@ describe( "luxJS - Store", function() {
 					}
 				);
 
-				store.should.have.property( "getSomethingCool" ).which.is.a.Function;
-				store.should.have.property( "getSomethingEvenCooler" ).which.is.a.Function;
+				store.should.contain.key( "getSomethingCool" );
+				store.getSomethingCool.should.be.an.instanceOf( Function );
 				store.getSomethingCool().should.be.true;
+
+				store.should.contain.key( "getSomethingEvenCooler" );
+				store.getSomethingEvenCooler.should.be.an.instanceOf( Function );
 				store.getSomethingEvenCooler().should.equal( "Truer than true" );
 				store.dispose();
 			} );
@@ -174,10 +182,11 @@ describe( "luxJS - Store", function() {
 					getActionGroup: [ "storeOne" ]
 				} );
 
-				creator.should.have.property( "one" ).which.is.a.Function;
-				creator.should.have.property( "two" ).which.is.a.Function;
-				creator.should.have.property( "three" ).which.is.a.Function;
-				creator.should.have.property( "four" ).which.is.a.Function;
+				creator.should.contain.all.keys( "one", "two", "three", "four" );
+				creator.one.should.be.an.instanceOf( Function );
+				creator.two.should.be.an.instanceOf( Function );
+				creator.three.should.be.an.instanceOf( Function );
+				creator.four.should.be.an.instanceOf( Function );
 				store.dispose();
 			} );
 			it( "Should allow for same-named handlers from multiple mixins", function() {
@@ -493,7 +502,7 @@ describe( "luxJS - Store", function() {
 					myTest: {
 						waitFor: [ "storeOne" ],
 						handler: function() {
-							storeOne.calledOnce.should.be.true;
+							storeOne.should.be.calledOnce;
 							storeTwo();
 						}
 					}
@@ -511,8 +520,8 @@ describe( "luxJS - Store", function() {
 			} );
 
 			creator.myTest();
-			storeOne.calledOnce.should.be.true;
-			storeTwo.calledOnce.should.be.true;
+			storeOne.should.be.calledOnce;
+			storeTwo.should.be.calledOnce;
 			store.dispose();
 			otherStore.dispose();
 		} );
@@ -561,7 +570,7 @@ describe( "luxJS - Store", function() {
 				getActions: [ "one" ]
 			} );
 			creator.one();
-			handler.calledOnce.should.be.true;
+			handler.should.be.calledOnce;
 			store.dispose();
 		} );
 		it( "Should not swallow exceptions if one occurs in a store handler", function() {

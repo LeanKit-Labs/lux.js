@@ -26,7 +26,7 @@ describe( "luxJS - Actions", function() {
 				var groupName = "add-group-actions-array";
 
 				lux.addToActionGroup( groupName, actionList );
-				lux.getActionGroup( groupName ).should.have.properties( actionList );
+				lux.getActionGroup( groupName ).should.contain.all.keys( actionList );
 			} );
 
 			it( "Should add the actions to the group when given a string", function() {
@@ -34,7 +34,7 @@ describe( "luxJS - Actions", function() {
 				var groupName = "add-group-actions-string";
 
 				lux.addToActionGroup( groupName, actionList );
-				lux.getActionGroup( groupName ).should.have.properties( actionList );
+				lux.getActionGroup( groupName ).should.contain.all.keys( actionList );
 			} );
 
 			it( "Should throw an exception if invalid action names are used", function() {
@@ -70,7 +70,7 @@ describe( "luxJS - Actions", function() {
 
 				// add to the existing group with the additional two actions
 				lux.addToActionGroup( groupName, actionList.slice( 1 ) );
-				lux.getActionGroup( groupName ).should.have.properties( actionList );
+				lux.getActionGroup( groupName ).should.contain.all.keys( actionList );
 			} );
 
 			it( "Should not add existing actions a second time", function() {
@@ -84,7 +84,7 @@ describe( "luxJS - Actions", function() {
 
 				// based on how results are plucked, can't tell that existing action was ignored
 				// verify that all three actions are returned anyways
-				lux.getActionGroup( groupName ).should.have.properties( actionList );
+				lux.getActionGroup( groupName ).should.contain.all.keys( actionList );
 			} );
 
 			it( "Should throw an exception if invalid action names are used", function() {
@@ -182,8 +182,8 @@ describe( "luxJS - Actions", function() {
 
 			actionCreator.publishAction( "testAction", testValue );
 
-			handler.calledOnce.should.be.true;
-			handler.lastCall.args[ 0 ].should.equal( testValue );
+			handler.should.be.calledOnce
+				.and.calledWithExactly( testValue );
 		} );
 	} );
 	describe( "When calling actionCreatorListener", function() {
@@ -201,8 +201,8 @@ describe( "luxJS - Actions", function() {
 			actionCreatorListener.publishAction.should.be.a.Function;
 			actionCreatorListener.publishAction( "testAction", testValue );
 
-			handler.calledOnce.should.be.true;
-			handler.lastCall.args[ 0 ].should.equal( testValue );
+			handler.should.be.calledOnce
+				.and.calledWithExactly( testValue );
 		} );
 	} );
 } );
