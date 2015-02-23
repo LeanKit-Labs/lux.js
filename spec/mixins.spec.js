@@ -1,5 +1,3 @@
-/* global describe, it, before, beforeEach, afterEach, React, sinon, postal, lux, utils, luxStoreCh */
-
 var stubCallback = function() {
 	this.__lux = { cleanup: [] };
 	return {};

@@ -160,7 +160,7 @@ describe( "luxJS - Dispatcher", function() {
 	it( "should ignore handled messages when there is no current actionContext", function() {
 		dispatcher.handle = sinon.spy();
 
-		dispatcherChannel.publish( "alpha.handled.test" )
+		dispatcherChannel.publish( "alpha.handled.test" );
 
 		dispatcher.handle.should.not.be.called;
 	} );

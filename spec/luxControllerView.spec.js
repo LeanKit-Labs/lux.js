@@ -1,5 +1,3 @@
-/* global describe, it, before, after, beforeEach, lux, utils, React, sinon, luxStoreCh */
-
 describe( "luxJS - Controller Views", function() {
 	var fakeStore, fakeStore2;
 	before( function() {

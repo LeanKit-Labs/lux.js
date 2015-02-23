@@ -1,5 +1,3 @@
-/* global describe, it, before, after, sinon, lux, utils, luxStoreCh, _ */
-
 describe( "luxJS - Actions", function() {
 	describe( "When calling addToActionGroup", function() {
 		describe( "When creating a new action group", function() {
