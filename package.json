@@ -44,7 +44,7 @@
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {
-    "6to5": "~3.3.10",
+    "babel": "~4.4.5",
     "react": ">=0.12.2"
   },
   "dependencies": {
@@ -53,12 +53,12 @@
     "postal": "~1.0.0"
   },
   "devDependencies": {
-    "6to5": "~3.3.10",
-    "6to5-loader": "^3.0.0",
+    "babel": "~4.4.5",
+    "babel-loader": "~4.0.0",
     "chai": "^2.0.0",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.8",
-    "gulp-6to5": "^3.0.0",
+    "gulp-babel": "~4.0.0",
     "gulp-header": "^1.0.5",
     "gulp-hint-not": "0.0.3",
     "gulp-imports": "0.0.3",

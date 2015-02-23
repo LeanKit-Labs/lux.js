@@ -2,7 +2,7 @@
 var chai = require( "chai" );
 chai.use( require( "sinon-chai" ) );
 window.should = chai.should();
-require( "6to5/polyfill" );
+require( "babel/polyfill" );
 window.React = require( "react" );
 window.utils = window.React.addons.TestUtils;
 window.postal = require( "postal" );

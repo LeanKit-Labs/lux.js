@@ -188,40 +188,28 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should allow for same-named handlers from multiple mixins", function() {
-				var backInTimeInvocations = 0;
-				var forwardInTimeInvocations = 0;
-				var feedMrFusionInvocations = 0;
+				var backInTimeSpy = sinon.spy();
+				var forwardInTimeSpy = sinon.spy();
+				var feedMrFusionSpy = sinon.spy();
 
 				var store = storeFactory(
 					{
 						namespace: "multiplicity",
 						handlers: {
-							backInTime: function() {
-								backInTimeInvocations++;
-							},
-							feedMrFusion: function() {
-								feedMrFusionInvocations++;
-							}
+							backInTime: backInTimeSpy,
+							feedMrFusion: feedMrFusionSpy
 						}
 					},
 					{
 						handlers: {
-							backInTime: function() {
-								backInTimeInvocations++;
-							},
-							forwardInTime: function() {
-								forwardInTimeInvocations++;
-							}
+							backInTime: backInTimeSpy,
+							forwardInTime: forwardInTimeSpy
 						}
 					},
 					{
 						handlers: {
-							backInTime: function() {
-								backInTimeInvocations++;
-							},
-							forwardInTime: function() {
-								forwardInTimeInvocations++;
-							}
+							backInTime: backInTimeSpy,
+							forwardInTime: forwardInTimeSpy
 						}
 					}
 				);
@@ -231,9 +219,9 @@ describe( "luxJS - Store", function() {
 				creator.backInTime();
 				creator.forwardInTime();
 				creator.feedMrFusion();
-				backInTimeInvocations.should.equal( 3 );
-				forwardInTimeInvocations.should.equal( 2 );
-				feedMrFusionInvocations.should.equal( 1 );
+				backInTimeSpy.should.be.calledThrice;
+				forwardInTimeSpy.should.be.calledTwice;
+				feedMrFusionSpy.should.be.calledOnce;
 				store.dispose();
 			} );
 			it( "Should support store dependency ordering with mixin handler collision", function() {
@@ -543,11 +531,11 @@ describe( "luxJS - Store", function() {
 			} );
 
 			creator.change();
-			onChange.callCount.should.equal( 1 );
+			onChange.should.be.calledOnce;
 			creator.inferredChange();
-			onChange.callCount.should.equal( 2 );
+			onChange.should.be.calledTwice;
 			creator.noChange();
-			onChange.callCount.should.equal( 2 );
+			onChange.should.be.calledTwice;
 			store.dispose();
 		} );
 		it( "Should publish a 'changed' message when flush is called and there are changes", function() {

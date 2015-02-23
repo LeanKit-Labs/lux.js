@@ -4,7 +4,7 @@ function verifyAction( name, args ) {
 		data.should.have.property( "actionType", name );
 		data.should.have.property( "actionArgs" );
 		args.forEach( function( arg, i ) {
-			data.actionArgs[ i ].should.eql( arg );
+			should.equal( data.actionArgs[ i ], arg );
 		} );
 	} ).once();
 }

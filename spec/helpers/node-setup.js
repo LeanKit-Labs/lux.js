@@ -1,5 +1,4 @@
 // Setup for running Mocha via Node
-require( "6to5/polyfill" );
 var jsdom = require( "jsdom" ).jsdom;
 global.document = jsdom( "<html><body></body></html>" );
 global.window = document.parentWindow;
@@ -11,8 +10,6 @@ var chai = require( "chai" );
 chai.use( require( "sinon-chai" ) );
 global.should = chai.should();
 
-require( "6to5/register" );
-
 global.React = require( "react/dist/react-with-addons" );
 global.utils = global.React.addons.TestUtils;
 
@@ -23,5 +20,8 @@ global.sinon = require( "sinon" );
 
 global.luxStoreCh = global.postal.channel( "lux.store" );
 global.luxActionCh = global.postal.channel( "lux.action" );
+
+
+require( "babel/register" );
 
 global.lux = require( "../../lib/lux.js" )( React, postal, machina, _ );

@@ -13,7 +13,7 @@ module.exports = {
 		],
 		loaders: [
 			{ test: /sinon.*\.js/, loader: "imports?define=>false" },
-			{ test: /\.spec\.js$/, exclude: /node_modules/, loader: "6to5-loader" }
+			{ test: /\.spec\.js$/, exclude: /node_modules/, loader: "babel-loader" }
 		]
 	},
 	resolve: {

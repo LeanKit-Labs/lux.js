@@ -257,9 +257,9 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 * [ReactJS](http://facebook.github.io/react/) (NOTE: ReactJS is a *peer dependency*. You will need to make sure you include it in your project's dependencies.)
 * [postal](https://github.com/postaljs/postal.js)
 * [machina](https://github.com/ifandelse/machina.js)
-* [6to5 polyfill](https://6to5.org/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the 6to5 polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) 6to5 is a peer dependency of lux.
+* [babel polyfill](https://babeljs.io/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the babel polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) babel is a peer dependency of lux.
 
->NOTE: If you're using bower, you will need to grab the 6to5 polyfill and include it manually. If you're using npm, you will need to `npm install 6to5` in your project.
+>NOTE: If you're using bower, you will need to grab the babel polyfill and include it manually. If you're using npm, you will need to `npm install babel` in your project.
 
 ## Installation & Example
 

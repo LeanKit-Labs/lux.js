@@ -63,7 +63,7 @@ describe( "luxJS - Dispatcher", function() {
 		alphaSubscription.unsubscribe();
 		betaSubscription.unsubscribe();
 
-		handler.callCount.should.equal( 2 );
+		handler.should.be.calledTwice;
 		handler.firstCall.args[ 1 ].topic.should.equal( "beta.handle.test" );
 		handler.secondCall.args[ 1 ].topic.should.equal( "alpha.handle.test" );
 	} );
@@ -99,7 +99,7 @@ describe( "luxJS - Dispatcher", function() {
 		alphaSubscription.unsubscribe();
 		betaSubscription.unsubscribe();
 
-		handler.callCount.should.equal( 3 );
+		handler.should.be.calledThrice;
 		handler.firstCall.args[ 1 ].topic.should.equal( "alpha.handle.test" );
 		handler.secondCall.args[ 1 ].topic.should.equal( "alpha.handle.test" );
 		handler.lastCall.args[ 1 ].topic.should.equal( "beta.handle.test" );
@@ -132,7 +132,7 @@ describe( "luxJS - Dispatcher", function() {
 		alphaSubscription.unsubscribe();
 		betaSubscription.unsubscribe();
 
-		handler.callCount.should.equal( 1 );
+		handler.should.be.calledOnce;
 		handler.firstCall.args[ 1 ].topic.should.equal( "beta.handle.test" );
 	} );
 

@@ -7,7 +7,7 @@ var pkg = require( "./package.json" );
 var hintNot = require( "gulp-hint-not" );
 var uglify = require( "gulp-uglify" );
 var _ = require("lodash");
-var to5 = require("gulp-6to5");
+var babel = require("gulp-babel");
 
 var banner = [ "/**",
 	" * <%= pkg.name %> - <%= pkg.description %>",
@@ -34,7 +34,7 @@ gulp.task("build:es5", function() {
 		.pipe( imports() )
 		.pipe( hintNot() )
 		.pipe( sourcemaps.init() )
-		.pipe( to5( { experimental: true } ) )
+		.pipe( babel( { experimental: true } ) )
 		.pipe( header( banner, {
 			pkg: pkg
 		} ) )
