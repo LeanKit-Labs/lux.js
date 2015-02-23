@@ -605,17 +605,15 @@ describe( "luxJS - Store", function() {
 			var storeIsInActionMap = function() {
 				var actionMap = lux.dispatcher.actionMap;
 				var isPresent = false;
-				/* Ignore don't make functions in a loop warning */
-				/* jshint -W083 */
+				var filterFn = function( x ) {
+					return x.namespace === "storeOne";
+				};
 				for (var action in actionMap) {
-					if ( actionMap[ action ].filter( function( x ) {
-								return x.namespace === "storeOne";
-							} ).length ) {
+					if ( actionMap[ action ].filter( filterFn ).length ) {
 						isPresent = true;
 						break;
 					}
 				}
-				/* jshint +W083 */
 				return isPresent;
 			};
 			var store = storeFactory();
