@@ -1,5 +1,7 @@
 // Setup for when running with Karma
-require( "should/should" );
+var chai = require( "chai" );
+chai.use( require( "sinon-chai" ) );
+window.should = chai.should();
 require( "6to5/polyfill" );
 window.React = require( "react" );
 window.utils = window.React.addons.TestUtils;

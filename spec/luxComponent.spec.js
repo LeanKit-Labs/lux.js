@@ -1,7 +1,3 @@
-/* global describe, it, before, lux, React, utils, luxActionCh */
-
-var _ = require( "lodash" );
-
 function verifyAction( name, args ) {
 	args = args || [];
 	luxActionCh.subscribe( "execute." + name, function( data ) {

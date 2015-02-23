@@ -1,5 +1,3 @@
-/* global describe, it, before, afterEach, lux, utils, luxStoreCh, sinon, postal */
-
 describe( "luxJS - Store", function() {
 	function storeFactory( options, m1, m2, m3, m4, m5, m6, m7 ) {
 		options = Object.assign( {
@@ -72,7 +70,8 @@ describe( "luxJS - Store", function() {
 					}
 				} );
 
-				store.should.have.property( "getSomethingCool" ).which.is.a.Function;
+				store.should.have.property( "getSomethingCool" );
+				store.getSomethingCool.should.be.an.instanceOf( Function );
 				store.getSomethingCool().should.be.true;
 				store.dispose();
 			} );
@@ -87,8 +86,10 @@ describe( "luxJS - Store", function() {
 					getActions: [ "one", "two" ]
 				} );
 
-				creator.should.have.property( "one" ).which.is.a.Function;
-				creator.should.have.property( "two" ).which.is.a.Function;
+				creator.should.have.property( "one" );
+				creator.one.should.be.an.instanceOf( Function );
+				creator.should.have.property( "two" );
+				creator.two.should.be.an.instanceOf( Function );
 				store.dispose();
 			} );
 			it( "Should create an action group for all handlers", function() {
@@ -102,8 +103,10 @@ describe( "luxJS - Store", function() {
 					getActionGroup: [ "storeOne" ]
 				} );
 
-				creator.should.have.property( "one" ).which.is.a.Function;
-				creator.should.have.property( "two" ).which.is.a.Function;
+				creator.should.have.property( "one" );
+				creator.one.should.be.an.instanceOf( Function );
+				creator.should.have.property( "two" );
+				creator.two.should.be.an.instanceOf( Function );
 				store.dispose();
 			} );
 			it( "Should remove action handlers from public object", function() {
@@ -149,9 +152,12 @@ describe( "luxJS - Store", function() {
 					}
 				);
 
-				store.should.have.property( "getSomethingCool" ).which.is.a.Function;
-				store.should.have.property( "getSomethingEvenCooler" ).which.is.a.Function;
+				store.should.contain.key( "getSomethingCool" );
+				store.getSomethingCool.should.be.an.instanceOf( Function );
 				store.getSomethingCool().should.be.true;
+
+				store.should.contain.key( "getSomethingEvenCooler" );
+				store.getSomethingEvenCooler.should.be.an.instanceOf( Function );
 				store.getSomethingEvenCooler().should.equal( "Truer than true" );
 				store.dispose();
 			} );
@@ -174,10 +180,11 @@ describe( "luxJS - Store", function() {
 					getActionGroup: [ "storeOne" ]
 				} );
 
-				creator.should.have.property( "one" ).which.is.a.Function;
-				creator.should.have.property( "two" ).which.is.a.Function;
-				creator.should.have.property( "three" ).which.is.a.Function;
-				creator.should.have.property( "four" ).which.is.a.Function;
+				creator.should.contain.all.keys( "one", "two", "three", "four" );
+				creator.one.should.be.an.instanceOf( Function );
+				creator.two.should.be.an.instanceOf( Function );
+				creator.three.should.be.an.instanceOf( Function );
+				creator.four.should.be.an.instanceOf( Function );
 				store.dispose();
 			} );
 			it( "Should allow for same-named handlers from multiple mixins", function() {
@@ -412,15 +419,12 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should not mutate original mixins as part of store construction", function() {
-				var handlerInvoked = false;
 				var mixin = {
 					state: {
 						danglingMixin: true
 					},
 					handlers: {
-						justStopIt: function() {
-							hanlderInvoked = true;
-						}
+						justStopIt: function() {}
 					}
 				};
 				var storeA = storeFactory( {}, mixin );
@@ -439,9 +443,7 @@ describe( "luxJS - Store", function() {
 						danglingMixin: true
 					},
 					handlers: {
-						justStopIt: function() {
-							hanlderInvoked = true;
-						}
+						justStopIt: function() {}
 					}
 				};
 				var Store = lux.Store.extend( { namespace: "wat" }, mixin );
@@ -493,7 +495,7 @@ describe( "luxJS - Store", function() {
 					myTest: {
 						waitFor: [ "storeOne" ],
 						handler: function() {
-							storeOne.calledOnce.should.be.true;
+							storeOne.should.be.calledOnce;
 							storeTwo();
 						}
 					}
@@ -511,8 +513,8 @@ describe( "luxJS - Store", function() {
 			} );
 
 			creator.myTest();
-			storeOne.calledOnce.should.be.true;
-			storeTwo.calledOnce.should.be.true;
+			storeOne.should.be.calledOnce;
+			storeTwo.should.be.calledOnce;
 			store.dispose();
 			otherStore.dispose();
 		} );
@@ -524,7 +526,7 @@ describe( "luxJS - Store", function() {
 					},
 					inferredChange: function() {},
 					noChange: function() {
-						return false
+						return false;
 					}
 				}
 			} );
@@ -561,7 +563,7 @@ describe( "luxJS - Store", function() {
 				getActions: [ "one" ]
 			} );
 			creator.one();
-			handler.calledOnce.should.be.true;
+			handler.should.be.calledOnce;
 			store.dispose();
 		} );
 		it( "Should not swallow exceptions if one occurs in a store handler", function() {
@@ -586,7 +588,7 @@ describe( "luxJS - Store", function() {
 	describe( "When removing a Store", function() {
 		it( "Should remove all subscriptions", function() {
 			var store = storeFactory();
-			postal.subscriptions[ 'lux.dispatcher' ].should.have.property( "storeOne.handle.*" );
+			postal.subscriptions[ "lux.dispatcher" ].should.have.property( "storeOne.handle.*" );
 			store.dispose();
 			store = undefined;
 		} );
@@ -595,7 +597,7 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 			store = undefined;
 			// Since actual namespaces are in a hidden variable, we simply try to create a new one
-			var store = storeFactory();
+			store = storeFactory();
 			// It will throw an error if still defined as a namespace (Unit test for throwing the error is above)
 			store.dispose();
 		} );
@@ -603,16 +605,17 @@ describe( "luxJS - Store", function() {
 			var storeIsInActionMap = function() {
 				var actionMap = lux.dispatcher.actionMap;
 				var isPresent = false;
+				var filterFn = function( x ) {
+					return x.namespace === "storeOne";
+				};
 				for (var action in actionMap) {
-					if ( actionMap[ action ].filter( function( x ) {
-								return x.namespace === "storeOne";
-							} ).length ) {
+					if ( actionMap[ action ].filter( filterFn ).length ) {
 						isPresent = true;
 						break;
 					}
 				}
 				return isPresent;
-			}
+			};
 			var store = storeFactory();
 			storeIsInActionMap().should.be.true;
 			store.dispose();

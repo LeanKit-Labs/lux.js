@@ -33,7 +33,7 @@ describe( "luxJS - Dispatcher", function() {
 
 		subscription.unsubscribe();
 
-		handler.calledOnce.should.be.true;
+		handler.should.be.calledOnce;
 		handler.lastCall.args[ 0 ].actionType.should.equal( testAction );
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 	} );
@@ -152,7 +152,7 @@ describe( "luxJS - Dispatcher", function() {
 
 		subscription.unsubscribe();
 
-		handler.calledOnce.should.be.true;
+		handler.should.be.calledOnce;
 		handler.lastCall.args[ 0 ].action.actionType.should.equal( testAction );
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 	} );
@@ -160,9 +160,9 @@ describe( "luxJS - Dispatcher", function() {
 	it( "should ignore handled messages when there is no current actionContext", function() {
 		dispatcher.handle = sinon.spy();
 
-		dispatcherChannel.publish( "alpha.handled.test" )
+		dispatcherChannel.publish( "alpha.handled.test" );
 
-		dispatcher.handle.notCalled.should.be.ok;
+		dispatcher.handle.should.not.be.called;
 	} );
 
 	it( "should unsubscribe and remove all subscriptions when disposed", function() {
@@ -172,6 +172,6 @@ describe( "luxJS - Dispatcher", function() {
 
 		subscriptions.forEach( ( sub ) => sub.inactive.should.be.ok );
 
-		( dispatcher.__subscriptions === null ).should.be.ok;
+		should.equal( dispatcher.__subscriptions, null );
 	} );
 } );
