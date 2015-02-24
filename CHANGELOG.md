@@ -1,3 +1,9 @@
+## v0.6.0
+
+* Use 6to5 by its new name babel.
+* Converted tests to Chai assertions and chai-sinon helpers
+* Update specs to workaround Number.should babel/chai conflict.
+
 ## v0.5.4
 
 * Fixed bug in store dispose method.
