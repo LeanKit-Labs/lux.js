@@ -55,12 +55,12 @@ describe( "luxJS - Mixins", function() {
 			lux.mixin( obj );
 
 			creator.publishAction( "one" );
-			onChange.callCount.should.equal( 1 );
+			onChange.should.be.calledOnce;
 
 			obj.luxCleanup();
 
 			creator.publishAction( "one" );
-			onChange.callCount.should.equal( 1 );
+			onChange.should.be.calledOnce;
 
 		} );
 	} );
@@ -169,12 +169,12 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.store );
 
 				creator.publishAction( "one" );
-				onChange.callCount.should.equal( 1 );
+				onChange.should.be.calledOnce;
 
 				obj.luxCleanup();
 
 				creator.publishAction( "one" );
-				onChange.callCount.should.equal( 1 );
+				onChange.should.be.calledOnce;
 			} );
 			it( "Should cleanup properly for a namespace that has dot-separated pieces, when teardown is called", function() {
 				storeFactory( { namespace: "teardown.store" } );
@@ -188,12 +188,12 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.store );
 
 				creator.publishAction( "one" );
-				onChange.callCount.should.equal( 1 );
+				onChange.should.be.calledOnce;
 
 				obj.luxCleanup();
 
 				creator.publishAction( "one" );
-				onChange.callCount.should.equal( 1 );
+				onChange.should.be.calledOnce;
 			} );
 		} );
 
