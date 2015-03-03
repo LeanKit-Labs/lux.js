@@ -36,7 +36,7 @@ var luxStoreMixin = {
 		var __lux = ensureLuxProp( this );
 		var stores = this.stores = ( this.stores || {} );
 
-		if ( !stores.listenTo ) {
+		if ( !stores.listenTo || !stores.listenTo.length ) {
 			throw new Error( `listenTo must contain at least one store namespace` );
 		}
 

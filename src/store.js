@@ -1,4 +1,4 @@
-/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator, merge, extend */
+/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator, merge, extend, _ */
 /* jshint -W098 */
 
 function ensureStoreOptions( options, handlers, store ) {
@@ -25,7 +25,7 @@ function getHandlerObject( handlers, key, listeners ) {
 			}.bind( this ) );
 			return changed > 0;
 		}
-	}
+	};
 }
 
 function updateWaitFor( source, handlerObject ) {
@@ -63,7 +63,7 @@ function processStoreArgs( ...options ) {
 					// being waited upon
 					updateWaitFor( handler, handlers[ key ] );
 					// Add the original handler method(s) to the listeners queue
-					addListeners( listeners, key, handler )
+					addListeners( listeners, key, handler );
 				});
 			}
 			delete opt.handlers;
@@ -93,6 +93,17 @@ class Store {
 			if( !inDispatch ) {
 				throw new Error( "setState can only be called during a dispatch cycle from a store action handler." );
 			}
+			state = Object.assign( state, newState );
+		};
+
+		this.replaceState = function( newState ) {
+			if( !inDispatch ) {
+				throw new Error( "replaceState can only be called during a dispatch cycle from a store action handler." );
+			}
+			// we preserve the underlying state ref, but clear it
+			Object.keys( state ).forEach( function( key ) {
+				delete state[ key ];
+			} );
 			state = Object.assign( state, newState );
 		};
 

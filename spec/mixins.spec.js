@@ -35,7 +35,7 @@ describe( "luxJS - Mixins", function() {
 		it( "Should add a luxCleanup method", function() {
 			var obj = {
 				stores: {
-					listenTo: [],
+					listenTo: [ "fakeStore" ],
 					onChange: function() {}
 				}
 			};
@@ -99,6 +99,17 @@ describe( "luxJS - Mixins", function() {
 					lux.mixin( objOne );
 				} ).should.throw( /no onChange handler/ );
 			} );
+			it( "Should throw an error if no store namespaces are listed", function() {
+				var objOne = {
+					stores: {
+						listenTo: [],
+						onChange: sinon.stub()
+					}
+				};
+				( function initializeMixinWithoutStoresInListenTo() {
+					lux.mixin( objOne );
+				} ).should.throw( /listenTo must contain at least one store namespace/ );
+			} );
 			it( "Should call onChange when a store is changed", function() {
 				storeFactory( { namespace: "shouldChange" } );
 				var onChange = sinon.spy();
@@ -155,7 +166,6 @@ describe( "luxJS - Mixins", function() {
 
 				storeOne.dispose();
 				storeTwo.dispose();
-
 			} );
 			it( "Should cleanup when teardown is called", function() {
 				storeFactory( { namespace: "teardownStore" } );
@@ -202,7 +212,7 @@ describe( "luxJS - Mixins", function() {
 			function controllerViewFactory( options ) {
 				var Component = lux.controllerView( Object.assign( {
 					stores: {
-						listenTo: [],
+						listenTo: [ "fakeStore" ],
 						onChange: function() {}
 					},
 					render: function() {

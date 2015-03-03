@@ -474,6 +474,61 @@ describe( "luxJS - Store", function() {
 			store.getState().flag.should.be.true;
 			store.dispose();
 		} );
+		it( "Should only allow replaceState while handling an action", function() {
+			var store = storeFactory( {
+				state: {},
+				handlers: {
+					anotherAction: function() {
+						this.replaceState( { flag: true } );
+					}
+				}
+			} );
+
+			( function() {
+				store.replaceState( { flag: true } );
+			} ).should.throw( /during a dispatch cycle/ );
+
+			var creator = lux.actionCreator( {
+				getActions: [ "anotherAction" ]
+			} );
+
+			store.getState().should.not.have.property( "flag" );
+
+			creator.anotherAction();
+
+			store.getState().flag.should.be.true;
+			store.dispose();
+		} );
+		it( "Should replace state if replaceState is called during an action cycle", function() {
+			var store = storeFactory( {
+				state: {
+					lots: true,
+					andLots: 12345,
+					ofKeys: "yessir"
+				},
+				handlers: {
+					aReplaceAction: function() {
+						this.replaceState( { replaced: true } );
+					}
+				}
+			} );
+
+			var creator = lux.actionCreator( {
+				getActions: [ "aReplaceAction" ]
+			} );
+
+			store.getState().should.have.property("lots");
+			store.getState().should.have.property("andLots");
+			store.getState().should.have.property("ofKeys");
+
+			creator.aReplaceAction();
+
+			store.getState().should.not.have.property("lots");
+			store.getState().should.not.have.property("andLots");
+			store.getState().should.not.have.property("ofKeys");
+			store.getState().replaced.should.be.true;
+			store.dispose();
+		} );
 		it( "Should wait for other stores to update before dependent action is handled", function() {
 			var storeOne = sinon.spy();
 			var storeTwo = sinon.spy();

@@ -14,7 +14,7 @@
 				lodash || require( "lodash" ) );
 		};
 	} else {
-		throw new Error( "Sorry - luxJS only support AMD or CommonJS module environments." );
+		root.lux = factory( root.React, root.postal, root.machina, root._ );
 	}
 }( this, function( React, postal, machina, _ ) {
 
