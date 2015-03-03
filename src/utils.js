@@ -1,6 +1,6 @@
 /*global actions, dispatcher, entries, actionGroups */
 /* jshint -W098 */
-
+/* istanbul ignore next */
 function getGroupsWithAction( actionName ) {
 	var groups = [];
 	for( var [ group, list ] of entries( actionGroups ) ) {
@@ -12,6 +12,7 @@ function getGroupsWithAction( actionName ) {
 }
 
 // NOTE - these will eventually live in their own add-on lib or in a debug build of lux
+/* istanbul ignore next */
 var utils = {
 	printActions() {
 		var actionList = Object.keys( actions )
