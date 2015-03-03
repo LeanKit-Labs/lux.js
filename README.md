@@ -1,7 +1,7 @@
-# luxJS
+<img src="logo.png?raw=true&amp;v=2" width="375" height="128" alt="lux.js: Illuminating React" />
 
 ## What Is It
-luxJS is an *opinionated* implementation of a [Flux](http://facebook.github.io/flux/docs/overview.html) architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
+lux.js is an *opinionated* implementation of a [Flux](http://facebook.github.io/flux/docs/overview.html) architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
 
 * *All* communication happens via message passing.
 * Each message payload should be fully serializable(!)
