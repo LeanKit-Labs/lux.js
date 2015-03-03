@@ -1,3 +1,10 @@
+## v0.6.1
+
+* Adding support for plain browser global usage.
+* Added check for listenTo array length.
+* Added replaceState method to store.
+* Appeased jshint. Added test coverage and ignored the print utils code for istanbul.
+
 ## v0.6.0
 
 * Use 6to5 by its new name babel.
