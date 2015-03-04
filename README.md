@@ -184,11 +184,13 @@ lux.customActionCreator({
 });
 ```
 
-#### lux.mixin.actionCreator mixin
-The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names.
+### Mixins
 
-#### lux.mixin.store mixin
-The `store` mixin (which is provided automatically when you call `lux.createControllerView`) will look for a `stores` property on your component options. This property should be an object with a `listenTo` array containing the list of store namespaces your component wants state from, and an `onChange` handler for when any of those stores publish state changes. You will need to include the store(s) as module dependencies to access their state from within the handler.
+#### lux.mixin.actionCreator and lux.reactMixin.actionCreator
+The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names. Use the `lux.reactMixin.actionCreator` with the `React.createClass` mixins property.
+
+#### lux.mixin.store and lux.reactMixin.store
+The `store` mixin (which is provided automatically when you call `lux.createControllerView`) will look for a `stores` property on your component options. This property should be an object with a `listenTo` array containing the list of store namespaces your component wants state from, and an `onChange` handler for when any of those stores publish state changes. You will need to include the store(s) as module dependencies to access their state from within the handler. Use the `lux.reactMixin.store` with the `React.createClass` mixins property.
 
 #### lux.mixin.actionListener
 The `actionListener` mixin wires an instance into the message bus to listen for `execute.*` messages on the `lux.action` channel. The subscription handler looks for a `handlers` property on the instance it's mixed into, and will fire any method that matches the action type passed on the message envelope. This is useful for integration non-lux modules into lux operations. For example, you may have a "remote data" (i.e. - HTTP/websockets) wrapper that uses this mixin to listen for actions that indicate an AJAX request needs to be made, etc.
@@ -202,7 +204,7 @@ The `lux.mixin()` method allows you to add support for lux stores and actions in
 
 You can also specify the lux mixins you wish to use by calling `lux.mixin(taget, lux.mixin.actionListener, lux.mixin.store);`.
 
-#### Other Helpers
+### Other Helpers
 Lux contains some helper methods that enable you to do the following:
 
 ##### Quickly Create an Action Listener

@@ -3,20 +3,14 @@
 ( function( root, factory ) {
 	if ( typeof define === "function" && define.amd ) {
 		// AMD. Register as an anonymous module.
-		define( [ "react", "postal", "machina", "lodash" ], factory );
+		define( [ "postal", "machina", "lodash" ], factory );
 	} else if ( typeof module === "object" && module.exports ) {
 		// Node, or CommonJS-Like environments
-		module.exports = function( React, postal, machina, lodash ) {
-			return factory(
-				React || require( "react" ),
-				postal || require( "postal" ),
-				machina || require( "machina" ),
-				lodash || require( "lodash" ) );
-		};
+		module.exports = factory( require( "postal" ), require( "machina" ), require( "lodash" ) );
 	} else {
-		root.lux = factory( root.React, root.postal, root.machina, root._ );
+		root.lux = factory( root.postal, root.machina, root._ );
 	}
-}( this, function( React, postal, machina, _ ) {
+}( this, function( postal, machina, _ ) {
 
 	/* istanbul ignore if */
 	if ( !( typeof global === "undefined" ? window : global )._babelPolyfill ) {
@@ -52,6 +46,12 @@
 		var cleanup = __lux.cleanup = ( __lux.cleanup || [] );
 		var subscriptions = __lux.subscriptions = ( __lux.subscriptions || {} );
 		return __lux;
+	}
+
+
+	var React;
+	function initReact( userReact ) {
+		React = userReact;
 	}
 
 	var extend = function( ...options ) {
@@ -126,6 +126,7 @@
 		actionCreator,
 		actionListener,
 		mixin: mixin,
+		initReact,
 		removeStore,
 		Store,
 		stores,
