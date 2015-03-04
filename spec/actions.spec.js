@@ -1,4 +1,22 @@
 describe( "luxJS - Actions", function() {
+	describe( "lux.publishAction", function() {
+		var listener, spy;
+		before( function () {
+			spy = sinon.spy();
+			listener = lux.actionListener( {
+				handlers: {
+					globalPublishAction: spy
+				}
+			} );
+		} );
+		after( function () {
+			listener.luxCleanup();
+		} );
+		it( "should trigger the correct action", function () {
+			lux.publishAction( "globalPublishAction" );
+			spy.should.be.calledOnce;
+		} );
+	} );
 	describe( "When calling addToActionGroup", function() {
 		describe( "When creating a new action group", function() {
 			before( function() {
@@ -102,7 +120,7 @@ describe( "luxJS - Actions", function() {
 			var actionName = "create-custom-action";
 			var customAction = {};
 
-			customAction[ actionName ] = function() {};
+			customAction[ actionName ] = sinon.spy();
 
 			lux.customActionCreator( customAction );
 
@@ -110,14 +128,16 @@ describe( "luxJS - Actions", function() {
 				getActions: actionName
 			} );
 
-			// ensure that the method added is actually the one we defined via customActionCreator
-			actionCreator[ actionName ].should.equal( customAction[ actionName ] );
+			// ensure that the method called is actually
+			// the one we defined via customActionCreator
+			actionCreator[ actionName ]();
+			customAction[ actionName ].should.be.calledOnce;
 		} );
 
 		it( "Should overwrite any existing action", function() {
 			var actionName = "overwrite-custom-action";
-			var handlerOne = function() {};
-			var handlerTwo = function() {};
+			var handlerOne = sinon.spy();
+			var handlerTwo = sinon.spy();
 			var customAction = {
 				[ actionName ]: handlerOne
 			};
@@ -133,11 +153,15 @@ describe( "luxJS - Actions", function() {
 			} );
 
 			// ensure that the method is the newly overwritten one
-			actionCreator[ actionName ].should.equal( handlerTwo );
+			actionCreator[ actionName ]();
+			handlerTwo.should.be.calledOnce;
+			handlerOne.should.not.be.called;
 		} );
 
 		it( "Should not be overwritten by automatic action creation", function() {
-			var handler = function() {};
+
+			var handler = sinon.spy();
+			var wrongHandler = sinon.spy();
 
 			lux.customActionCreator( {
 				automaticActionCreationTest: handler
@@ -146,7 +170,7 @@ describe( "luxJS - Actions", function() {
 			// this should not overwrite the custom action in place
 			lux.actionListener( {
 				handlers: {
-					automaticActionCreationTest: function() {}
+					automaticActionCreationTest: wrongHandler
 				}
 			} );
 
@@ -154,7 +178,10 @@ describe( "luxJS - Actions", function() {
 				getActions: "automaticActionCreationTest"
 			} );
 
-			actionCreator.automaticActionCreationTest.should.equal( handler );
+			actionCreator.automaticActionCreationTest();
+
+			handler.should.be.calledOnce;
+			wrongHandler.should.not.be.called;
 		} );
 	} );
 

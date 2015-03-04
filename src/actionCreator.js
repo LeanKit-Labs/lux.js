@@ -14,6 +14,14 @@ function buildActionList( handlers ) {
 	return actionList;
 }
 
+function publishAction( action, ...args ) {
+	if ( actions[ action ] ) {
+		actions[ action ]( ...args );
+	} else {
+		throw new Error( `There is no action named '${action}'` );
+	}
+}
+
 function generateActionCreator( actionList ) {
 	actionList = ( typeof actionList === "string" ) ? [ actionList ] : actionList;
 	actionList.forEach( function( action ) {

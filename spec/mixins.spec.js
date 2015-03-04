@@ -301,6 +301,20 @@ describe( "luxJS - Mixins", function() {
 				obj.should.contain.all.keys( "action1", "action2" );
 			} );
 
+			it( "Should look at getActions and create methods for each action, even if the action does not exist yet", function() {
+				lux.customActionCreator( {
+					action1: function() {}
+				} );
+
+				var obj = {
+					getActions: [ "action1", "action2" ]
+				};
+
+				lux.mixin( obj, lux.mixin.actionCreator );
+
+				obj.should.contain.all.keys( "action1", "action2" );
+			} );
+
 			it( "Should support using a string or array for getActions", function() {
 				lux.customActionCreator( {
 					action1: function() {},
@@ -331,14 +345,16 @@ describe( "luxJS - Mixins", function() {
 					lux.mixin( obj, lux.mixin.actionCreator );
 				} ).should.throw( /there is no action group/i );
 			} );
-			it( "Should throw an error when requested an action that does not exist", function() {
+			it( "Should throw an error when using an action that does not exist", function() {
 				var obj = {
 					getActions: "doesNotExist"
 				};
 
-				( function() {
-					lux.mixin( obj, lux.mixin.actionCreator );
-				} ).should.throw( /there is no action/i );
+				lux.mixin( obj, lux.mixin.actionCreator );
+
+				obj.should.contain.key( "doesNotExist" );
+
+				obj.doesNotExist.should.throw( /there is no action/i );
 			} );
 
 			it( "Should add a publishAction method", function() {

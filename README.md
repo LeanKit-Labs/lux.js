@@ -204,7 +204,7 @@ By default, lux will generate an action creator method for your actions (which s
 lux.customActionCreator({
 	myActionName: function(something, anotherThing) {
 		console.log("I want to console log this:", something, anotherThing);
-		this.dispatchAction("myActionName", something, anotherThing);
+		lux.publishAction("myActionName", something, anotherThing);
 	}
 });
 ```
@@ -244,7 +244,7 @@ var http = lux.actionListener({
 				var board = mockData.boards.find(function(x) {
 					return x.boardId.toString() === boardId.toString();
 				});
-				this.dispatchAction("boardLoaded", boardId, board);
+				lux.publishAction("boardLoaded", boardId, board);
 			}.bind(this), 200);
 		}
 	}
@@ -263,6 +263,14 @@ var boardActions = lux.actionCreator({
 
 boardAction.toggleLaneSelection(123, 4567);
 
+```
+
+##### Publish A Named Action
+
+If you just need to publish an action, you can do that by calling `lux.publishAction( actionName, arg1, arg2... )`. Just a reminder, you can really use this anywhere in your application but it is **strongly discouraged** to have a store ever publish actions.
+
+```javascript
+lux.publishAction( "initializePage" ); // kick off page setup
 ```
 
 ##### Utils

@@ -1,5 +1,5 @@
 
-/* global storeChannel, generateActionCreator, actions, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
+/* global storeChannel, generateActionCreator, actions, publishAction, addToActionGroup, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -102,31 +102,20 @@ var luxActionCreatorMixin = {
 
 		if( this.getActions.length ) {
 			this.getActions.forEach( function ( key ) {
-				var val = actions[ key ];
-				if ( val ) {
-					addActionIfNotPresent( key, val );
-				} else {
-					throw new Error( `There is no action named '${key}'` );
-				}
+				addActionIfNotPresent( key, function () {
+					publishAction( key, ...arguments );
+				} );
 			});
 		}
 	},
 	mixin: {
-		publishAction: function( action, ...args ) {
-			actionChannel.publish( {
-				topic: `execute.${action}`,
-				data: {
-					actionType: action,
-					actionArgs: args
-				}
-			} );
-		}
+		publishAction: publishAction
 	}
 };
 
 var luxActionCreatorReactMixin = {
 	componentWillMount: luxActionCreatorMixin.setup,
-	publishAction: luxActionCreatorMixin.mixin.publishAction
+	publishAction: publishAction
 };
 
 /*********************************************
