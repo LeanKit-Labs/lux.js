@@ -1,3 +1,11 @@
+## v0.7.0
+
+* Removed factory function export from CommonJS wrapper.
+* Added logo to repo and README
+* Separate `initReact` method
+* Exposed react mixins
+* Added a top level publishAction to call both custom and auto-generated actions
+
 ## v0.6.1
 
 * Adding support for plain browser global usage.
