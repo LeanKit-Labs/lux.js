@@ -44,8 +44,7 @@
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {
-    "babel": "~4.4.5",
-    "react": ">=0.12.2"
+    "babel": "~4.4.5"
   },
   "dependencies": {
     "lodash": "3.1.0",
