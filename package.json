@@ -39,8 +39,8 @@
   ],
   "scripts": {
     "build": "gulp",
-    "test": "mocha -r spec/helpers/node-setup.js spec",
-    "coverage": "istanbul cover _mocha -x 'spec/**/*'  -- -r spec/helpers/node-setup.js spec/*.spec.js",
+    "test": "gulp build:es5 && mocha -r spec/helpers/node-setup.js spec",
+    "coverage": "gulp build:es5 && istanbul cover _mocha -x 'spec/**/*'  -- -r spec/helpers/node-setup.js spec/*.spec.js",
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {

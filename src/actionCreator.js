@@ -14,19 +14,22 @@ function buildActionList( handlers ) {
 	return actionList;
 }
 
+function publishAction( action, ...args ) {
+	actionChannel.publish( {
+		topic: `execute.${action}`,
+		data: {
+			actionType: action,
+			actionArgs: args
+		}
+	} );
+}
+
 function generateActionCreator( actionList ) {
 	actionList = ( typeof actionList === "string" ) ? [ actionList ] : actionList;
 	actionList.forEach( function( action ) {
 		if( !actions[ action ]) {
 			actions[ action ] = function() {
-				var args = Array.from( arguments );
-				actionChannel.publish( {
-					topic: `execute.${action}`,
-					data: {
-						actionType: action,
-						actionArgs: args
-					}
-				} );
+				publishAction( action, ...arguments );
 			};
 		}
 	});

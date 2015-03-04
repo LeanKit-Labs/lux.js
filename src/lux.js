@@ -116,6 +116,7 @@
 	// jshint ignore: start
 	return {
 		actions,
+		publishAction,
 		addToActionGroup,
 		component,
 		controllerView,
