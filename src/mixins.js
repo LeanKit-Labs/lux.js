@@ -103,11 +103,7 @@ var luxActionCreatorMixin = {
 		if( this.getActions.length ) {
 			this.getActions.forEach( function ( key ) {
 				addActionIfNotPresent( key, function () {
-					if ( actions[ key ] ) {
-						actions[key].apply( this, arguments );
-					} else {
-						throw new Error( `There is no action named '${key}'` );
-					}
+					publishAction( key, ...arguments );
 				} );
 			});
 		}

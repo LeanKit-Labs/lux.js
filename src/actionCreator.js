@@ -15,13 +15,11 @@ function buildActionList( handlers ) {
 }
 
 function publishAction( action, ...args ) {
-	actionChannel.publish( {
-		topic: `execute.${action}`,
-		data: {
-			actionType: action,
-			actionArgs: args
-		}
-	} );
+	if ( actions[ action ] ) {
+		actions[ action ]( ...args );
+	} else {
+		throw new Error( `There is no action named '${action}'` );
+	}
 }
 
 function generateActionCreator( actionList ) {
@@ -29,7 +27,14 @@ function generateActionCreator( actionList ) {
 	actionList.forEach( function( action ) {
 		if( !actions[ action ]) {
 			actions[ action ] = function() {
-				publishAction( action, ...arguments );
+				var args = Array.from( arguments );
+				actionChannel.publish( {
+					topic: `execute.${action}`,
+					data: {
+						actionType: action,
+						actionArgs: args
+					}
+				} );
 			};
 		}
 	});
