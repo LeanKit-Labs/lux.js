@@ -15,12 +15,15 @@ luxJS is an *opinionated* implementation of a [Flux](http://facebook.github.io/f
 
 ### The Pieces
 #### ControllerViews
-A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.mixin.actionCreator` and `lux.mixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
+A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.reactMixin.actionCreator` and `lux.reactMixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
 
-You get an instance of a ControllerView by calling `lux.controllerView()`. For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
+You get an instance of a ControllerView by calling `lux.controllerView()` (You must call `lux.initReact( React )` once in your app before using this method). For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
 
 
 ```javascript
+var lux = require( "lux.js" );
+lux.initReact( React ); // Only needed one time in the app
+
 var LaneSelector = lux.controllerView({
 
 	// In this case "board" is an action group that contains
@@ -63,14 +66,26 @@ var LaneSelector = lux.controllerView({
 });
 ```
 
+`lux.controllerView` is just a convenience method that calls `React.createClass` with the two mixins. You could also use:
+
+```js
+var LaneSelector = React.createClass({
+	mixins: [ lux.reactMixin.store, lux.reactMixin.actionCreator ],
+	...
+});
+```
+
 As of v0.2.0, a lux ControllerView will wait on all the stores involved in an action to signal state changes before it calls `onChange`. This means your component will only call render once even if it's listening to multiple stores that change state during an action dispatch.
 
 >Opinionation: In a lux app, ControllerViews are the *only* React components that should be allowed listen to stores for state. Other non-ControllerViews might have internal state (that's not from a store) and that's OK, but only ControllerViews should be wired to listen to stores.
 
 #### "Normal" Lux Components
-For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.component()`. For example, this component is being given an ActionCreator API for the "board" store (which adds the `toggleLaneSelection` method to the component), but is NOT listening to the board store for state, since it's not a ControllerView:
+For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.component()` (You must call `lux.initReact( React )` once in your app before using this method). For example, this component is being given an ActionCreator API for the "board" store (which adds the `toggleLaneSelection` method to the component), but is NOT listening to the board store for state, since it's not a ControllerView:
 
 ```javascript
+var lux = require( "lux.js" );
+lux.initReact( React ); // Only needed one time in the app
+
 var Lane = lux.component({
 
 	getActionGroup: ["board"],
@@ -98,6 +113,16 @@ var Lane = lux.component({
 	render: function() {
 		// etc etc, you get the idea....
 	}
+});
+```
+
+
+`lux.component` is just a convenience method that calls `React.createClass` with one mixin. You could also use:
+
+```js
+var Lane = React.createClass({
+	mixins: [ lux.reactMixin.actionCreator ],
+	...
 });
 ```
 

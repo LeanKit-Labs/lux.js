@@ -236,6 +236,11 @@ mixin.store = luxStoreMixin;
 mixin.actionCreator = luxActionCreatorMixin;
 mixin.actionListener = luxActionListenerMixin;
 
+var reactMixin = {
+	actionCreator: luxActionCreatorReactMixin,
+	store: luxStoreReactMixin
+};
+
 function actionListener( target ) {
 	return mixin( target, luxActionListenerMixin );
 }

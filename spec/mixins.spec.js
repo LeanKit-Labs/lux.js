@@ -210,7 +210,8 @@ describe( "luxJS - Mixins", function() {
 		describe( "When using the React mixin", function() {
 			var mocked;
 			function controllerViewFactory( options ) {
-				var Component = lux.controllerView( Object.assign( {
+				var Component = React.createClass( Object.assign( {
+					mixins: [ lux.reactMixin.store ],
 					stores: {
 						listenTo: [ "fakeStore" ],
 						onChange: function() {}
@@ -400,7 +401,8 @@ describe( "luxJS - Mixins", function() {
 				lux.customActionCreator( {
 					sample: function() {}
 				} );
-				var Component = lux.component( {
+				var Component = React.createClass( {
+					mixins: [ lux.reactMixin.actionCreator ],
 					getActions: "sample",
 					componentWillMount: function() {
 						this.should.contain.all.keys( "publishAction", "sample" );

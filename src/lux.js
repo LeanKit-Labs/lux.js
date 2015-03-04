@@ -127,6 +127,7 @@
 		actionListener,
 		mixin: mixin,
 		initReact,
+		reactMixin,
 		removeStore,
 		Store,
 		stores,
