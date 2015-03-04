@@ -24,4 +24,5 @@ global.luxActionCh = global.postal.channel( "lux.action" );
 
 require( "babel/register" );
 
-global.lux = require( "../../lib/lux.js" )( React, postal, machina, _ );
+global.lux = require( "../../lib/lux.js" );
+global.lux.initReact( React );

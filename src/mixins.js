@@ -174,7 +174,14 @@ var luxActionListenerMixin = function( { handlers, handlerFn, context, channel, 
 /*********************************************
 *   React Component Versions of Above Mixin  *
 **********************************************/
+function ensureReact( methodName ) {
+	if ( typeof React === "undefined" ) {
+		throw new Error( "You attempted to use lux." + methodName + " without first calling lux.initReact( React );" );
+	}
+}
+
 function controllerView( options ) {
+	ensureReact( "controllerView" );
 	var opt = {
 		mixins: [ luxStoreReactMixin, luxActionCreatorReactMixin ].concat( options.mixins || [] )
 	};
@@ -183,6 +190,7 @@ function controllerView( options ) {
 }
 
 function component( options ) {
+	ensureReact( "component" );
 	var opt = {
 		mixins: [ luxActionCreatorReactMixin ].concat( options.mixins || [] )
 	};
@@ -227,6 +235,11 @@ function mixin( context, ...mixins ) {
 mixin.store = luxStoreMixin;
 mixin.actionCreator = luxActionCreatorMixin;
 mixin.actionListener = luxActionListenerMixin;
+
+var reactMixin = {
+	actionCreator: luxActionCreatorReactMixin,
+	store: luxStoreReactMixin
+};
 
 function actionListener( target ) {
 	return mixin( target, luxActionListenerMixin );

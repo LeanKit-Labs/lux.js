@@ -39,13 +39,12 @@
   ],
   "scripts": {
     "build": "gulp",
-    "test": "./node_modules/mocha/bin/mocha -r spec/helpers/node-setup.js spec",
-    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -x 'spec/**/*'  -- -r spec/helpers/node-setup.js spec spec/*.spec.js",
+    "test": "mocha -r spec/helpers/node-setup.js spec",
+    "coverage": "istanbul cover _mocha -x 'spec/**/*'  -- -r spec/helpers/node-setup.js spec/*.spec.js",
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {
-    "babel": "~4.4.5",
-    "react": ">=0.12.2"
+    "babel": "~4.4.5"
   },
   "dependencies": {
     "lodash": "3.1.0",

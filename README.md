@@ -15,12 +15,15 @@ lux.js is an *opinionated* implementation of a [Flux](http://facebook.github.io/
 
 ### The Pieces
 #### ControllerViews
-A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.mixin.actionCreator` and `lux.mixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
+A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.reactMixin.actionCreator` and `lux.reactMixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
 
-You get an instance of a ControllerView by calling `lux.controllerView()`. For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
+You get an instance of a ControllerView by calling `lux.controllerView()` (You must call `lux.initReact( React )` once in your app before using this method). For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
 
 
 ```javascript
+var lux = require( "lux.js" );
+lux.initReact( React ); // Only needed one time in the app
+
 var LaneSelector = lux.controllerView({
 
 	// In this case "board" is an action group that contains
@@ -63,14 +66,26 @@ var LaneSelector = lux.controllerView({
 });
 ```
 
+`lux.controllerView` is just a convenience method that calls `React.createClass` with the two mixins. You could also use:
+
+```js
+var LaneSelector = React.createClass({
+	mixins: [ lux.reactMixin.store, lux.reactMixin.actionCreator ],
+	...
+});
+```
+
 As of v0.2.0, a lux ControllerView will wait on all the stores involved in an action to signal state changes before it calls `onChange`. This means your component will only call render once even if it's listening to multiple stores that change state during an action dispatch.
 
 >Opinionation: In a lux app, ControllerViews are the *only* React components that should be allowed listen to stores for state. Other non-ControllerViews might have internal state (that's not from a store) and that's OK, but only ControllerViews should be wired to listen to stores.
 
 #### "Normal" Lux Components
-For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.component()`. For example, this component is being given an ActionCreator API for the "board" store (which adds the `toggleLaneSelection` method to the component), but is NOT listening to the board store for state, since it's not a ControllerView:
+For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.component()` (You must call `lux.initReact( React )` once in your app before using this method). For example, this component is being given an ActionCreator API for the "board" store (which adds the `toggleLaneSelection` method to the component), but is NOT listening to the board store for state, since it's not a ControllerView:
 
 ```javascript
+var lux = require( "lux.js" );
+lux.initReact( React ); // Only needed one time in the app
+
 var Lane = lux.component({
 
 	getActionGroup: ["board"],
@@ -98,6 +113,16 @@ var Lane = lux.component({
 	render: function() {
 		// etc etc, you get the idea....
 	}
+});
+```
+
+
+`lux.component` is just a convenience method that calls `React.createClass` with one mixin. You could also use:
+
+```js
+var Lane = React.createClass({
+	mixins: [ lux.reactMixin.actionCreator ],
+	...
 });
 ```
 
@@ -184,11 +209,13 @@ lux.customActionCreator({
 });
 ```
 
-#### lux.mixin.actionCreator mixin
-The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names.
+### Mixins
 
-#### lux.mixin.store mixin
-The `store` mixin (which is provided automatically when you call `lux.createControllerView`) will look for a `stores` property on your component options. This property should be an object with a `listenTo` array containing the list of store namespaces your component wants state from, and an `onChange` handler for when any of those stores publish state changes. You will need to include the store(s) as module dependencies to access their state from within the handler.
+#### lux.mixin.actionCreator and lux.reactMixin.actionCreator
+The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names. Use the `lux.reactMixin.actionCreator` with the `React.createClass` mixins property.
+
+#### lux.mixin.store and lux.reactMixin.store
+The `store` mixin (which is provided automatically when you call `lux.createControllerView`) will look for a `stores` property on your component options. This property should be an object with a `listenTo` array containing the list of store namespaces your component wants state from, and an `onChange` handler for when any of those stores publish state changes. You will need to include the store(s) as module dependencies to access their state from within the handler. Use the `lux.reactMixin.store` with the `React.createClass` mixins property.
 
 #### lux.mixin.actionListener
 The `actionListener` mixin wires an instance into the message bus to listen for `execute.*` messages on the `lux.action` channel. The subscription handler looks for a `handlers` property on the instance it's mixed into, and will fire any method that matches the action type passed on the message envelope. This is useful for integration non-lux modules into lux operations. For example, you may have a "remote data" (i.e. - HTTP/websockets) wrapper that uses this mixin to listen for actions that indicate an AJAX request needs to be made, etc.
@@ -202,7 +229,7 @@ The `lux.mixin()` method allows you to add support for lux stores and actions in
 
 You can also specify the lux mixins you wish to use by calling `lux.mixin(taget, lux.mixin.actionListener, lux.mixin.store);`.
 
-#### Other Helpers
+### Other Helpers
 Lux contains some helper methods that enable you to do the following:
 
 ##### Quickly Create an Action Listener
@@ -254,10 +281,13 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 
 ## Dependencies
 
-* [ReactJS](http://facebook.github.io/react/) (NOTE: ReactJS is a *peer dependency*. You will need to make sure you include it in your project's dependencies.)
 * [postal](https://github.com/postaljs/postal.js)
 * [machina](https://github.com/ifandelse/machina.js)
 * [babel polyfill](https://babeljs.io/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the babel polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) babel is a peer dependency of lux.
+
+### Optional Dependencies
+
+* [ReactJS](http://facebook.github.io/react/) – The `lux.reactMixin` mixins are made to work with React. Lux only needs a reference to React if you plan on using `lux.component` and `lux.controllerView` methods. In that case, calling `lux.initReact( React )` will allow those methods to work with your version of React.
 
 >NOTE: If you're using bower, you will need to grab the babel polyfill and include it manually. If you're using npm, you will need to `npm install babel` in your project.
 
