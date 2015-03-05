@@ -1,3 +1,8 @@
+## v0.7.1
+
+* No longer sending prenotify message if no stores have updated
+* Removed deprecated mixin method, changed `initReact` to return the module export to allow chaining
+
 ## v0.7.0
 
 * Removed factory function export from CommonJS wrapper.
