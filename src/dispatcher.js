@@ -76,7 +76,9 @@ class Dispatcher extends machina.BehavioralFsm {
 						}
 					},
 					_onExit: function( luxAction ) {
-						dispatcherChannel.publish( "prenotify", { stores: luxAction.updated } );
+						if( luxAction.updated.length ) {
+							dispatcherChannel.publish( "prenotify", { stores: luxAction.updated } );
+						}
 					}
 				},
 				notifying: {

@@ -68,7 +68,6 @@ var luxStoreMixin = {
 
 var luxStoreReactMixin = {
 	componentWillMount: luxStoreMixin.setup,
-	loadState: luxStoreMixin.mixin.loadState,
 	componentWillUnmount: luxStoreMixin.teardown
 };
 
