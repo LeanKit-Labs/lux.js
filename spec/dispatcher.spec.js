@@ -174,4 +174,49 @@ describe( "luxJS - Dispatcher", function() {
 
 		should.equal( dispatcher.__subscriptions, null );
 	} );
+
+	describe("when exiting dispatching state", function(){
+		var hasChanged, namespace, prenotifySent, alphaSubscription, prenotifySubscription;
+
+		beforeEach(function(){
+			namespace = "alpha";
+			prenotifySent = false;
+			dispatcher.registerStore( {
+				namespace: "alpha",
+				actions: [
+					{ actionType: "test", waitFor: [ "beta" ] }
+				]
+			} );
+			alphaSubscription = dispatcherChannel.subscribe( namespace + ".handle." + testAction, function() {
+				dispatcherChannel.publish(
+					namespace + ".handled." + testAction,
+					{ hasChanged: hasChanged, namespace: namespace }
+				);
+			} );
+			prenotifySubscription = dispatcherChannel.subscribe( "prenotify", function() {
+				prenotifySent = true;
+			} );
+		});
+
+		afterEach(function() {
+			alphaSubscription.unsubscribe();
+			prenotifySubscription.unsubscribe();
+		});
+
+		it( "should send a prenotify message if there are stores that have updated", function(){
+			hasChanged = true;
+			dispatcher.handleActionDispatch( {
+				actionType: testAction
+			} );
+			prenotifySent.should.be.true;
+		});
+
+		it( "should not send a prenotify message if there are no stores that updated", function(){
+			hasChanged = false;
+			dispatcher.handleActionDispatch( {
+				actionType: testAction
+			} );
+			prenotifySent.should.be.false;
+		});
+	});
 } );
