@@ -50,9 +50,6 @@
 
 
 	var React;
-	function initReact( userReact ) {
-		React = userReact;
-	}
 
 	var extend = function( ...options ) {
 		var parent = this;
@@ -127,7 +124,10 @@
 		actionCreator,
 		actionListener,
 		mixin: mixin,
-		initReact,
+		initReact( userReact ) {
+			React = userReact;
+			return this;
+		},
 		reactMixin,
 		removeStore,
 		Store,
