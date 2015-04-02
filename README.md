@@ -1,28 +1,31 @@
 <img src="logo.png?raw=true&amp;v=2" width="375" height="128" alt="lux.js: Illuminating React" />
 
 ## What Is It
-lux.js is an *opinionated* implementation of a [Flux](http://facebook.github.io/flux/docs/overview.html) architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are *highly* de-coupled. Here's a gist of the opinions at play:
+lux.js is an implementation of a [Flux](http://facebook.github.io/flux/docs/overview.html) architecture using ReactJS, postal.js and machina.js. In a nutshell, the React components, dispatcher and stores are highly de-coupled. Here's a gist of the opinions at play:
 
-* *All* communication happens via message passing.
-* Each message payload should be fully serializable(!)
 * Components use an ActionCreator API as a proxy to stores.
-* Store state should never *ever* **EVER** be mutated directly. In fact, it's only possible to mutate store state inside a store's action handler. For mutable operations, you should ONLY communicate with a store via the Dispatcher (using an action creator API), or an equivalent message-capable API that follows the lux message contracts for these operations.
-* Stores can be used for read operations by other modules.
 * ActionCreator APIs generate message payloads that are routed to the Dispatcher, which coordinates when and how the stores are told to handle the actions.
-* The Dispatcher ensures that all stores involved in an action perform their tasks in the correct order.
-* Once all stores involved in processing an action have completed their tasks, the Dispatcher signals (via msg) that it's OK for the stores send change notifications.
+* Store operations are synchronous.
+* Store state is not mutated directly. In fact, it's only possible to mutate store state inside a store's action handler. Communication with a store is done via the Dispatcher (using an action creator API), or an equivalent message-capable API that follows the lux message contracts for these operations.
+* Other modules can take a dependency on a store for read-only operations.
+* Once all stores involved in processing an action have completed their tasks, the Dispatcher signals (via msg) that it's OK for the stores to send change notifications.
 * ControllerViews (see below) that are wired up to listen to specific stores will receive their updates, etc.
+* All communication happens via message passing.
+* Each message payload should be fully serializable(!)
 
 ### The Pieces
 #### ControllerViews
 A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.reactMixin.actionCreator` and `lux.reactMixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
 
-You get an instance of a ControllerView by calling `lux.controllerView()` (You must call `lux.initReact( React )` once in your app before using this method). For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
+##### Creating a ControllerView
+You can get an instance of a ControllerView by calling `lux.controllerView()` (You must call `lux.initReact( React )` once in your app before using this method). For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
 
 
 ```javascript
 var lux = require( "lux.js" );
-lux.initReact( React ); // Only needed one time in the app
+// Only needed one time in the app
+// (& only if you're using lux.controllerView or lux.component)
+lux.initReact( React );
 
 var LaneSelector = lux.controllerView({
 
@@ -66,7 +69,7 @@ var LaneSelector = lux.controllerView({
 });
 ```
 
-`lux.controllerView` is just a convenience method that calls `React.createClass` with the two mixins. You could also use:
+Lux provides a couple of helper methods to get pre-configured React components, but you can also stick to plain React components, and use the appropriate lux mixins. Since `lux.controllerView` is just a convenience method that calls `React.createClass` with the two mixins, you could also use:
 
 ```js
 var LaneSelector = React.createClass({
@@ -75,16 +78,27 @@ var LaneSelector = React.createClass({
 });
 ```
 
-As of v0.2.0, a lux ControllerView will wait on all the stores involved in an action to signal state changes before it calls `onChange`. This means your component will only call render once even if it's listening to multiple stores that change state during an action dispatch.
+The nice thing about the above approach is that if you just need to listen to a store for state, then you could include *only* the mixin you need:
 
->Opinionation: In a lux app, ControllerViews are the *only* React components that should be allowed listen to stores for state. Other non-ControllerViews might have internal state (that's not from a store) and that's OK, but only ControllerViews should be wired to listen to stores.
+```js
+var LaneSelector = React.createClass({
+	mixins: [ lux.reactMixin.store ],
+	...
+});
+```
+
+##### How Components Update When Stores Change
+
+A lux ControllerView will wait on all the stores involved in an action to signal state changes before it calls `onChange`. This means your component will only call render once even if it's listening to multiple stores that change state during an action dispatch.
 
 #### "Normal" Lux Components
 For components that need an ActionCreator API (i.e. - they need to dispatch actions), but *don't* need to listen to a store, you can call `lux.component()` (You must call `lux.initReact( React )` once in your app before using this method). For example, this component is being given an ActionCreator API for the "board" store (which adds the `toggleLaneSelection` method to the component), but is NOT listening to the board store for state, since it's not a ControllerView:
 
 ```javascript
 var lux = require( "lux.js" );
-lux.initReact( React ); // Only needed one time in the app
+// Only needed one time in the app
+// (& only if you're using lux.controllerView or lux.component)
+lux.initReact( React );
 
 var Lane = lux.component({
 
@@ -116,8 +130,7 @@ var Lane = lux.component({
 });
 ```
 
-
-`lux.component` is just a convenience method that calls `React.createClass` with one mixin. You could also use:
+Just like `lux.controllerView`, `lux.component` is a convenience method that calls `React.createClass` with one mixin. You could also use:
 
 ```js
 var Lane = React.createClass({
@@ -125,10 +138,6 @@ var Lane = React.createClass({
 	...
 });
 ```
-
-> What if I have a component that doesn't care about listening to stores or dispatching actions?
-
-I'm glad you asked. We use normal React components for those concerns. Lux is there to *complement*, not take the place of nor hide React.
 
 #### Dispatcher
 The Dispatcher listens for actions that are dispatched by Components using ActionCreator APIs. Underneath, it's a [`BehavioralFSM`](https://github.com/ifandelse/machina.js/wiki/machina.BehavioralFsm). You don't have to do anything special, lux creates a single dispatcher instance for you.
@@ -267,7 +276,7 @@ boardAction.toggleLaneSelection(123, 4567);
 
 ##### Publish A Named Action
 
-If you just need to publish an action, you can do that by calling `lux.publishAction( actionName, arg1, arg2... )`. Just a reminder, you can really use this anywhere in your application but it is **strongly discouraged** to have a store ever publish actions.
+If you just need to publish an action, you can do that by calling `lux.publishAction( actionName, arg1, arg2... )`. Just a reminder: even though you can use this anywhere in your application, it is **strongly discouraged** (i.e. - we think it's an anti-pattern) to ever have a store publish actions.
 
 ```javascript
 lux.publishAction( "initializePage" ); // kick off page setup
@@ -280,8 +289,35 @@ lux currently has two console utility methods:
 * `lux.utils.printStoreDepTree()` - prints (in Chrome) a table of each action, and the dependency tree of participating stores, showing them in the order they will handle the action.
 * `lux.utils.printActions()` - prints (in Chrome) a table of the known actions.
 
+### What About Data I/O (e.g. - HTTP, WebSockets)
+Some flux implementations handle remote data access inside stores. We believe that the best way to handle this kind of I/O is *outside* a store.
+
+#### Why Not Inside a Store?
+In addition to tightly coupling stores to a transport, making HTTP calls from a store handler requires action dispatch cycles to be asynchronous, and typically results in stores publishing actions of their own when responses have been recieved. This scenario undermines the benefits gained from a clean uni-directional data flow and removes the predictable nature of knowing where state changes originated from.
+
+#### So How Do We Do It?
+In our apps, we have an API wrapper module (it could wrap `$.ajax`, a WebSocket lib, or whatever you use - we usually wrap [halon](https://github.com/leankit-labs/halon)). This API module uses the `lux.mixin.actionCreator` and `lux.mixin.actionListener` mixins so that it listens for actions (much like the Dispatcher does), and it can also publish actions (when a response is received, for example). For example:
+
+```javascript
+var api = lux.actionCreatorListener( {
+    handlers: {
+        cartCheckout: function( products ) {
+            shop.buyProducts( products, function() {
+                this.publishAction( "successCheckout", products );
+            }.bind( this ) );
+        },
+        getAllProducts: function() {
+            shop.getProducts( function( products ) {
+                this.publishAction( "receiveProducts", products );
+            }.bind( this ) );
+        },
+    }
+} );
+```
+
+The above API wrapper listens for `cartCheckout` and `getAllProducts` actions, and is capable of publishing `successCheckout` and `receiveProducts` actions. Check out the "Examples and More" section at the bottom if you're interested in seeing more.
+
 ## What It Lacks & Other Caveats
-Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 
 * A Store implementation that utilizes immutable.js
 * An API wrapper for things like HTTP/websockets, etc.
@@ -293,13 +329,13 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 * [machina](https://github.com/ifandelse/machina.js)
 * [babel polyfill](https://babeljs.io/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the babel polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) babel is a peer dependency of lux.
 
+>NOTE: If you're using bower, you will need to grab the babel polyfill and include it manually. If you're using npm, you will need to `npm install babel` in your project.
+
 ### Optional Dependencies
 
 * [ReactJS](http://facebook.github.io/react/) – The `lux.reactMixin` mixins are made to work with React. Lux only needs a reference to React if you plan on using `lux.component` and `lux.controllerView` methods. In that case, calling `lux.initReact( React )` will allow those methods to work with your version of React.
 
->NOTE: If you're using bower, you will need to grab the babel polyfill and include it manually. If you're using npm, you will need to `npm install babel` in your project.
-
-## Installation & Example
+## Installation
 
 ### To build the project:
 
@@ -312,7 +348,6 @@ Boy this thing is rough. Right now it doesn't have, but *might* have soon:
 * `npm run coverage` runs istanbul coverage reporter in console (and generates an .html report)
 * `npm run show-coverage` opens the above coverage report in your browser (if you're on a Mac)
 
-### To run the example:
-* navigate to the `/example` directory
-* run `npm install`
-* run `gulp` and your browser should open to <http://localhost:3080>
+### Examples and More:
+* [Doug Neiner](https://twitter.com/dougneiner) has created a great example app [here](https://github.com/LeanKit-Labs/lux-mail-example).
+* Check out the [flux-comparison](https://github.com/voronianski/flux-comparison) project so you can see what lux looks like compared to other great flux implementations.
