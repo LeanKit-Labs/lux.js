@@ -1,6 +1,7 @@
 /* global require, module */
 /* jshint -W098 */
 ( function( root, factory ) {
+	/* istanbul ignore next - don't test UMD wrapper */
 	if ( typeof define === "function" && define.amd ) {
 		// AMD. Register as an anonymous module.
 		define( [ "postal", "machina", "lodash" ], factory );
@@ -12,7 +13,7 @@
 	}
 }( this, function( postal, machina, _ ) {
 
-	/* istanbul ignore if */
+	/* istanbul ignore next */
 	if ( !( typeof global === "undefined" ? window : global )._babelPolyfill ) {
 		throw new Error("You must include the babel polyfill on your page before lux is loaded. See https://babeljs.io/docs/usage/polyfill/ for more details.");
 	}
