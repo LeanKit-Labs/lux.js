@@ -37,6 +37,7 @@ gulp.task( "build:es5", function() {
 		.pipe( babel( {
 			auxiliaryComment: "istanbul ignore next",
 			compact: false,
+			blacklist: [ "strict" ],
 			experimental: true
 		} ) )
 		.pipe( header( banner, {
