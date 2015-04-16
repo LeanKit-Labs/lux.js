@@ -1,3 +1,12 @@
+
+## v0.7.2
+
+* Improves usefulness of coverage
+* Blacklisted `strict` in Babel, to fix UMD
+* Detect circular waitFor and incorrect waitFor
+* Removed Examples (now see @dcneiner's [lux mail example app](https://github.com/LeanKit-Labs/lux-mail-example))
+* Include current year in license header
+
 ## v0.7.1
 
 * No longer sending prenotify message if no stores have updated
