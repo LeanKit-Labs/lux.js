@@ -561,6 +561,122 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 			otherStore.dispose();
 		} );
+		it( "Should warn when an action is dependent on a store that does not participate in that action (or does not exist)", function () {
+			sinon.stub( console, "warn" );
+			var storeOne = sinon.stub();
+			var store = storeFactory( {
+				handlers: {
+					myTest: {
+						waitFor: [ "doesNotExist" ],
+						handler: storeOne
+					}
+				}
+			} );
+
+			lux.publishAction( "myTest" );
+			storeOne.should.be.calledOnce;
+
+			console.warn.should.be.calledOnce.and.calledWithMatch( /doesNotExist/ );
+			console.warn.restore();
+
+			store.dispose();
+		} );
+		it( "Should throw an error when a direct circular dependency between stores is detected", function() {
+			var storeOne = sinon.spy();
+			var storeTwo = sinon.spy();
+
+			var circular1 = new lux.Store( {
+				namespace: "circular1",
+				handlers: {
+					myTest: {
+						waitFor: [ "circular2" ],
+						handler: storeOne
+					}
+				}
+			} );
+
+			var circular2 = new lux.Store( {
+				namespace: "circular2",
+				handlers: {
+					myTest: {
+						waitFor: [ "circular1" ],
+						handler: storeTwo
+					}
+				}
+			} );
+
+			var creator = lux.actionCreator( {
+				getActions: [ "myTest" ]
+			} );
+
+			creator.myTest.should.throw( /circular dependency/i );
+
+			storeOne.should.not.be.called;
+			storeTwo.should.not.be.called;
+			circular1.dispose();
+			circular2.dispose();
+		} );
+		it( "Should throw an error when a more distant circular dependency between stores is detected", function() {
+			var storeOne = sinon.spy();
+			var storeTwo = sinon.spy();
+			var storeThree = sinon.spy();
+			var storeFour = sinon.spy();
+
+			var circular1 = new lux.Store( {
+				namespace: "circular1",
+				handlers: {
+					myTest: {
+						waitFor: [ "circular4" ],
+						handler: storeOne
+					}
+				}
+			} );
+
+			var circular2 = new lux.Store( {
+				namespace: "circular2",
+				handlers: {
+					myTest: {
+						waitFor: [ "circular1" ],
+						handler: storeTwo
+					}
+				}
+			} );
+
+			var circular3 = new lux.Store( {
+				namespace: "circular3",
+				handlers: {
+					myTest: {
+						waitFor: [ "circular2" ],
+						handler: storeThree
+					}
+				}
+			} );
+
+			var circular4 = new lux.Store( {
+				namespace: "circular4",
+				handlers: {
+					myTest: {
+						waitFor: [ "circular3" ],
+						handler: storeFour
+					}
+				}
+			} );
+
+			var creator = lux.actionCreator( {
+				getActions: [ "myTest" ]
+			} );
+
+			creator.myTest.should.throw( /circular dependency/i );
+
+			storeOne.should.not.be.called;
+			storeTwo.should.not.be.called;
+			storeThree.should.not.be.called;
+			storeFour.should.not.be.called;
+			circular1.dispose();
+			circular2.dispose();
+			circular3.dispose();
+			circular4.dispose();
+		} );
 		it( "Should assume there were changes unless a handler explicitly returns `false`", function() {
 			var store = storeFactory( {
 				handlers: {
