@@ -49,7 +49,6 @@ function processGeneration( generation, action ) {
 
 class Dispatcher extends machina.BehavioralFsm {
 	constructor() {
-		this.actionContext = undefined;
 		super( {
 			initialState: "ready",
 			actionMap: {},
@@ -64,8 +63,9 @@ class Dispatcher extends machina.BehavioralFsm {
 					_onEnter: function( luxAction ) {
 						this.actionContext = luxAction;
 						if(luxAction.generations.length) {
-							[ for ( generation of luxAction.generations )
-								processGeneration.call( luxAction, generation, luxAction.action ) ];
+							for ( var generation of luxAction.generations ) {
+								processGeneration.call( luxAction, generation, luxAction.action );
+							}
 							this.transition( luxAction, "notifying" );
 						} else {
 							this.transition( luxAction, "nothandled");
