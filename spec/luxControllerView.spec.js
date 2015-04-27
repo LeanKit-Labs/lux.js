@@ -54,7 +54,7 @@ describe( "luxJS - Controller Views", function() {
 		} );
 
 		describe( "When React is not initialized", function() {
-			it( "should throw a friendly error", function (){
+			it( "should throw a friendly error", function() {
 				lux.initReact();
 				controllerViewFactory.should.throw( /initReact/ );
 				lux.initReact( React );

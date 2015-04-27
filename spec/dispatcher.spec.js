@@ -1,10 +1,10 @@
 /* global describe, it, before, lux, utils, luxStoreCh, postal, sinon */
 
 describe( "luxJS - Dispatcher", function() {
-	var dispatcher,
-		dispatcherChannel = postal.channel( "lux.dispatcher" ),
-		testAction = "test",
-		handler = sinon.spy();
+	var dispatcher;
+	var dispatcherChannel = postal.channel( "lux.dispatcher" );
+	var testAction = "test";
+	var handler = sinon.spy();
 
 	beforeEach( function() {
 		// lux exposes the single dispatcher instance, but for tests create a new one each time
@@ -175,10 +175,10 @@ describe( "luxJS - Dispatcher", function() {
 		should.equal( dispatcher.__subscriptions, null );
 	} );
 
-	describe("when exiting dispatching state", function(){
+	describe( "when exiting dispatching state", function() {
 		var hasChanged, namespace, prenotifySent, alphaSubscription, prenotifySubscription;
 
-		beforeEach(function(){
+		beforeEach( function() {
 			namespace = "alpha";
 			prenotifySent = false;
 			dispatcher.registerStore( {
@@ -196,27 +196,27 @@ describe( "luxJS - Dispatcher", function() {
 			prenotifySubscription = dispatcherChannel.subscribe( "prenotify", function() {
 				prenotifySent = true;
 			} );
-		});
+		} );
 
-		afterEach(function() {
+		afterEach( function() {
 			alphaSubscription.unsubscribe();
 			prenotifySubscription.unsubscribe();
-		});
+		} );
 
-		it( "should send a prenotify message if there are stores that have updated", function(){
+		it( "should send a prenotify message if there are stores that have updated", function() {
 			hasChanged = true;
 			dispatcher.handleActionDispatch( {
 				actionType: testAction
 			} );
 			prenotifySent.should.be.true;
-		});
+		} );
 
-		it( "should not send a prenotify message if there are no stores that updated", function(){
+		it( "should not send a prenotify message if there are no stores that updated", function() {
 			hasChanged = false;
 			dispatcher.handleActionDispatch( {
 				actionType: testAction
 			} );
 			prenotifySent.should.be.false;
-		});
-	});
+		} );
+	} );
 } );

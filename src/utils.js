@@ -3,8 +3,8 @@
 /* istanbul ignore next */
 function getGroupsWithAction( actionName ) {
 	var groups = [];
-	for( var [ group, list ] of entries( actionGroups ) ) {
-		if( list.indexOf( actionName ) >= 0 ) {
+	for ( var [ group, list ] of entries( actionGroups ) ) {
+		if ( list.indexOf( actionName ) >= 0 ) {
 			groups.push( group );
 		}
 	}
@@ -18,12 +18,14 @@ var utils = {
 		var actionList = Object.keys( actions )
 			.map( function( x ) {
 				return {
-					"action name" : x,
-					"stores" : dispatcher.getStoresHandling( x ).stores.map( function( x ) { return x.namespace; } ).join( "," ),
-					"groups" : getGroupsWithAction( x ).join( "," )
+					"action name": x,
+					stores: dispatcher.getStoresHandling( x ).stores.map( function( x ) {
+						return x.namespace;
+					} ).join( "," ),
+					groups: getGroupsWithAction( x ).join( "," )
 				};
-			});
-		if( console && console.table ) {
+			} );
+		if ( console && console.table ) {
 			console.group( "Currently Recognized Actions" );
 			console.table( actionList );
 			console.groupEnd();
@@ -35,23 +37,23 @@ var utils = {
 	printStoreDepTree( actionType ) {
 		var tree = [];
 		actionType = typeof actionType === "string" ? [ actionType ] : actionType;
-		if( !actionType ) {
+		if ( !actionType ) {
 			actionType = Object.keys( actions );
 		}
-		actionType.forEach( function( at ){
+		actionType.forEach( function( at ) {
 			dispatcher.getStoresHandling( at )
 			    .generations.forEach( function( x ) {
-			        while ( x.length ) {
-			            var t = x.pop();
-			            tree.push( {
-			            	"action type" : at,
-			                "store namespace" : t.namespace,
-			                "waits for" : t.waitFor.join( "," ),
-			                generation: t.gen
-			            } );
-			        }
-			    });
-		    if( console && console.table ) {
+				while ( x.length ) {
+					var t = x.pop();
+					tree.push( {
+						"action type": at,
+						"store namespace": t.namespace,
+						"waits for": t.waitFor.join( "," ),
+						generation: t.gen
+					} );
+				}
+			    } );
+			if ( console && console.table ) {
 				console.group( `Store Dependency List for ${at}` );
 				console.table( tree );
 				console.groupEnd();
@@ -60,6 +62,6 @@ var utils = {
 				console.log( tree );
 			}
 			tree = [];
-		});
+		} );
 	}
 };

@@ -25,7 +25,7 @@ function publishAction( action, ...args ) {
 function generateActionCreator( actionList ) {
 	actionList = ( typeof actionList === "string" ) ? [ actionList ] : actionList;
 	actionList.forEach( function( action ) {
-		if( !actions[ action ]) {
+		if ( !actions[ action ] ) {
 			actions[ action ] = function() {
 				var args = Array.from( arguments );
 				actionChannel.publish( {
@@ -37,7 +37,7 @@ function generateActionCreator( actionList ) {
 				} );
 			};
 		}
-	});
+	} );
 }
 
 function getActionGroup( group ) {
@@ -54,17 +54,17 @@ function customActionCreator( action ) {
 
 function addToActionGroup( groupName, actionList ) {
 	var group = actionGroups[ groupName ];
-	if( !group ) {
+	if ( !group ) {
 		group = actionGroups[ groupName ] = [];
 	}
 	actionList = typeof actionList === "string" ? [ actionList ] : actionList;
 	var diff = _.difference( actionList, Object.keys( actions ) );
-	if( diff.length ) {
-		throw new Error( `The following actions do not exist: ${diff.join(", ")}` );
+	if ( diff.length ) {
+		throw new Error( `The following actions do not exist: ${diff.join( ", " )}` );
 	}
-	actionList.forEach( function( action ){
-		if( group.indexOf( action ) === -1 ) {
+	actionList.forEach( function( action ) {
+		if ( group.indexOf( action ) === -1 ) {
 			group.push( action );
 		}
-	});
+	} );
 }

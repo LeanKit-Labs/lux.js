@@ -1,7 +1,7 @@
 /* global __dirname */
 var webpack = require( "webpack" ); //jshint ignore:line
-var sml = require("source-map-loader"); //jshint ignore:line
-var path = require("path");
+var sml = require( "source-map-loader" ); //jshint ignore:line
+var path = require( "path" );
 
 module.exports = {
 	module: {
@@ -20,8 +20,8 @@ module.exports = {
 		alias: {
 			"when.parallel": "when/parallel",
 			"when.pipeline": "when/pipeline",
-			react          : "react/dist/react-with-addons.js",
-			lux            : path.join( __dirname, "./lib/lux.js")
+			react: "react/dist/react-with-addons.js",
+			lux: path.join( __dirname, "./lib/lux.js" )
 		}
 	}
 };

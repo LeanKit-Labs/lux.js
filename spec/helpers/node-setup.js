@@ -21,9 +21,9 @@ global.sinon = require( "sinon" );
 global.luxStoreCh = global.postal.channel( "lux.store" );
 global.luxActionCh = global.postal.channel( "lux.action" );
 
-require( "babel/register" )({
+require( "babel/register" )( {
 	only: /spec/
-});
+} );
 
 global.lux = require( "../../lib/lux.js" );
 global.lux.initReact( React );

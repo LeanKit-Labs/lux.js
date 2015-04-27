@@ -12,10 +12,9 @@
 		root.lux = factory( root.postal, root.machina, root._ );
 	}
 }( this, function( postal, machina, _ ) {
-
 	/* istanbul ignore next */
 	if ( !( typeof global === "undefined" ? window : global )._babelPolyfill ) {
-		throw new Error("You must include the babel polyfill on your page before lux is loaded. See https://babeljs.io/docs/usage/polyfill/ for more details.");
+		throw new Error( "You must include the babel polyfill on your page before lux is loaded. See https://babeljs.io/docs/usage/polyfill/ for more details." );
 	}
 
 	var actionChannel = postal.channel( "lux.action" );
@@ -25,21 +24,21 @@
 
 	// jshint ignore:start
 	var entries = function* ( obj ) {
-		if( [ "object", "function" ].indexOf( typeof obj ) === -1 ) {
+		if ( [ "object", "function" ].indexOf( typeof obj ) === -1 ) {
 			obj = {};
 		}
-		for( var k of Object.keys( obj ) ) {
+		for ( var k of Object.keys( obj ) ) {
 			yield [ k, obj[ k ] ];
 		}
-	}
+	};
 	// jshint ignore:end
 
 	function configSubscription( context, subscription ) {
 		return subscription.context( context )
-		                   .constraint( function( data, envelope ){
-		                       return !( envelope.hasOwnProperty( "originId" ) ) ||
-		                          ( envelope.originId === postal.instanceId() );
-		                   });
+		                   .constraint( function( data, envelope ) {
+			return !( envelope.hasOwnProperty( "originId" ) ) ||
+			( envelope.originId === postal.instanceId() );
+		                   } );
 	}
 
 	function ensureLuxProp( context ) {
@@ -49,18 +48,17 @@
 		return __lux;
 	}
 
-
 	var React;
 
 	var extend = function( ...options ) {
 		var parent = this;
 		var store; // placeholder for instance constructor
 		var storeObj = {}; // object used to hold initialState & states from prototype for instance-level merging
-		var ctor = function() {}; // placeholder ctor function used to insert level in prototype chain
+		var Ctor = function() {}; // placeholder ctor function used to insert level in prototype chain
 
 		// First - separate mixins from prototype props
 		var mixins = [];
-		for( var opt of options ) {
+		for ( var opt of options ) {
 			mixins.push( _.pick( opt, [ "handlers", "state" ] ) );
 			delete opt.handlers;
 			delete opt.state;
@@ -88,8 +86,8 @@
 
 		// Set the prototype chain to inherit from `parent`, without calling
 		// `parent`'s constructor function.
-		ctor.prototype = parent.prototype;
-		store.prototype = new ctor();
+		Ctor.prototype = parent.prototype;
+		store.prototype = new Ctor();
 
 		// Add prototype properties (instance properties) to the subclass,
 		// if supplied.
@@ -136,5 +134,4 @@
 		utils
 	};
 	// jshint ignore: end
-
-}));
+} ) );

@@ -32,7 +32,7 @@ function handlePreNotify( data ) {
 }
 
 var luxStoreMixin = {
-	setup: function () {
+	setup: function() {
 		var __lux = ensureLuxProp( this );
 		var stores = this.stores = ( this.stores || {} );
 
@@ -51,14 +51,14 @@ var luxStoreMixin = {
 
 		listenTo.forEach( ( store ) => {
 			__lux.subscriptions[ `${store}.changed` ] = storeChannel.subscribe( `${store}.changed`, () => gateKeeper.call( this, store ) );
-		});
+		} );
 
 		__lux.subscriptions.prenotify = dispatcherChannel.subscribe( "prenotify", ( data ) => handlePreNotify.call( this, data ) );
 	},
-	teardown: function () {
-		for( var [ key, sub ] of entries( this.__lux.subscriptions ) ) {
+	teardown: function() {
+		for ( var [ key, sub ] of entries( this.__lux.subscriptions ) ) {
 			var split;
-			if( key === "prenotify" || ( ( split = key.split( "." ) ) && split.pop() === "changed" ) ) {
+			if ( key === "prenotify" || ( ( split = key.split( "." ) ) && split.pop() === "changed" ) ) {
 				sub.unsubscribe();
 			}
 		}
@@ -76,7 +76,7 @@ var luxStoreReactMixin = {
 **********************************************/
 
 var luxActionCreatorMixin = {
-	setup: function () {
+	setup: function() {
 		this.getActionGroup = this.getActionGroup || [];
 		this.getActions = this.getActions || [];
 
@@ -89,22 +89,22 @@ var luxActionCreatorMixin = {
 		}
 
 		var addActionIfNotPresent = ( k, v ) => {
-			if( !this[ k ] ) {
-					this[ k ] = v;
-				}
+			if ( !this[ k ] ) {
+				this[ k ] = v;
+			}
 		};
 		this.getActionGroup.forEach( ( group ) => {
-			for( var [ k, v ] of entries( getActionGroup( group ) ) ) {
+			for ( var [ k, v ] of entries( getActionGroup( group ) ) ) {
 				addActionIfNotPresent( k, v );
 			}
-		});
+		} );
 
-		if( this.getActions.length ) {
-			this.getActions.forEach( function ( key ) {
-				addActionIfNotPresent( key, function () {
+		if ( this.getActions.length ) {
+			this.getActions.forEach( function( key ) {
+				addActionIfNotPresent( key, function() {
 					publishAction( key, ...arguments );
 				} );
-			});
+			} );
 		}
 	},
 	mixin: {
@@ -131,11 +131,11 @@ var luxActionListenerMixin = function( { handlers, handlerFn, context, channel, 
 			topic = topic || "execute.*";
 			handlerFn = handlerFn || ( ( data, env ) => {
 				var handler;
-				if( handler = handlers[ data.actionType ] ) {
+				if ( handler = handlers[ data.actionType ] ) {
 					handler.apply( context, data.actionArgs );
 				}
 			} );
-			if( !handlers || !Object.keys( handlers ).length ) {
+			if ( !handlers || !Object.keys( handlers ).length ) {
 				throw new Error( "You must have at least one action handler in the handlers property" );
 			} else if ( subs && subs.actionListener ) {
 				// TODO: add console warn in debug builds
@@ -149,13 +149,13 @@ var luxActionListenerMixin = function( { handlers, handlerFn, context, channel, 
 				);
 			var handlerKeys = Object.keys( handlers );
 			generateActionCreator( handlerKeys );
-			if( context.namespace ) {
+			if ( context.namespace ) {
 				addToActionGroup( context.namespace, handlerKeys );
 			}
 		},
 		teardown() {
 			this.__lux.subscriptions.actionListener.unsubscribe();
-		},
+		}
 	};
 };
 
@@ -186,36 +186,35 @@ function component( options ) {
 	return React.createClass( Object.assign( opt, options ) );
 }
 
-
 /*********************************************
 *   Generalized Mixin Behavior for non-lux   *
 **********************************************/
-var luxMixinCleanup = function () {
+var luxMixinCleanup = function() {
 	this.__lux.cleanup.forEach( ( method ) => method.call( this ) );
 	this.__lux.cleanup = undefined;
 	delete this.__lux.cleanup;
 };
 
 function mixin( context, ...mixins ) {
-	if( mixins.length === 0 ) {
+	if ( mixins.length === 0 ) {
 		mixins = [ luxStoreMixin, luxActionCreatorMixin ];
 	}
 
 	mixins.forEach( ( mixin ) => {
-		if( typeof mixin === "function" ) {
+		if ( typeof mixin === "function" ) {
 			mixin = mixin();
 		}
-		if( mixin.mixin ) {
+		if ( mixin.mixin ) {
 			Object.assign( context, mixin.mixin );
 		}
-		if( typeof mixin.setup !== "function" ) {
+		if ( typeof mixin.setup !== "function" ) {
 			throw new Error( "Lux mixins should have a setup method. Did you perhaps pass your mixins ahead of your target instance?" );
 		}
 		mixin.setup.call( context );
-		if( mixin.teardown ) {
+		if ( mixin.teardown ) {
 			context.__lux.cleanup.push( mixin.teardown );
 		}
-	});
+	} );
 	context.luxCleanup = luxMixinCleanup;
 	return context;
 }
@@ -238,5 +237,5 @@ function actionCreator( target ) {
 }
 
 function actionCreatorListener( target ) {
-	return actionCreator( actionListener( target ));
+	return actionCreator( actionListener( target ) );
 }

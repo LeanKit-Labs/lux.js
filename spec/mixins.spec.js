@@ -61,7 +61,6 @@ describe( "luxJS - Mixins", function() {
 
 			creator.publishAction( "one" );
 			onChange.should.be.calledOnce;
-
 		} );
 	} );
 	describe( "When using the Store Mixin", function() {
@@ -125,7 +124,6 @@ describe( "luxJS - Mixins", function() {
 				onChange.should.be.calledOnce;
 			} );
 			it( "Should wait for all stores to update before calling the onChange", function() {
-
 				var onActionOne = sinon.spy();
 				var storeOne = new lux.Store( {
 					namespace: "waitAll",
@@ -359,7 +357,7 @@ describe( "luxJS - Mixins", function() {
 
 			it( "Should add a publishAction method", function() {
 				lux.customActionCreator( {
-					toPublish: function() {},
+					toPublish: function() {}
 				} );
 
 				var obj = {
@@ -372,7 +370,7 @@ describe( "luxJS - Mixins", function() {
 			} );
 			it( "Should publish a correctly formed action when publishAction is called", function() {
 				lux.customActionCreator( {
-					publishTest: function() {},
+					publishTest: function() {}
 				} );
 
 				var obj = {

@@ -8,6 +8,9 @@ var hintNot = require( "gulp-hint-not" );
 var uglify = require( "gulp-uglify" );
 var _ = require( "lodash" );
 var babel = require( "gulp-babel" );
+var jshint = require( "gulp-jshint" );
+var jscs = require( "gulp-jscs" );
+var gulpChanged = require( "gulp-changed" );
 
 var banner = [ "/**",
 	" * <%= pkg.name %> - <%= pkg.description %>",
@@ -18,7 +21,7 @@ var banner = [ "/**",
 	" */",
 "" ].join( "\n" );
 
-gulp.task( "build:es6", function() {
+gulp.task( "build:es6", [ "format" ], function() {
 	return gulp.src( "src/lux.js" )
 		.pipe( imports() )
 		.pipe( hintNot() )
@@ -29,7 +32,7 @@ gulp.task( "build:es6", function() {
 		.pipe( gulp.dest( "lib/" ) );
 } );
 
-gulp.task( "build:es5", function() {
+gulp.task( "build:es5", [ "format" ], function() {
 	return gulp.src( "src/lux.js" )
 		.pipe( imports() )
 		.pipe( hintNot() )
@@ -70,7 +73,7 @@ function runTests( options, done ) {
 	}, options ), done || function() {} );
 }
 
-gulp.task( "test", function( done ) {
+gulp.task( "test", [ "format" ], function( done ) {
 	// There are issues with the osx reporter keeping
 	// the node process running, so this forces the main
 	// test task to not show errors in a notification
@@ -95,6 +98,23 @@ gulp.task( "mocha", function() {
 			debug: false
 		} ) )
 		.on( "error", console.warn.bind( console ) );
+} );
+
+gulp.task( "jshint", function() {
+	return gulp.src( [ "src/**/*.js", "spec/**/*.spec.js" ] )
+		.pipe( jshint() )
+		.pipe( jshint.reporter( "jshint-stylish" ) )
+		.pipe( jshint.reporter( "fail" ) );
+} );
+
+gulp.task( "format", [ "jshint" ], function() {
+	return gulp.src( [ "**/*.js", "!node_modules/**" ] )
+		.pipe( jscs( {
+			configPath: ".jscsrc",
+			fix: true
+		} ) )
+		.pipe( gulpChanged( ".", { hasChanged: gulpChanged.compareSha1Digest } ) )
+		.pipe( gulp.dest( "." ) );
 } );
 
 gulp.task( "watch", function() {
