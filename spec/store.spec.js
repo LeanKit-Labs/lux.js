@@ -79,7 +79,7 @@ describe( "luxJS - Store", function() {
 				var store = storeFactory( {
 					handlers: {
 						one: function() {},
-						two: function() {},
+						two: function() {}
 					}
 				} );
 				var creator = lux.actionCreator( {
@@ -96,7 +96,7 @@ describe( "luxJS - Store", function() {
 				var store = storeFactory( {
 					handlers: {
 						one: function() {},
-						two: function() {},
+						two: function() {}
 					}
 				} );
 				var creator = lux.actionCreator( {
@@ -166,13 +166,13 @@ describe( "luxJS - Store", function() {
 					{
 						handlers: {
 							one: function() {},
-							two: function() {},
+							two: function() {}
 						}
 					},
 					{
 						handlers: {
 							three: function() {},
-							four: function() {},
+							four: function() {}
 						}
 					}
 				);
@@ -288,7 +288,6 @@ describe( "luxJS - Store", function() {
 						}
 					}
 				);
-
 
 				var creator = lux.actionCreator( {
 					getActionGroup: [ "multiplicity" ]
@@ -442,7 +441,6 @@ describe( "luxJS - Store", function() {
 					danglingMixin: true
 				} );
 				store.dispose();
-
 			} );
 		} );
 	} );
@@ -517,15 +515,15 @@ describe( "luxJS - Store", function() {
 				getActions: [ "aReplaceAction" ]
 			} );
 
-			store.getState().should.have.property("lots");
-			store.getState().should.have.property("andLots");
-			store.getState().should.have.property("ofKeys");
+			store.getState().should.have.property( "lots" );
+			store.getState().should.have.property( "andLots" );
+			store.getState().should.have.property( "ofKeys" );
 
 			creator.aReplaceAction();
 
-			store.getState().should.not.have.property("lots");
-			store.getState().should.not.have.property("andLots");
-			store.getState().should.not.have.property("ofKeys");
+			store.getState().should.not.have.property( "lots" );
+			store.getState().should.not.have.property( "andLots" );
+			store.getState().should.not.have.property( "ofKeys" );
 			store.getState().replaced.should.be.true;
 			store.dispose();
 		} );
@@ -561,7 +559,7 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 			otherStore.dispose();
 		} );
-		it( "Should warn when an action is dependent on a store that does not participate in that action (or does not exist)", function () {
+		it( "Should warn when an action is dependent on a store that does not participate in that action (or does not exist)", function() {
 			sinon.stub( console, "warn" );
 			var storeOne = sinon.stub();
 			var store = storeFactory( {
@@ -730,7 +728,7 @@ describe( "luxJS - Store", function() {
 				handlers: {
 					taseMeBro: function() {
 						throw new Error( "Don't Tase Me Bro!" );
-					},
+					}
 				}
 			} );
 
@@ -767,7 +765,7 @@ describe( "luxJS - Store", function() {
 				var filterFn = function( x ) {
 					return x.namespace === "storeOne";
 				};
-				for (var action in actionMap) {
+				for ( var action in actionMap ) {
 					if ( actionMap[ action ].filter( filterFn ).length ) {
 						isPresent = true;
 						break;

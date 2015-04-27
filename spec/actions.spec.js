@@ -1,7 +1,7 @@
 describe( "luxJS - Actions", function() {
 	describe( "lux.publishAction", function() {
 		var listener, spy;
-		before( function () {
+		before( function() {
 			spy = sinon.spy();
 			listener = lux.actionListener( {
 				handlers: {
@@ -9,10 +9,10 @@ describe( "luxJS - Actions", function() {
 				}
 			} );
 		} );
-		after( function () {
+		after( function() {
 			listener.luxCleanup();
 		} );
-		it( "should trigger the correct action", function () {
+		it( "should trigger the correct action", function() {
 			lux.publishAction( "globalPublishAction" );
 			spy.should.be.calledOnce;
 		} );
@@ -20,16 +20,16 @@ describe( "luxJS - Actions", function() {
 	describe( "When calling addToActionGroup", function() {
 		describe( "When creating a new action group", function() {
 			before( function() {
-				lux.customActionCreator({
+				lux.customActionCreator( {
 					one: function() {},
 					two: function() {},
-					three: function() {},
-				});
+					three: function() {}
+				} );
 			} );
 			after( function() {
-				_.each(lux.actions, function(v, k) {
+				_.each( lux.actions, function( v, k ) {
 					delete lux.actions[k];
-				});
+				} );
 			} );
 			it( "Should create the action group", function() {
 				var groupName = "add-group-create";
@@ -57,24 +57,24 @@ describe( "luxJS - Actions", function() {
 				var actionList = [ "one", "two", "three", "shfifty" ];
 				var groupName = "Not-gonna-happen";
 
-				(function() {
+				( function() {
 					lux.addToActionGroup( groupName, actionList );
-				}).should.throw();
+				} ).should.throw();
 			} );
 		} );
 
 		describe( "When adding to an existing action group", function() {
 			before( function() {
-				lux.customActionCreator({
+				lux.customActionCreator( {
 					one: function() {},
 					two: function() {},
-					three: function() {},
-				});
+					three: function() {}
+				} );
 			} );
 			after( function() {
-				_.each(lux.actions, function(v, k) {
+				_.each( lux.actions, function( v, k ) {
 					delete lux.actions[k];
-				});
+				} );
 			} );
 			it( "Should add the actions to the group", function() {
 				var actionList = [ "one", "two", "three" ];
@@ -107,11 +107,10 @@ describe( "luxJS - Actions", function() {
 				var actionList = [ "one", "two", "three", "shfifty" ];
 				var groupName = "Not-gonna-happen";
 
-				(function() {
+				( function() {
 					lux.addToActionGroup( groupName, actionList );
-				}).should.throw();
+				} ).should.throw();
 			} );
-
 		} );
 	} );
 
@@ -139,7 +138,7 @@ describe( "luxJS - Actions", function() {
 			var handlerOne = sinon.spy();
 			var handlerTwo = sinon.spy();
 			var customAction = {
-				[ actionName ]: handlerOne
+				[ actionName]: handlerOne
 			};
 
 			lux.customActionCreator( customAction );
@@ -159,7 +158,6 @@ describe( "luxJS - Actions", function() {
 		} );
 
 		it( "Should not be overwritten by automatic action creation", function() {
-
 			var handler = sinon.spy();
 			var wrongHandler = sinon.spy();
 
@@ -194,8 +192,8 @@ describe( "luxJS - Actions", function() {
 	} );
 	describe( "When calling actionListener", function() {
 		it( "Should take input object and add luxActionListenerMixin", function() {
-			var handler = sinon.spy(),
-				testValue = "test-value";
+			var handler = sinon.spy();
+			var testValue = "test-value";
 
 			lux.actionListener( {
 				handlers: {
@@ -213,8 +211,8 @@ describe( "luxJS - Actions", function() {
 	} );
 	describe( "When calling actionCreatorListener", function() {
 		it( "Should take input object and add both luxActionListenerMixin and luxActionCreator", function() {
-			var handler = sinon.spy(),
-				testValue = "test-value";
+			var handler = sinon.spy();
+			var testValue = "test-value";
 
 			var actionCreatorListener = lux.actionCreatorListener( {
 				handlers: {

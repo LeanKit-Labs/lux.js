@@ -1,4 +1,4 @@
-/* global entries, machina, ActionCoordinator, configSubscription, actionChannel, storeChannel */
+/* global entries, machina, ActionCoordinator, configSubscription, actionChannel, storeChannel, _, dispatcherChannel */
 /* jshint -W098 */
 function calculateGen( store, lookup, gen, actionType, namespaces ) {
 	var calcdGen = gen;
@@ -9,7 +9,7 @@ function calculateGen( store, lookup, gen, actionType, namespaces ) {
 	if ( store.waitFor && store.waitFor.length ) {
 		store.waitFor.forEach( function( dep ) {
 			var depStore = lookup[ dep ];
-			if( depStore ) {
+			if ( depStore ) {
 				_namespaces.push( store.namespace );
 				var thisGen = calculateGen( depStore, lookup, gen + 1, actionType, _namespaces );
 				if ( thisGen > calcdGen ) {
@@ -44,7 +44,7 @@ function processGeneration( generation, action ) {
 			`${store.namespace}.handle.${action.actionType}`,
 			data
 		);
-	});
+	} );
 }
 
 class Dispatcher extends machina.BehavioralFsm {
@@ -62,23 +62,22 @@ class Dispatcher extends machina.BehavioralFsm {
 				dispatching: {
 					_onEnter: function( luxAction ) {
 						this.actionContext = luxAction;
-						if(luxAction.generations.length) {
+						if ( luxAction.generations.length ) {
 							for ( var generation of luxAction.generations ) {
 								processGeneration.call( luxAction, generation, luxAction.action );
 							}
 							this.transition( luxAction, "notifying" );
 						} else {
-							this.transition( luxAction, "nothandled");
+							this.transition( luxAction, "nothandled" );
 						}
-
 					},
 					"action.handled": function( luxAction, data ) {
-						if( data.hasChanged ) {
+						if ( data.hasChanged ) {
 							luxAction.updated.push( data.namespace );
 						}
 					},
 					_onExit: function( luxAction ) {
-						if( luxAction.updated.length ) {
+						if ( luxAction.updated.length ) {
 							dispatcherChannel.publish( "prenotify", { stores: luxAction.updated } );
 						}
 					}
@@ -87,7 +86,7 @@ class Dispatcher extends machina.BehavioralFsm {
 					_onEnter: function( luxAction ) {
 						dispatcherChannel.publish( "notify", {
 							action: luxAction.action
-						});
+						} );
 					}
 				},
 				nothandled: {}
@@ -99,7 +98,7 @@ class Dispatcher extends machina.BehavioralFsm {
 					generations: buildGenerations( stores, actionType )
 				};
 			}
-		});
+		} );
 		this.createSubscribers();
 	}
 
@@ -128,16 +127,16 @@ class Dispatcher extends machina.BehavioralFsm {
 		var isThisNameSpace = function( meta ) {
 			return meta.namespace === namespace;
 		};
-		for( var [ k, v ] of entries( this.actionMap ) ) {
+		for ( var [ k, v ] of entries( this.actionMap ) ) {
 			var idx = v.findIndex( isThisNameSpace );
-			if( idx !== -1 ) {
+			if ( idx !== -1 ) {
 				v.splice( idx, 1 );
 			}
 		}
 	}
 
 	createSubscribers() {
-		if( !this.__subscriptions || !this.__subscriptions.length ) {
+		if ( !this.__subscriptions || !this.__subscriptions.length ) {
 			this.__subscriptions = [
 				configSubscription(
 					this,
