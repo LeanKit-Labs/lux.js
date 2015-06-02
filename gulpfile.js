@@ -1,4 +1,5 @@
 var gulp = require( "gulp" );
+var gutil = require( "gulp-util" );
 var sourcemaps = require( "gulp-sourcemaps" );
 var rename = require( "gulp-rename" );
 var header = require( "gulp-header" );
@@ -113,6 +114,10 @@ gulp.task( "format", [ "jshint" ], function() {
 			configPath: ".jscsrc",
 			fix: true
 		} ) )
+		.on( "error", function( error ) {
+			gutil.log( gutil.colors.red( error.message ) );
+			this.end();
+		} )
 		.pipe( gulpChanged( ".", { hasChanged: gulpChanged.compareSha1Digest } ) )
 		.pipe( gulp.dest( "." ) );
 } );
