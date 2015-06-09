@@ -1,3 +1,6 @@
+## v0.7.3
+
+* Updated babel dependency to 5.x
 
 ## v0.7.2
 

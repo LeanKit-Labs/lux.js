@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
@@ -41,7 +41,7 @@
     "LeanKit"
   ],
   "dependencies": {
-    "babel/babel" : "^4.6.6",
+    "babel/babel" : "5.x",
     "postal": "1.x",
     "machina": "1.x",
     "lodash": "3.x"

@@ -1,12 +1,15 @@
 {
   "name": "lux.js",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
   "repository": {
     "type": "git",
     "url": "git://github.com/LeanKit-Labs/lux.js.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
   },
   "contributors": [
     {
@@ -44,7 +47,7 @@
     "show-coverage": "open ./coverage/lcov-report/index.html"
   },
   "peerDependencies": {
-    "babel": "^4.6.6"
+    "babel": "5.x"
   },
   "dependencies": {
     "lodash": "3.x",
@@ -52,7 +55,7 @@
     "postal": "1.x"
   },
   "devDependencies": {
-    "babel": "^4.6.6",
+    "babel": "5.x",
     "babel-loader": "~4.0.0",
     "chai": "^2.0.0",
     "expect.js": "^0.3.1",
