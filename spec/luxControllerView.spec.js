@@ -30,23 +30,18 @@ describe( "luxJS - Controller Views", function() {
 	} );
 	describe( "When Instantiating a lux Controller View", function() {
 		var ControllerView;
-		var innerRef;
-		var mocked;
 		var creator;
 
 		function controllerViewFactory( options ) {
 			options = Object.assign( {
 				displayName: "testControllerView",
-				componentWillMount: function() {
-					innerRef = this;
-				},
 				render: function() {
 					return null;
 				}
 			}, options );
 
 			ControllerView = lux.controllerView( options );
-			mocked = utils.renderIntoDocument( React.createElement( ControllerView ) );
+			utils.renderIntoDocument( React.createElement( ControllerView ) );
 		}
 
 		before( function() {

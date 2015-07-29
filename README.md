@@ -325,6 +325,7 @@ The above API wrapper listens for `cartCheckout` and `getAllProducts` actions, a
 
 ## Dependencies
 
+* [lodash](https://lodash.com/)
 * [postal](https://github.com/postaljs/postal.js)
 * [machina](https://github.com/ifandelse/machina.js)
 * [babel polyfill](https://babeljs.io/docs/usage/polyfill/) lux is written in ES6 and then transpiled to ES5, so you need to include the babel polyfill either in your build, or on your page(s) before lux is loaded. (The polyfill is necessary because lux uses generator functions.) babel is a peer dependency of lux.
@@ -344,9 +345,10 @@ The above API wrapper listens for `cartCheckout` and `getAllProducts` actions, a
 * built files appear under `/lib` in the project root.
 
 ###To Run Tests:
-* `npm test` runs a console test suite
-* `npm run coverage` runs istanbul coverage reporter in console (and generates an .html report)
-* `npm run show-coverage` opens the above coverage report in your browser (if you're on a Mac)
+* `gulp test` runs the tests using webpack + karma
+* `gulp mocha` runs the tests in node using mocha + jsdom
+* `gulp coverage` runs istanbul coverage reporter in console (and generates an .html report)
+* `gulp watch` starts a watch task to auto-build if the `src/` changes, and to run the mocha tests if the `spec/` directory or built output in `lib/` changes.
 
 ### Examples and More:
 * [Doug Neiner](https://twitter.com/dougneiner) has created a great example app [here](https://github.com/LeanKit-Labs/lux-mail-example).

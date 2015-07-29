@@ -28,7 +28,7 @@ describe( "luxJS - Store", function() {
 			} );
 			it( "Should throw an error if the namespace is not provided", function() {
 				( function() {
-					var tmpStore = new lux.Store( {
+					return new lux.Store( {
 						handlers: {
 							one: function() {}
 						}

@@ -1,7 +1,14 @@
+## Current
+
+* Converted to full ES6 modules, using webpack + babel to build.
+* Updated gulpfile to run coverage using istanbul + karma.
+* Moved postal to the package.json's peer dependencies.
+* Updated package.json scripts to align with basic gulp task names.
+
 ## v0.7.4
 
 * Removed unnecessary postal subscription constraint on `originId`.
-* Update karma and karma-webpack. Start server with newer API. 
+* Update karma and karma-webpack. Start server with newer API.
 
 ## v0.7.3
 

@@ -1,7 +1,4 @@
-// Karma configuration
-// Generated on Sat Oct 18 2014 22:09:29 GMT-0400 (EDT)
-
-var webpackConfig = require( "./webpack.config.js" );
+var webpackConfig = require( "./webpack.config.test.js" );
 var _ = require( "lodash" );
 
 _.extend( webpackConfig, {
@@ -11,7 +8,7 @@ _.extend( webpackConfig, {
 	devtool: "inline-source-map"
 } );
 
-var reporters = [ "spec" ];
+var reporters = [ "spec", "progress", "coverage" ];
 
 delete webpackConfig.output;
 delete webpackConfig.entry;
@@ -40,9 +37,8 @@ module.exports = function( config ) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-		"spec/**/*.spec.*": [ "webpack", "sourcemap" ],
-		"spec/helpers/karma-setup.js": [ "webpack", "sourcemap" ]
-	},
+			"spec/**/*.js": [ "webpack", "sourcemap" ]
+		},
 
 		webpack: webpackConfig,
 
@@ -69,11 +65,11 @@ module.exports = function( config ) {
 		browsers: [ "Chrome" /*, "Safari", "Firefox" */ ],
 
 		webpackServer: {
-		quiet: true,
-		stats: {
-			colors: true
-		}
-	},
+			quiet: true,
+			stats: {
+				colors: true
+			}
+		},
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits

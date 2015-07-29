@@ -1,0 +1,35 @@
+{
+	"ecmaFeatures": {
+		"jsx": true,
+		"modules" : true
+	},
+
+	"env": {
+		"browser": true,
+		"node": true,
+		"es6": true
+	},
+
+	"rules": {
+		"no-unused-vars": [2, {"vars": "all", "args": "none"}],
+		"no-underscore-dangle" : 0,
+		"no-unused-expressions" : 0
+	},
+
+	"globals": {
+		"describe": true,
+		"before": true,
+		"beforeEach": true,
+		"after": true,
+		"afterEach": true,
+		"it": true,
+		"sinon": true,
+		"lux": true,
+		"_": true,
+		"postal": true,
+		"should": true,
+		"luxActionCh": true,
+		"React": true,
+		"utils": true
+	}
+}

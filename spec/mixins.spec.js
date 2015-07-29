@@ -27,7 +27,7 @@ describe( "luxJS - Mixins", function() {
 		it( "Should mixin both luxStoreMixin and luxActionCreatorMixin", sinon.test( function() {
 			var adStub = this.stub( lux.mixin.actionCreator, "setup", stubCallback );
 			var storeStub = this.stub( lux.mixin.store, "setup", stubCallback );
-			var obj = lux.mixin( {} );
+			lux.mixin( {} );
 
 			adStub.should.be.calledOnce;
 			storeStub.should.be.calledOnce;
@@ -411,7 +411,6 @@ describe( "luxJS - Mixins", function() {
 
 		describe( "When using the React mixin", function() {
 			it( "Should initialize during componentWillMount", function() {
-				var mocked;
 				lux.customActionCreator( {
 					sample: function() {}
 				} );
@@ -425,7 +424,7 @@ describe( "luxJS - Mixins", function() {
 						return React.DOM.div();
 					}
 				} );
-				mocked = utils.renderIntoDocument( React.createElement( Component ) );
+				utils.renderIntoDocument( React.createElement( Component ) );
 			} );
 		} );
 	} );
@@ -445,8 +444,8 @@ describe( "luxJS - Mixins", function() {
 					}
 				};
 				lux.mixin( obj, lux.mixin.actionListener );
-				var creator = lux.actionCreator( {} );
-				creator.publishAction( "fireMyHandler", "testy" );
+				var creatr = lux.actionCreator( {} );
+				creatr.publishAction( "fireMyHandler", "testy" );
 				handler.should.be.calledOnce;
 				handler.should.be.calledWith( "testy" );
 			} );
@@ -459,10 +458,10 @@ describe( "luxJS - Mixins", function() {
 				};
 				lux.mixin( obj, lux.mixin.actionListener );
 				// This will throw an error if the action isn't found
-				var creator = lux.actionCreator( {
+				var creatr = lux.actionCreator( {
 					getActions: "fireMyHandler"
 				} );
-				creator.fireMyHandler();
+				creatr.fireMyHandler();
 			} );
 			it( "Should auto-generate action group if a namespace is provided", function() {
 				var handler = sinon.spy();
@@ -474,10 +473,10 @@ describe( "luxJS - Mixins", function() {
 				};
 				lux.mixin( obj, lux.mixin.actionListener );
 				// This will throw an error if the action isn't found
-				var creator = lux.actionCreator( {
+				var creatr = lux.actionCreator( {
 					getActionGroup: [ "nameynamename" ]
 				} );
-				creator.fireMyHandler();
+				creatr.fireMyHandler();
 			} );
 			it( "Should cleanup when teardown is called", function() {
 				var obj = {

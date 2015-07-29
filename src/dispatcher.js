@@ -1,17 +1,21 @@
-/* global entries, machina, ActionCoordinator, actionChannel, storeChannel, _, dispatcherChannel */
-/* jshint -W098 */
+"use strict";
+import _ from "lodash";
+import { dispatcherChannel, actionChannel } from "./bus";
+import { entries } from "./utils";
+import machina from "machina";
+
 function calculateGen( store, lookup, gen, actionType, namespaces ) {
-	var calcdGen = gen;
-	var _namespaces = namespaces || [];
+	let calcdGen = gen;
+	const _namespaces = namespaces || [];
 	if ( _namespaces.indexOf( store.namespace ) > -1 ) {
 		throw new Error( `Circular dependency detected for the "${store.namespace}" store when participating in the "${actionType}" action.` );
 	}
 	if ( store.waitFor && store.waitFor.length ) {
 		store.waitFor.forEach( function( dep ) {
-			var depStore = lookup[ dep ];
+			const depStore = lookup[ dep ];
 			if ( depStore ) {
 				_namespaces.push( store.namespace );
-				var thisGen = calculateGen( depStore, lookup, gen + 1, actionType, _namespaces );
+				const thisGen = calculateGen( depStore, lookup, gen + 1, actionType, _namespaces );
 				if ( thisGen > calcdGen ) {
 					calcdGen = thisGen;
 				}
@@ -24,20 +28,22 @@ function calculateGen( store, lookup, gen, actionType, namespaces ) {
 }
 
 function buildGenerations( stores, actionType ) {
-	var tree = [];
-	var lookup = {};
+	const tree = [];
+	const lookup = {};
 	stores.forEach( ( store ) => lookup[ store.namespace ] = store );
 	stores.forEach( ( store ) => store.gen = calculateGen( store, lookup, 0, actionType ) );
-	for ( var [ key, item ] of entries( lookup ) ) {
+	/*eslint-disable */
+	for ( let [ key, item ] of entries( lookup ) ) {
 		tree[ item.gen ] = tree[ item.gen ] || [];
 		tree[ item.gen ].push( item );
 	}
+	/*eslint-enable */
 	return tree;
 }
 
 function processGeneration( generation, action ) {
 	generation.map( ( store ) => {
-		var data = Object.assign( {
+		const data = Object.assign( {
 			deps: _.pick( this.stores, store.waitFor )
 		}, action );
 		dispatcherChannel.publish(
@@ -92,7 +98,7 @@ class Dispatcher extends machina.BehavioralFsm {
 				nothandled: {}
 			},
 			getStoresHandling( actionType ) {
-				var stores = this.actionMap[ actionType ] || [];
+				const stores = this.actionMap[ actionType ] || [];
 				return {
 					stores,
 					generations: buildGenerations( stores, actionType )
@@ -103,7 +109,7 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	handleActionDispatch( data ) {
-		var luxAction = Object.assign(
+		const luxAction = Object.assign(
 			{ action: data, generationIndex: 0, updated: [] },
 			this.getStoresHandling( data.actionType )
 		);
@@ -111,10 +117,10 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	registerStore( storeMeta ) {
-		for ( var actionDef of storeMeta.actions ) {
-			var action;
-			var actionName = actionDef.actionType;
-			var actionMeta = {
+		for ( let actionDef of storeMeta.actions ) {
+			let action;
+			const actionName = actionDef.actionType;
+			const actionMeta = {
 				namespace: storeMeta.namespace,
 				waitFor: actionDef.waitFor
 			};
@@ -124,15 +130,17 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	removeStore( namespace ) {
-		var isThisNameSpace = function( meta ) {
+		function isThisNameSpace( meta ) {
 			return meta.namespace === namespace;
-		};
-		for ( var [ k, v ] of entries( this.actionMap ) ) {
-			var idx = v.findIndex( isThisNameSpace );
+		}
+		/*eslint-disable */
+		for ( let [ k, v ] of entries( this.actionMap ) ) {
+			let idx = v.findIndex( isThisNameSpace );
 			if ( idx !== -1 ) {
 				v.splice( idx, 1 );
 			}
 		}
+		/*eslint-enable */
 	}
 
 	createSubscribers() {
@@ -158,4 +166,5 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 }
 
-var dispatcher = new Dispatcher();
+export default new Dispatcher();
+
