@@ -65,13 +65,15 @@ gulp.task( "build:es5", [ "format" ], function() {
 gulp.task( "default", [ "build:es6", "build:es5" ] );
 
 function runTests( options, done ) {
-	var karma = require( "karma" ).server;
-	karma.start( _.extend( {
+	var karma = require( "karma" );
+	var server = new karma.Server( _.extend( {
 		configFile: __dirname + "/karma.conf.js",
 		singleRun: true
 
 		// no-op keeps karma from process.exit'ing gulp
 	}, options ), done || function() {} );
+
+	server.start();
 }
 
 gulp.task( "test", [ "format" ], function( done ) {
