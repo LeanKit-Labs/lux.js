@@ -33,14 +33,6 @@
 	};
 	// jshint ignore:end
 
-	function configSubscription( context, subscription ) {
-		return subscription.context( context )
-		                   .constraint( function( data, envelope ) {
-			return !( envelope.hasOwnProperty( "originId" ) ) ||
-			( envelope.originId === postal.instanceId() );
-		                   } );
-	}
-
 	function ensureLuxProp( context ) {
 		var __lux = context.__lux = ( context.__lux || {} );
 		var cleanup = __lux.cleanup = ( __lux.cleanup || [] );
