@@ -1,3 +1,8 @@
+## v0.7.4
+
+* Removed unnecessary postal subscription constraint on `originId`.
+* Update karma and karma-webpack. Start server with newer API. 
+
 ## v0.7.3
 
 * Updated babel dependency to 5.x
