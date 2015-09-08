@@ -1,4 +1,4 @@
-/* global entries, machina, ActionCoordinator, configSubscription, actionChannel, storeChannel, _, dispatcherChannel */
+/* global entries, machina, ActionCoordinator, actionChannel, storeChannel, _, dispatcherChannel */
 /* jshint -W098 */
 function calculateGen( store, lookup, gen, actionType, namespaces ) {
 	var calcdGen = gen;
@@ -138,12 +138,9 @@ class Dispatcher extends machina.BehavioralFsm {
 	createSubscribers() {
 		if ( !this.__subscriptions || !this.__subscriptions.length ) {
 			this.__subscriptions = [
-				configSubscription(
-					this,
-					actionChannel.subscribe(
-						"execute.*",
-						( data, env ) => this.handleActionDispatch( data )
-					)
+				actionChannel.subscribe(
+					"execute.*",
+					( data, env ) => this.handleActionDispatch( data )
 				),
 				dispatcherChannel.subscribe(
 					"*.handled.*",

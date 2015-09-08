@@ -1,4 +1,4 @@
-/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, configSubscription, lux, buildActionList, stores, generateActionCreator, merge, extend, _ */
+/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, lux, buildActionList, stores, generateActionCreator, merge, extend, _ */
 /* jshint -W098 */
 
 function ensureStoreOptions( options, handlers, store ) {
@@ -134,7 +134,8 @@ class Store {
 		} ) );
 
 		this.__subscription = {
-			notify: configSubscription( this, dispatcherChannel.subscribe( `notify`, this.flush ) ).constraint( () => inDispatch )
+			notify: dispatcherChannel.subscribe( `notify`, () => this.flush() )
+					.constraint( () => inDispatch )
 		};
 
 		dispatcher.registerStore(

@@ -1,5 +1,5 @@
 
-/* global storeChannel, generateActionCreator, actions, publishAction, addToActionGroup, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, configSubscription, luxActionChannel */
+/* global storeChannel, generateActionCreator, actions, publishAction, addToActionGroup, ensureLuxProp, actionChannel, dispatcherChannel, React, getActionGroup, entries, luxActionChannel */
 /* jshint -W098 */
 
 /*********************************************
@@ -142,11 +142,7 @@ var luxActionListenerMixin = function( { handlers, handlerFn, context, channel, 
 				// since we ran the mixin on this context already
 				return;
 			}
-			subs.actionListener =
-				configSubscription(
-					context,
-					channel.subscribe( topic, handlerFn )
-				);
+			subs.actionListener = channel.subscribe( topic, handlerFn ).context( context );
 			var handlerKeys = Object.keys( handlers );
 			generateActionCreator( handlerKeys );
 			if ( context.namespace ) {
