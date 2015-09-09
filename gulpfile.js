@@ -85,7 +85,7 @@ gulp.task( "lint", function() {
 } );
 
 gulp.task( "format", [ "lint" ], function() {
-	return gulp.src( [ "**/*.js", "!node_modules/**" ] )
+	return gulp.src( [ "*.js", "{spec,src}/**/*.js" ] )
 		.pipe( jscs( {
 			configPath: ".jscsrc",
 			fix: true
