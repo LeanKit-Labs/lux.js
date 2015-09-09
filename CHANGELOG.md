@@ -1,4 +1,4 @@
-## Current
+## v0.8.0
 
 * Converted to full ES6 modules, using webpack + babel to build.
 * Updated gulpfile to run coverage using istanbul + karma.
