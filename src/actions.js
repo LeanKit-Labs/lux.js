@@ -1,8 +1,8 @@
 import _ from "lodash";
 import { entries } from "./utils";
 import { actionChannel } from "./bus";
-export let actions = Object.create( null );
-export let actionGroups = {};
+export const actions = Object.create( null );
+export const actionGroups = Object.create( null );
 
 export function generateActionCreator( actionList ) {
 	actionList = ( typeof actionList === "string" ) ? [ actionList ] : actionList;
@@ -41,7 +41,7 @@ export function getGroupsWithAction( actionName ) {
 }
 
 export function customActionCreator( action ) {
-	actions = Object.assign( actions, action );
+	Object.assign( actions, action );
 }
 
 export function addToActionGroup( groupName, actionList ) {
