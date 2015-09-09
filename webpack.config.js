@@ -1,27 +1,50 @@
-/* global __dirname */
-var webpack = require( "webpack" ); //jshint ignore:line
-var sml = require( "source-map-loader" ); //jshint ignore:line
-var path = require( "path" );
+var pkg = require( "./package.json" );
+var _ = require( "lodash" );
+var webpack = require( "webpack" );
+var banner = [
+	" * <%= pkg.name %> - <%= pkg.description %>",
+	" * Author: <%= pkg.author %>",
+	" * Version: v<%= pkg.version %>",
+	" * Url: <%= pkg.homepage %>",
+	" * License(s): <%= pkg.license %>"
+].join( "\n" );
+var header = _.template( banner )( { pkg: pkg } );
 
 module.exports = {
-	module: {
-		preLoaders: [
-			{
-				test: /\.js$/,
-				loader: "source-map-loader"
+	output: {
+		library: "lux",
+		libraryTarget: "umd",
+		filename: "lux.js"
+	},
+	devtool: "#inline-source-map",
+	externals: [
+		{
+			postal: true,
+			machina: true,
+			lodash: {
+				root: "_",
+				commonjs: "lodash",
+				commonjs2: "lodash",
+				amd: "lodash"
 			}
-		],
+		}
+	],
+	module: {
 		loaders: [
-			{ test: /sinon.*\.js/, loader: "imports?define=>false" },
-			{ test: /\.spec\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+			{
+				test: /\.js?$/,
+				exclude: /(node_modules|bower_components)/,
+				loader: "babel",
+				query: {
+					auxiliaryCommentBefore: "istanbul ignore next",
+					compact: false,
+					blacklist: [ "strict" ],
+					experimental: true
+				}
+			}
 		]
 	},
-	resolve: {
-		alias: {
-			"when.parallel": "when/parallel",
-			"when.pipeline": "when/pipeline",
-			react: "react/dist/react-with-addons.js",
-			lux: path.join( __dirname, "./lib/lux.js" )
-		}
-	}
+	plugins: [
+		new webpack.BannerPlugin( header )
+	]
 };

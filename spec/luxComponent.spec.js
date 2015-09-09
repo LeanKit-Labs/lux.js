@@ -9,8 +9,9 @@ function verifyAction( name, args ) {
 	} ).once();
 }
 
+/*eslint "no-unused-vars": 0 */
 describe( "luxJS - components", function() {
-	var Component, innerRef, mocked, fakeStore;
+	var Component, innerRef, fakeStore;
 
 	function componentFactory( options ) {
 		options = Object.assign( {
@@ -24,7 +25,7 @@ describe( "luxJS - components", function() {
 		}, options );
 
 		Component = lux.component( options );
-		mocked = utils.renderIntoDocument( React.createElement( Component ) );
+		utils.renderIntoDocument( React.createElement( Component ) );
 	}
 
 	before( function() {
@@ -108,3 +109,4 @@ describe( "luxJS - components", function() {
 		} );
 	} );
 } );
+/*eslint "no-unused-vars": 0 */

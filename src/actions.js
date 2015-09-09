@@ -1,28 +1,10 @@
-/* global entries, actionChannel, _ */
-/* jshint -W098 */
-var actions = Object.create( null );
-var actionGroups = {};
+import _ from "lodash";
+import { entries } from "./utils";
+import { actionChannel } from "./bus";
+export const actions = Object.create( null );
+export const actionGroups = Object.create( null );
 
-function buildActionList( handlers ) {
-	var actionList = [];
-	for ( var [ key, handler ] of entries( handlers ) ) {
-		actionList.push( {
-			actionType: key,
-			waitFor: handler.waitFor || []
-		} );
-	}
-	return actionList;
-}
-
-function publishAction( action, ...args ) {
-	if ( actions[ action ] ) {
-		actions[ action ]( ...args );
-	} else {
-		throw new Error( `There is no action named '${action}'` );
-	}
-}
-
-function generateActionCreator( actionList ) {
+export function generateActionCreator( actionList ) {
 	actionList = ( typeof actionList === "string" ) ? [ actionList ] : actionList;
 	actionList.forEach( function( action ) {
 		if ( !actions[ action ] ) {
@@ -40,7 +22,7 @@ function generateActionCreator( actionList ) {
 	} );
 }
 
-function getActionGroup( group ) {
+export function getActionGroup( group ) {
 	if ( actionGroups[ group ] ) {
 		return _.pick( actions, actionGroups[ group ] );
 	} else {
@@ -48,17 +30,27 @@ function getActionGroup( group ) {
 	}
 }
 
-function customActionCreator( action ) {
-	actions = Object.assign( actions, action );
+export function getGroupsWithAction( actionName ) {
+	const groups = [];
+	for ( var [ group, list ] of entries( actionGroups ) ) {
+		if ( list.indexOf( actionName ) >= 0 ) {
+			groups.push( group );
+		}
+	}
+	return groups;
 }
 
-function addToActionGroup( groupName, actionList ) {
-	var group = actionGroups[ groupName ];
+export function customActionCreator( action ) {
+	Object.assign( actions, action );
+}
+
+export function addToActionGroup( groupName, actionList ) {
+	let group = actionGroups[ groupName ];
 	if ( !group ) {
 		group = actionGroups[ groupName ] = [];
 	}
 	actionList = typeof actionList === "string" ? [ actionList ] : actionList;
-	var diff = _.difference( actionList, Object.keys( actions ) );
+	const diff = _.difference( actionList, Object.keys( actions ) );
 	if ( diff.length ) {
 		throw new Error( `The following actions do not exist: ${diff.join( ", " )}` );
 	}

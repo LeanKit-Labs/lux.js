@@ -1,4 +1,4 @@
-/* global describe, it, before, lux, utils, luxStoreCh, postal, sinon */
+/* global describe, it, before, lux, postal, sinon */
 
 describe( "luxJS - Dispatcher", function() {
 	var dispatcher;

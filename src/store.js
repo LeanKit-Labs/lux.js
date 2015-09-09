@@ -1,8 +1,24 @@
-/* global entries, dispatcher, mixin, luxActionListenerMixin, storeChannel, dispatcherChannel, lux, buildActionList, stores, generateActionCreator, merge, extend, _ */
-/* jshint -W098 */
+import { storeChannel, dispatcherChannel } from "./bus";
+import { entries } from "./utils";
+import dispatcher from "./dispatcher";
+import _ from "lodash";
+import { mixin } from "./mixins";
+
+export const stores = {};
+
+function buildActionList( handlers ) {
+	const actionList = [];
+	for ( let [ key, handler ] of entries( handlers ) ) {
+		actionList.push( {
+			actionType: key,
+			waitFor: handler.waitFor || []
+		} );
+	}
+	return actionList;
+}
 
 function ensureStoreOptions( options, handlers, store ) {
-	var namespace = ( options && options.namespace ) || store.namespace;
+	const namespace = ( options && options.namespace ) || store.namespace;
 	if ( namespace in stores ) {
 		throw new Error( `The store namespace "${namespace}" already exists.` );
 	}
@@ -14,12 +30,12 @@ function ensureStoreOptions( options, handlers, store ) {
 	}
 }
 
-function getHandlerObject( handlers, key, listeners ) {
+function getHandlerObject( key, listeners ) {
 	return {
 		waitFor: [],
 		handler: function() {
-			var changed = 0;
-			var args = Array.from( arguments );
+			let changed = 0;
+			const args = Array.from( arguments );
 			listeners[ key ].forEach( function( listener ) {
 				changed += ( listener.apply( this, args ) === false ? 0 : 1 );
 			}.bind( this ) );
@@ -44,21 +60,21 @@ function addListeners( listeners, key, handler ) {
 }
 
 function processStoreArgs( ...options ) {
-	var listeners = {};
-	var handlers = {};
-	var state = {};
-	var otherOpts = {};
+	const listeners = {};
+	const handlers = {};
+	const state = {};
+	const otherOpts = {};
 	options.forEach( function( o ) {
-		var opt;
+		let opt;
 		if ( o ) {
 			opt = _.clone( o );
 			_.merge( state, opt.state );
 			if ( opt.handlers ) {
 				Object.keys( opt.handlers ).forEach( function( key ) {
-					var handler = opt.handlers[ key ];
+					let handler = opt.handlers[ key ];
 					// set up the actual handler method that will be executed
 					// as the store handles a dispatched action
-					handlers[ key ] = handlers[ key ] || getHandlerObject( handlers, key, listeners );
+					handlers[ key ] = handlers[ key ] || getHandlerObject( key, listeners );
 					// ensure that the handler definition has a list of all stores
 					// being waited upon
 					updateWaitFor( handler, handlers[ key ] );
@@ -74,15 +90,15 @@ function processStoreArgs( ...options ) {
 	return [ state, handlers, otherOpts ];
 }
 
-class Store {
+export class Store {
 
 	constructor( ...opt ) {
-		var [ state, handlers, options ] = processStoreArgs( ...opt );
+		let [ state, handlers, options ] = processStoreArgs( ...opt );
 		ensureStoreOptions( options, handlers, this );
-		var namespace = options.namespace || this.namespace;
+		const namespace = options.namespace || this.namespace;
 		Object.assign( this, options );
 		stores[ namespace ] = this;
-		var inDispatch = false;
+		let inDispatch = false;
 		this.hasChanged = false;
 
 		this.getState = function() {
@@ -115,12 +131,12 @@ class Store {
 			}
 		};
 
-		mixin( this, luxActionListenerMixin( {
+		mixin( this, mixin.actionListener( {
 			context: this,
 			channel: dispatcherChannel,
 			topic: `${namespace}.handle.*`,
 			handlers: handlers,
-			handlerFn: function( data, envelope ) {
+			handlerFn: function( data ) {
 				if ( handlers.hasOwnProperty( data.actionType ) ) {
 					inDispatch = true;
 					var res = handlers[ data.actionType ].handler.apply( this, data.actionArgs.concat( data.deps ) );
@@ -149,17 +165,17 @@ class Store {
 	// Need to build in behavior to remove this store
 	// from the dispatcher's actionMap as well!
 	dispose() {
-		for ( var [ k, subscription ] of entries( this.__subscription ) ) {
+		/*eslint-disable */
+		for ( let [ k, subscription ] of entries( this.__subscription ) ) {
 			subscription.unsubscribe();
 		}
+		/*eslint-enable */
 		delete stores[ this.namespace ];
 		dispatcher.removeStore( this.namespace );
 		this.luxCleanup();
 	}
 }
 
-Store.extend = extend;
-
-function removeStore( namespace ) {
+export function removeStore( namespace ) {
 	stores[ namespace ].dispose();
 }
