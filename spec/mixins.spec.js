@@ -2,6 +2,7 @@ var stubCallback = function() {
 	this.__lux = { cleanup: [] };
 	return {};
 };
+var reactDOM = ( typeof window === "undefined" ? global : window ).reactDOM;
 
 describe( "luxJS - Mixins", function() {
 	var store, creator;
@@ -238,8 +239,7 @@ describe( "luxJS - Mixins", function() {
 						this.__lux.subscriptions.prenotify.inactive.should.be.true;
 					}
 				} );
-
-				React.unmountComponentAtNode( mocked.getDOMNode().parentNode );
+				reactDOM.unmountComponentAtNode( reactDOM.findDOMNode( mocked ).parentNode );
 			} );
 		} );
 	} );

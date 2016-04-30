@@ -84,6 +84,7 @@
     "karma-webpack": "^1.7.0",
     "mocha": "^2.1.0",
     "react": ">=0.12.2",
+    "react-dom": "^15.0.2",
     "sinon": "~1.11.0",
     "sinon-chai": "^2.7.0",
     "source-map-loader": "^0.1.3",

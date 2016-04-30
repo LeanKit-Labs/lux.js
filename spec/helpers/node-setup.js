@@ -11,6 +11,7 @@ chai.use( require( "sinon-chai" ) );
 global.should = chai.should();
 
 global.React = require( "react/dist/react-with-addons" );
+window.reactDOM = require( "react/lib/ReactDOM" );
 global.utils = global.React.addons.TestUtils;
 
 global.postal = require( "postal" );
