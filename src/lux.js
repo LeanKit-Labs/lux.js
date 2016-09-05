@@ -10,7 +10,6 @@ import utils from "./utils";
 import {
 	getActionGroup,
 	customActionCreator,
-	addToActionGroup,
 	actions
 } from "./actions";
 
@@ -35,7 +34,6 @@ import dispatcher from "./dispatcher";
 export default {
 	actions,
 	publishAction,
-	addToActionGroup,
 	component,
 	controllerView,
 	customActionCreator,

@@ -2,6 +2,7 @@ var stubCallback = function() {
 	this.__lux = { cleanup: [] };
 	return {};
 };
+var reactDOM = ( typeof window === "undefined" ? global : window ).reactDOM;
 
 describe( "luxJS - Mixins", function() {
 	var store, creator;
@@ -238,52 +239,12 @@ describe( "luxJS - Mixins", function() {
 						this.__lux.subscriptions.prenotify.inactive.should.be.true;
 					}
 				} );
-
-				React.unmountComponentAtNode( mocked.getDOMNode().parentNode );
+				reactDOM.unmountComponentAtNode( reactDOM.findDOMNode( mocked ).parentNode );
 			} );
 		} );
 	} );
 	describe( "When Using the Creator Mixin", function() {
 		describe( "When using with lux.mixin", function() {
-			it( "Should look at getActionGroup and create methods for each action in the group", function() {
-				lux.customActionCreator( {
-					group1: function() {},
-					group2: function() {}
-				} );
-				lux.addToActionGroup( "grouped", [ "group1", "group2" ] );
-
-				var obj = {
-					getActionGroup: [ "grouped" ]
-				};
-
-				lux.mixin( obj, lux.mixin.actionCreator );
-
-				obj.should.contain.key( "group1" );
-				obj.group1.should.be.an.instanceOf( Function );
-				obj.should.contain.key( "group2" );
-				obj.group2.should.be.an.instanceOf( Function );
-			} );
-			it( "Should support using a string or array for getActionGroup", function() {
-				lux.customActionCreator( {
-					group1: function() {},
-					group2: function() {}
-				} );
-				lux.addToActionGroup( "grouped", [ "group1", "group2" ] );
-
-				var objOne = {
-					getActionGroup: "grouped"
-				};
-
-				var objTwo = {
-					getActionGroup: [ "grouped" ]
-				};
-
-				lux.mixin( objOne, lux.mixin.actionCreator );
-				lux.mixin( objTwo, lux.mixin.actionCreator );
-
-				objOne.should.contain.all.keys( "group1", "group2" );
-				objTwo.should.contain.all.keys( "group1", "group2" );
-			} );
 			it( "Should look at getActions and create methods for each action", function() {
 				lux.customActionCreator( {
 					action1: function() {},
@@ -333,16 +294,6 @@ describe( "luxJS - Mixins", function() {
 				objOne.should.contain.key( "action1" );
 				objTwo.should.contain.all.keys( "action1", "action2" );
 			} );
-
-			it( "Should throw an error when requested a group that does not exist", function() {
-				var obj = {
-					getActionGroup: "doesNotExist"
-				};
-
-				( function() {
-					lux.mixin( obj, lux.mixin.actionCreator );
-				} ).should.throw( /there is no action group/i );
-			} );
 			it( "Should throw an error when using an action that does not exist", function() {
 				var obj = {
 					getActions: "doesNotExist"
@@ -391,21 +342,6 @@ describe( "luxJS - Mixins", function() {
 				} );
 
 				obj.publishAction( "publishTest" );
-			} );
-			it( "Should throw an error if the target isn't passed as first arg", function() {
-				lux.customActionCreator( {
-					group1: function() {},
-					group2: function() {}
-				} );
-				lux.addToActionGroup( "grouped", [ "group1", "group2" ] );
-
-				var obj = {
-					getActionGroup: [ "grouped" ]
-				};
-
-				( function() {
-					lux.mixin( lux.mixin.actionCreator, obj );
-				} ).should.throw( /Lux mixins should have a setup method/i );
 			} );
 		} );
 

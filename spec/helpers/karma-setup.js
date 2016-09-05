@@ -4,6 +4,7 @@ chai.use( require( "sinon-chai" ) );
 window.should = chai.should();
 require( "babel/polyfill" );
 window.React = require( "react" );
+window.reactDOM = require( "ReactDOM" );
 window.utils = window.React.addons.TestUtils;
 window.postal = require( "postal" );
 window.luxStoreCh = window.postal.channel( "lux.store" );

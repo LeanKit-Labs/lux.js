@@ -27,6 +27,7 @@ module.exports = {
 			"when.parallel": "when/parallel",
 			"when.pipeline": "when/pipeline",
 			react: "react/dist/react-with-addons.js",
+			ReactDOM: path.join( __dirname, "./node_modules/react/lib/ReactDOM" ),
 			lux: path.join( __dirname, "./lib/lux.js" )
 		}
 	}
