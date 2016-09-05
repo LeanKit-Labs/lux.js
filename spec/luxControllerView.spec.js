@@ -22,7 +22,6 @@ describe( "luxJS - Controller Views", function() {
 				}
 			}
 		} );
-		lux.addToActionGroup( "fakeyactiongroup", [ "doYourControllerViewThing" ] );
 	} );
 	after( function() {
 		fakeStore.dispose();
