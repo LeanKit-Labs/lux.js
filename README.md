@@ -15,10 +15,10 @@ lux.js is an implementation of a [Flux](http://facebook.github.io/flux/docs/over
 
 ### The Pieces
 #### ControllerViews
-A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.reactMixin.actionCreator` and `lux.reactMixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s) or action group(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
+A ControllerView is a component that contains state that will be updated from a store - they will typically appear at the top (or near) of logical sections of your component tree. In lux, a ControllerView gets two primary mixins: `lux.reactMixin.actionCreator` and `lux.reactMixin.store` (see the section on mixins below for more information on the mixins' API). The `actionCreator` mixin gives the ControllerView an `ActionCreator` API for the specified action(s). The `store` mixin wires the component into the bus to listen for updates from the specified store(s).
 
 ##### Creating a ControllerView
-You can get an instance of a ControllerView by calling `lux.controllerView()` (You must call `lux.initReact( React )` once in your app before using this method). For example, the ControllerView below is being given all the actions associated with the "board" action group, and is also listening to the board store for data:
+You can get an instance of a ControllerView by calling `lux.controllerView()` (You must call `lux.initReact( React )` once in your app before using this method). For example, the ControllerView below is being given an action creator method for the `loadBoard` action, and is also listening to the board store for data:
 
 
 ```javascript
@@ -29,11 +29,12 @@ lux.initReact( React );
 
 var LaneSelector = lux.controllerView({
 
-	// In this case "board" is an action group that contains
-	// at least one action called "loadBoard". Any actions
-	// under the "board" action group get added as top level
-	// methods to this react element.
-    getActionGroup: ["board"],
+	// The getActions array is a list of actions you want
+	// to be able to dispatch from this component. Action
+	// Creator methods will be added to the component with
+	// the method name matching the action name. This is
+	// an alternative to calling lux.publishAction(actionName, args...)
+    getActions: [ "loadBoard" ],
 
     stores: {
     	// `listenTo` can also be an array of store namespaces
@@ -102,7 +103,7 @@ lux.initReact( React );
 
 var Lane = lux.component({
 
-	getActionGroup: ["board"],
+	getActions: [ "loadBoard" ],
 
 	getInitialState: function() {
 		return {
@@ -197,14 +198,6 @@ var boardStore = new lux.Store(
 #### ActionCreator APIs
 Components don't talk to stores directly. Instead, they use an ActionCreator API as a proxy to store operations. ActionCreator APIs are built automatically as stores (and any other instance that uses the `lux.mixin.actionListener` mixin) are created. If you use the `actionCreator` mixin (or use a ControllerView or lux Component), action creator APIs will appear as top level methods on your component. The auto-generated ActionCreator APIs use the same method names as the corresponding action type names. ActionCreator methods simply publish the correct message payload for the action. Remember that any arguments you pass to an ActionCreator method should be *fully serializable*. If you really need to, you can create your own ActionCreator API method - either at the component level, or globally. Implementing a method on your component that matches the name of an action allows for a component-specific override, or you can use `lux.customActionCreator` to implement your own global overrides of how an action is dispatched. You just have to honor the message contracts (see the source for information on that now....more documentation later).
 
-You can group actions together under a "label" (known as an action group) by using the `lux.addToActionGroup` method:
-
-```javascript
-// if the "board" action group doesn't exist, it will be created. If it does exist
-// the actions in the second argument will be added to what's already there
-lux.addToActionGroup( "board", ["toggleLaneSelection", "toggleRollUpLane", "loadBoard" ]);
-```
-
 By default, lux will generate an action creator method for your actions (which simply publishes a structured message payload defining the action), but you might want to create a custom version of an action creator method:
 
 ```javascript
@@ -221,7 +214,7 @@ lux.customActionCreator({
 ### Mixins
 
 #### lux.mixin.actionCreator and lux.reactMixin.actionCreator
-The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActionGroup` array or a `getActions` array on your component options. The `getActionGroup` array should contain the string action group name(s) that contain the actions you want. The `getActions` should contain the action names you want on the component (you can use either or both). The ActionCreator APIs will appear on the component as top level method names. Use the `lux.reactMixin.actionCreator` with the `React.createClass` mixins property.
+The `actionCreator` mixin (which is provided automatically when you call `lux.controllerView` and `lux.component`) will look for a `getActions` array on your component options. The `getActions` array should contain the action names you want on the component. The ActionCreator APIs will appear on the component as top level method names. Use the `lux.reactMixin.actionCreator` with the `React.createClass` mixins property.
 
 #### lux.mixin.store and lux.reactMixin.store
 The `store` mixin (which is provided automatically when you call `lux.createControllerView`) will look for a `stores` property on your component options. This property should be an object with a `listenTo` array containing the list of store namespaces your component wants state from, and an `onChange` handler for when any of those stores publish state changes. You will need to include the store(s) as module dependencies to access their state from within the handler. Use the `lux.reactMixin.store` with the `React.createClass` mixins property.
@@ -233,7 +226,7 @@ The `actionListener` mixin wires an instance into the message bus to listen for 
 The `lux.mixin()` method allows you to add support for lux stores and actions into any object. *You will not need to use this on React components or existing lux components.* Simply call `lux.mixin( this )` on your object, and lux will do the following steps:
 
 1. If it finds a `stores` property on your object it will wire up stores and the `onChange` handler.
-2. If it finds a `getActionGroup` or `getActions` property on your object it will add top level methods for the needed actions.
+2. If it finds a `getActions` property on your object it will add top level methods for the needed actions.
 3. It will add a `luxCleanup()` method to your object. Invoke this method during a destroy or teardown lifecycle event to cleanup the mixin's subscriptions.
 
 You can also specify the lux mixins you wish to use by calling `lux.mixin(taget, lux.mixin.actionListener, lux.mixin.store);`.
@@ -261,14 +254,14 @@ var http = lux.actionListener({
 ```
 
 ##### Quickly Create an Action Creator
-In this example, we're creating an instance of a plain object (not a lux component or controller view) that will have any actions associated with the "board" action group:
+In this example, we're creating an instance of a plain object (not a lux component or controller view) that will have an action creator methods for the `loadBoard` and `toggleLaneSelection` actions:
 
 ```javascript
 var boardActions = lux.actionCreator({
-	getActionGroup: [ "board" ]
+	getActions: [ "loadBoard", "toggleLaneSelection" ]
 });
 
-// assuming the board action group has a "toggleLaneSelection" action
+// dispatching the "toggleLaneSelection" action
 
 boardAction.toggleLaneSelection(123, 4567);
 

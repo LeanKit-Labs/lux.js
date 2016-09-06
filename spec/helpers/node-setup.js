@@ -10,8 +10,9 @@ var chai = require( "chai" );
 chai.use( require( "sinon-chai" ) );
 global.should = chai.should();
 
-global.React = require( "react/dist/react-with-addons" );
-global.utils = global.React.addons.TestUtils;
+global.React = require( "react" );
+global.ReactDOM = require( "react-dom" );
+global.utils = require( "react-addons-test-utils" );
 
 global.postal = require( "postal" );
 global.machina = require( "machina" );
