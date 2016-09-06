@@ -239,7 +239,7 @@ describe( "luxJS - Mixins", function() {
 					}
 				} );
 
-				React.unmountComponentAtNode( mocked.getDOMNode().parentNode );
+				ReactDOM.unmountComponentAtNode( ReactDOM.findDOMNode( mocked ).parentNode );
 			} );
 		} );
 	} );

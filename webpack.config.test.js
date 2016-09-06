@@ -26,7 +26,6 @@ module.exports = {
 		alias: {
 			"when.parallel": "when/parallel",
 			"when.pipeline": "when/pipeline",
-			react: "react/dist/react-with-addons.js",
 			lux: path.join( __dirname, "./lib/lux.js" )
 		}
 	}

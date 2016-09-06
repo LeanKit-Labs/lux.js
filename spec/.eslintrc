@@ -30,6 +30,7 @@
 		"should": true,
 		"luxActionCh": true,
 		"React": true,
+		"ReactDOM": true,
 		"utils": true
 	}
 }
