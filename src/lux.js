@@ -14,8 +14,6 @@ import {
 } from "./actions";
 
 import {
-	component,
-	controllerView,
 	mixin,
 	reactMixin,
 	actionListener,
@@ -34,8 +32,6 @@ import dispatcher from "./dispatcher";
 export default {
 	actions,
 	publishAction,
-	component,
-	controllerView,
 	customActionCreator,
 	dispatcher,
 	getActionGroup,

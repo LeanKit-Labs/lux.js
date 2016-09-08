@@ -3,24 +3,7 @@
 import { storeMixin, storeReactMixin } from "./store";
 import { actionCreatorMixin, actionCreatorReactMixin, publishAction } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
-import React from "react";
 import LuxContainer from "./luxContainer";
-
-function controllerView( options ) {
-	const opt = {
-		mixins: [ storeReactMixin, actionCreatorReactMixin ].concat( options.mixins || [] )
-	};
-	delete options.mixins;
-	return React.createClass( Object.assign( opt, options ) );
-}
-
-function component( options ) {
-	const opt = {
-		mixins: [ actionCreatorReactMixin ].concat( options.mixins || [] )
-	};
-	delete options.mixins;
-	return React.createClass( Object.assign( opt, options ) );
-}
 
 /*********************************************
 *   Generalized Mixin Behavior for non-lux   *
@@ -77,8 +60,6 @@ function actionCreatorListener( target ) {
 }
 
 export {
-	component,
-	controllerView,
 	mixin,
 	reactMixin,
 	actionListener,
