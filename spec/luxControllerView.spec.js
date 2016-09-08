@@ -47,14 +47,6 @@ describe( "luxJS - Controller Views", function() {
 			creator = lux.actionCreator( {} );
 		} );
 
-		describe( "When React is not initialized", function() {
-			it( "should throw a friendly error", function() {
-				lux.initReact();
-				controllerViewFactory.should.throw( /initReact/ );
-				lux.initReact( React );
-			} );
-		} );
-
 		describe( "When Listening to One Store", function() {
 			var onChange;
 			beforeEach( function() {

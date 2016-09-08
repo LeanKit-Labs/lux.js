@@ -45,13 +45,6 @@ describe( "luxJS - components", function() {
 		} );
 	} );
 	describe( "When Instantiating a lux Component", function() {
-		describe( "When React is not initialized", function() {
-			it( "should throw a friendly error", function() {
-				lux.initReact();
-				componentFactory.should.throw( /initReact/ );
-				lux.initReact( React );
-			} );
-		} );
 		describe( "When using getActions", function() {
 			before( function() {
 				componentFactory( {

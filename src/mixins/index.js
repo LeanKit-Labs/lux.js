@@ -3,22 +3,10 @@
 import { storeMixin, storeReactMixin } from "./store";
 import { actionCreatorMixin, actionCreatorReactMixin, publishAction } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
-
-let React;
-
-function initReact( userReact ) {
-	React = userReact;
-	return this;
-}
-
-function ensureReact( methodName ) {
-	if ( typeof React === "undefined" ) {
-		throw new Error( "You attempted to use lux." + methodName + " without first calling lux.initReact( React );" );
-	}
-}
+import React from "react";
+import LuxContainer from "./luxContainer";
 
 function controllerView( options ) {
-	ensureReact( "controllerView" );
 	const opt = {
 		mixins: [ storeReactMixin, actionCreatorReactMixin ].concat( options.mixins || [] )
 	};
@@ -27,7 +15,6 @@ function controllerView( options ) {
 }
 
 function component( options ) {
-	ensureReact( "component" );
 	const opt = {
 		mixins: [ actionCreatorReactMixin ].concat( options.mixins || [] )
 	};
@@ -92,11 +79,11 @@ function actionCreatorListener( target ) {
 export {
 	component,
 	controllerView,
-	initReact,
 	mixin,
 	reactMixin,
 	actionListener,
 	actionCreator,
 	actionCreatorListener,
-	publishAction
+	publishAction,
+	LuxContainer
 };

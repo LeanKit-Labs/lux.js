@@ -16,13 +16,13 @@ import {
 import {
 	component,
 	controllerView,
-	initReact,
 	mixin,
 	reactMixin,
 	actionListener,
 	actionCreator,
 	actionCreatorListener,
-	publishAction
+	publishAction,
+	LuxContainer
 } from "./mixins";
 
 import { Store, stores, removeStore } from "./store";
@@ -43,10 +43,10 @@ export default {
 	actionCreator,
 	actionListener,
 	mixin,
-	initReact,
 	reactMixin,
 	removeStore,
 	Store,
 	stores,
-	utils
+	utils,
+	LuxContainer
 };

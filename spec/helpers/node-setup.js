@@ -27,4 +27,3 @@ require( "babel/register" )( {
 } );
 
 global.lux = require( "../../lib/lux" );
-global.lux.initReact( React );

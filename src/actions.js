@@ -30,6 +30,9 @@ export function getActionGroup( group ) {
 	}
 }
 
+// This method is deprecated, but will remain as
+// long as the print utils need it.
+/* istanbul ignore next */
 export function getGroupsWithAction( actionName ) {
 	const groups = [];
 	for ( var [ group, list ] of entries( actionGroups ) ) {
