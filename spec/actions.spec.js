@@ -1,11 +1,11 @@
 describe( "luxJS - Actions", function() {
-	describe( "lux.publishAction", function() {
+	describe( "lux.dispatch", function() {
 		var listener, spy;
 		before( function() {
 			spy = sinon.spy();
 			listener = lux.actionListener( {
 				handlers: {
-					globalPublishAction: spy
+					globalDispatch: spy
 				}
 			} );
 		} );
@@ -13,7 +13,7 @@ describe( "luxJS - Actions", function() {
 			listener.luxCleanup();
 		} );
 		it( "should trigger the correct action", function() {
-			lux.publishAction( "globalPublishAction" );
+			lux.dispatch( "globalDispatch" );
 			spy.should.be.calledOnce;
 		} );
 	} );
@@ -91,7 +91,7 @@ describe( "luxJS - Actions", function() {
 		it( "Should take input object and add luxActionCreatorMixin", function() {
 			var actionCreator = lux.actionCreator( {} );
 
-			actionCreator.publishAction.should.be.a.Function;
+			actionCreator.dispatch.should.be.a.Function;
 		} );
 	} );
 	describe( "When calling actionListener", function() {
@@ -107,7 +107,7 @@ describe( "luxJS - Actions", function() {
 
 			var actionCreator = lux.actionCreator( {} );
 
-			actionCreator.publishAction( "testAction", testValue );
+			actionCreator.dispatch( "testAction", testValue );
 
 			handler.should.be.calledOnce
 				.and.calledWithExactly( testValue );
@@ -124,9 +124,9 @@ describe( "luxJS - Actions", function() {
 				}
 			} );
 
-			// action creator would add publishAction method and action listener would listen for it
-			actionCreatorListener.publishAction.should.be.a.Function;
-			actionCreatorListener.publishAction( "testAction", testValue );
+			// action creator would add dispatch method and action listener would listen for it
+			actionCreatorListener.dispatch.should.be.a.Function;
+			actionCreatorListener.dispatch( "testAction", testValue );
 
 			handler.should.be.calledOnce
 				.and.calledWithExactly( testValue );

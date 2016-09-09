@@ -22,6 +22,9 @@ export function generateActionCreator( actionList ) {
 	} );
 }
 
+// This method is deprecated, but will remain as
+// long as the print utils need it.
+/* istanbul ignore next */
 export function getActionGroup( group ) {
 	if ( actionGroups[ group ] ) {
 		return _.pick( actions, actionGroups[ group ] );
@@ -47,6 +50,9 @@ export function customActionCreator( action ) {
 	Object.assign( actions, action );
 }
 
+// This method is deprecated, but will remain as
+// long as the print utils need it.
+/* istanbul ignore next */
 export function addToActionGroup( groupName, actionList ) {
 	let group = actionGroups[ groupName ];
 	if ( !group ) {

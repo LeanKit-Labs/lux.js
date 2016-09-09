@@ -1,7 +1,7 @@
 "use strict";
 
 import { storeMixin, storeReactMixin } from "./store";
-import { actionCreatorMixin, actionCreatorReactMixin, publishAction } from "./actionCreator";
+import { actionCreatorMixin, actionCreatorReactMixin, dispatch } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
 import LuxContainer from "./luxContainer";
 
@@ -65,6 +65,6 @@ export {
 	actionListener,
 	actionCreator,
 	actionCreatorListener,
-	publishAction,
+	dispatch,
 	LuxContainer
 };

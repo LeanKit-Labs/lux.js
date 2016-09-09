@@ -19,7 +19,7 @@ import {
 	actionListener,
 	actionCreator,
 	actionCreatorListener,
-	publishAction,
+	dispatch,
 	LuxContainer
 } from "./mixins";
 
@@ -31,8 +31,8 @@ import dispatcher from "./dispatcher";
 
 export default {
 	actions,
-	publishAction,
 	customActionCreator,
+	dispatch,
 	dispatcher,
 	getActionGroup,
 	actionCreatorListener,
