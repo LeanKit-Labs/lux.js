@@ -20,8 +20,6 @@ function gateKeeper( store, data ) {
 			__lux.heardFrom = [];
 			this.stores.onChange.call( this, payload );
 		}
-	} else {
-		this.stores.onChange.call( this, payload );
 	}
 }
 

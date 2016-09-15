@@ -571,7 +571,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			lux.publishAction( "myTest" );
+			lux.dispatch( "myTest" );
 			storeOne.should.be.calledOnce;
 
 			console.warn.should.be.calledOnce.and.calledWithMatch( /doesNotExist/ );

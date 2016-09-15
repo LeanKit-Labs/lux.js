@@ -5,7 +5,7 @@ import { getActionGroup, actions } from "../actions";
 *           Action Creator Mixin          *
 **********************************************/
 
-export function publishAction( action, ...args ) {
+export function dispatch( action, ...args ) {
 	if ( actions[ action ] ) {
 		actions[ action ]( ...args );
 	} else {
@@ -40,17 +40,17 @@ export const actionCreatorMixin = {
 		if ( this.getActions.length ) {
 			this.getActions.forEach( function( key ) {
 				addActionIfNotPresent( key, function() {
-					publishAction( key, ...arguments );
+					dispatch( key, ...arguments );
 				} );
 			} );
 		}
 	},
 	mixin: {
-		publishAction: publishAction
+		dispatch: dispatch
 	}
 };
 
 export const actionCreatorReactMixin = {
 	componentWillMount: actionCreatorMixin.setup,
-	publishAction: publishAction
+	dispatch: dispatch
 };

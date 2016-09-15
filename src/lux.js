@@ -14,16 +14,21 @@ import {
 } from "./actions";
 
 import {
-	component,
-	controllerView,
-	initReact,
 	mixin,
 	reactMixin,
 	actionListener,
 	actionCreator,
 	actionCreatorListener,
-	publishAction
+	dispatch,
+	LuxContainer
 } from "./mixins";
+
+function publishAction( ...args ) {
+	if ( console && typeof console.log === "function" ) {
+		console.log( "lux.publishAction has been deprecated and will be removed in future releases. Please use lux.dispatch." );
+	}
+	dispatch( ...args );
+}
 
 import { Store, stores, removeStore } from "./store";
 import { extend } from "./extend";
@@ -33,20 +38,19 @@ import dispatcher from "./dispatcher";
 
 export default {
 	actions,
-	publishAction,
-	component,
-	controllerView,
 	customActionCreator,
+	dispatch,
+	publishAction,
 	dispatcher,
 	getActionGroup,
 	actionCreatorListener,
 	actionCreator,
 	actionListener,
 	mixin,
-	initReact,
 	reactMixin,
 	removeStore,
 	Store,
 	stores,
-	utils
+	utils,
+	LuxContainer
 };

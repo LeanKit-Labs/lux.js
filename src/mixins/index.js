@@ -1,39 +1,9 @@
 "use strict";
 
 import { storeMixin, storeReactMixin } from "./store";
-import { actionCreatorMixin, actionCreatorReactMixin, publishAction } from "./actionCreator";
+import { actionCreatorMixin, actionCreatorReactMixin, dispatch } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
-
-let React;
-
-function initReact( userReact ) {
-	React = userReact;
-	return this;
-}
-
-function ensureReact( methodName ) {
-	if ( typeof React === "undefined" ) {
-		throw new Error( "You attempted to use lux." + methodName + " without first calling lux.initReact( React );" );
-	}
-}
-
-function controllerView( options ) {
-	ensureReact( "controllerView" );
-	const opt = {
-		mixins: [ storeReactMixin, actionCreatorReactMixin ].concat( options.mixins || [] )
-	};
-	delete options.mixins;
-	return React.createClass( Object.assign( opt, options ) );
-}
-
-function component( options ) {
-	ensureReact( "component" );
-	const opt = {
-		mixins: [ actionCreatorReactMixin ].concat( options.mixins || [] )
-	};
-	delete options.mixins;
-	return React.createClass( Object.assign( opt, options ) );
-}
+import LuxContainer from "./luxContainer";
 
 /*********************************************
 *   Generalized Mixin Behavior for non-lux   *
@@ -90,13 +60,11 @@ function actionCreatorListener( target ) {
 }
 
 export {
-	component,
-	controllerView,
-	initReact,
 	mixin,
 	reactMixin,
 	actionListener,
 	actionCreator,
 	actionCreatorListener,
-	publishAction
+	dispatch,
+	LuxContainer
 };
