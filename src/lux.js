@@ -23,6 +23,13 @@ import {
 	LuxContainer
 } from "./mixins";
 
+function publishAction( ...args ) {
+	if ( console && typeof console.log === "function" ) {
+		console.log( "lux.publishAction has been deprecated and will be removed in future releases. Please use lux.dispatch." );
+	}
+	dispatch( ...args );
+}
+
 import { Store, stores, removeStore } from "./store";
 import { extend } from "./extend";
 Store.extend = extend;
@@ -33,6 +40,7 @@ export default {
 	actions,
 	customActionCreator,
 	dispatch,
+	publishAction,
 	dispatcher,
 	getActionGroup,
 	actionCreatorListener,
