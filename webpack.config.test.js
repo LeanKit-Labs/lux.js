@@ -14,7 +14,20 @@ module.exports = {
 		],
 		loaders: [
 			{ test: /sinon.*\.js/, loader: "imports?define=>false" },
-			{ test: /\.spec\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+			{
+				test: /\.spec\.js$/,
+				exclude: /node_modules/,
+				loader: "babel-loader",
+				query: {
+					auxiliaryCommentBefore: "istanbul ignore next",
+					compact: false,
+					presets: [
+						"es2015-without-strict",
+						"stage-0"
+					],
+					plugins: [ "add-module-exports" ]
+				}
+			}
 		],
 		postLoaders: [ {
 			test: /\.js$/,

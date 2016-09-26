@@ -44,8 +44,11 @@ module.exports = {
 				query: {
 					auxiliaryCommentBefore: "istanbul ignore next",
 					compact: false,
-					blacklist: [ "strict" ],
-					experimental: true
+					presets: [
+						"es2015-without-strict",
+						"stage-0"
+					],
+					plugins: [ "add-module-exports" ]
 				}
 			}
 		]
