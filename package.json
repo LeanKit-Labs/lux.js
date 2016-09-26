@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "2.0.0-1",
+  "version": "2.0.0-2",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
