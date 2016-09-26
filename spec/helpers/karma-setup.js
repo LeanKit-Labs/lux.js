@@ -2,7 +2,7 @@
 var chai = require( "chai" );
 chai.use( require( "sinon-chai" ) );
 window.should = chai.should();
-require( "babel/polyfill" );
+require( "babel-polyfill" );
 window.React = require( "react" );
 window.ReactDOM = require( "react-dom" );
 window.utils = require( "react-addons-test-utils" );
