@@ -18,10 +18,6 @@ export const actionCreatorMixin = {
 		this.getActionGroup = this.getActionGroup || [];
 		this.getActions = this.getActions || [];
 
-		if ( typeof this.getActionGroup === "string" ) {
-			this.getActionGroup = [ this.getActionGroup ];
-		}
-
 		if ( typeof this.getActions === "string" ) {
 			this.getActions = [ this.getActions ];
 		}

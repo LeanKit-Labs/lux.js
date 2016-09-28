@@ -42,7 +42,6 @@ module.exports = {
 				exclude: /(node_modules|bower_components)/,
 				loader: "babel",
 				query: {
-					auxiliaryCommentBefore: "istanbul ignore next",
 					compact: false,
 					presets: [
 						"es2015-without-strict",

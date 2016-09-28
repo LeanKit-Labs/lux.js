@@ -29,8 +29,8 @@ describe( "luxJS - Mixins", function() {
 			var storeStub = this.stub( lux.mixin.store, "setup", stubCallback );
 			lux.mixin( {} );
 
-			adStub.should.be.calledOnce;
-			storeStub.should.be.calledOnce;
+			adStub.should.be.calledOnce();
+			storeStub.should.be.calledOnce();
 		} ) );
 		it( "Should add a luxCleanup method", function() {
 			var obj = {
@@ -55,12 +55,12 @@ describe( "luxJS - Mixins", function() {
 			lux.mixin( obj );
 
 			creator.dispatch( "one" );
-			onChange.should.be.calledOnce;
+			onChange.should.be.calledOnce();
 
 			obj.luxCleanup();
 
 			creator.dispatch( "one" );
-			onChange.should.be.calledOnce;
+			onChange.should.be.calledOnce();
 		} );
 	} );
 	describe( "When using the Store Mixin", function() {
@@ -85,8 +85,8 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( objOne, lux.mixin.store );
 				lux.mixin( objTwo, lux.mixin.store );
 				creator.dispatch( "one" );
-				onChangeOne.should.be.calledOnce;
-				onChangeTwo.should.be.calledOnce;
+				onChangeOne.should.be.calledOnce();
+				onChangeTwo.should.be.calledOnce();
 			} );
 			it( "Should throw an error when no change handler is provided", function() {
 				var objOne = {
@@ -109,6 +109,11 @@ describe( "luxJS - Mixins", function() {
 					lux.mixin( objOne );
 				} ).should.throw( /listenTo must contain at least one store namespace/ );
 			} );
+			it( "Should throw an error when no stores property is provided", function() {
+				( function initializeMixinWithoutOnChange() {
+					lux.mixin( {} );
+				} ).should.throw( /Your component must provide a \"stores\" key/ );
+			} );
 			it( "Should call onChange when a store is changed", function() {
 				storeFactory( { namespace: "shouldChange" } );
 				var onChange = sinon.spy();
@@ -121,7 +126,7 @@ describe( "luxJS - Mixins", function() {
 
 				lux.mixin( obj, lux.mixin.store );
 				creator.dispatch( "one" );
-				onChange.should.be.calledOnce;
+				onChange.should.be.calledOnce();
 			} );
 			it( "Should wait for all stores to update before calling the onChange", function() {
 				var onActionOne = sinon.spy();
@@ -150,8 +155,8 @@ describe( "luxJS - Mixins", function() {
 					stores: {
 						listenTo: [ "waitAll", "waitExtra" ],
 						onChange: function() {
-							onActionOne.should.be.calledOnce;
-							onActionTwo.should.be.calledOnce;
+							onActionOne.should.be.calledOnce();
+							onActionTwo.should.be.calledOnce();
 							onChange();
 						}
 					}
@@ -160,7 +165,7 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.store );
 
 				creator.dispatch( "doAction" );
-				onChange.should.be.calledOnce;
+				onChange.should.be.calledOnce();
 
 				storeOne.dispose();
 				storeTwo.dispose();
@@ -177,12 +182,12 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.store );
 
 				creator.dispatch( "one" );
-				onChange.should.be.calledOnce;
+				onChange.should.be.calledOnce();
 
 				obj.luxCleanup();
 
 				creator.dispatch( "one" );
-				onChange.should.be.calledOnce;
+				onChange.should.be.calledOnce();
 			} );
 		} );
 
@@ -216,7 +221,7 @@ describe( "luxJS - Mixins", function() {
 			it( "Should cleanup during componentWillUnmount", function() {
 				controllerViewFactory( {
 					componentWillUnmount: function() {
-						this.__lux.subscriptions.prenotify.inactive.should.be.true;
+						this.__lux.subscriptions.prenotify.inactive.should.be.true();
 					}
 				} );
 
@@ -363,7 +368,7 @@ describe( "luxJS - Mixins", function() {
 				lux.mixin( obj, lux.mixin.actionListener );
 				var creatr = lux.actionCreator( {} );
 				creatr.dispatch( "fireMyHandler", "testy" );
-				handler.should.be.calledOnce;
+				handler.should.be.calledOnce();
 				handler.should.be.calledWith( "testy" );
 			} );
 			it( "Should auto-generate action creator methods", function() {
@@ -403,7 +408,7 @@ describe( "luxJS - Mixins", function() {
 				};
 				lux.mixin( obj, lux.mixin.actionListener );
 				obj.luxCleanup();
-				obj.__lux.subscriptions.actionListener.inactive.should.be.true;
+				obj.__lux.subscriptions.actionListener.inactive.should.be.true();
 			} );
 			it( "Should throw an error if the target isn't passed as first arg", function() {
 				var obj = {

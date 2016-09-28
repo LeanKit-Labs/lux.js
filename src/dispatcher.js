@@ -144,18 +144,16 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	createSubscribers() {
-		if ( !this.__subscriptions || !this.__subscriptions.length ) {
-			this.__subscriptions = [
-				actionChannel.subscribe(
-					"execute.*",
-					( data, env ) => this.handleActionDispatch( data )
-				),
-				dispatcherChannel.subscribe(
-					"*.handled.*",
-					( data ) => this.handle( this.actionContext, "action.handled", data )
-				).constraint( () => !!this.actionContext )
-			];
-		}
+		this.__subscriptions = [
+			actionChannel.subscribe(
+				"execute.*",
+				( data, env ) => this.handleActionDispatch( data )
+			),
+			dispatcherChannel.subscribe(
+				"*.handled.*",
+				( data ) => this.handle( this.actionContext, "action.handled", data )
+			).constraint( () => !!this.actionContext )
+		];
 	}
 
 	dispose() {

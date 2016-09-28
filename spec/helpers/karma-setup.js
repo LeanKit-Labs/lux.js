@@ -1,5 +1,6 @@
 // Setup for when running with Karma
 var chai = require( "chai" );
+chai.use( require( "dirty-chai" ) );
 chai.use( require( "sinon-chai" ) );
 window.should = chai.should();
 require( "babel-polyfill" );

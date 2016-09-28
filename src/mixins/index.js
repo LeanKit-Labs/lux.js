@@ -3,7 +3,7 @@
 import { storeMixin, storeReactMixin } from "./store";
 import { actionCreatorMixin, actionCreatorReactMixin, dispatch } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
-import LuxContainer from "./luxContainer";
+import luxWrapper from "./luxWrapper";
 
 /*********************************************
 *   Generalized Mixin Behavior for non-lux   *
@@ -66,5 +66,5 @@ export {
 	actionCreator,
 	actionCreatorListener,
 	dispatch,
-	LuxContainer
+	luxWrapper
 };

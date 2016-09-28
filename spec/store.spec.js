@@ -72,7 +72,7 @@ describe( "luxJS - Store", function() {
 
 				store.should.have.property( "getSomethingCool" );
 				store.getSomethingCool.should.be.an.instanceOf( Function );
-				store.getSomethingCool().should.be.true;
+				store.getSomethingCool().should.be.true();
 				store.dispose();
 			} );
 			it( "Should make action creator methods for each handler", function() {
@@ -154,7 +154,7 @@ describe( "luxJS - Store", function() {
 
 				store.should.contain.key( "getSomethingCool" );
 				store.getSomethingCool.should.be.an.instanceOf( Function );
-				store.getSomethingCool().should.be.true;
+				store.getSomethingCool().should.be.true();
 
 				store.should.contain.key( "getSomethingEvenCooler" );
 				store.getSomethingEvenCooler.should.be.an.instanceOf( Function );
@@ -219,9 +219,9 @@ describe( "luxJS - Store", function() {
 				creator.backInTime();
 				creator.forwardInTime();
 				creator.feedMrFusion();
-				backInTimeSpy.should.be.calledThrice;
-				forwardInTimeSpy.should.be.calledTwice;
-				feedMrFusionSpy.should.be.calledOnce;
+				backInTimeSpy.should.be.calledThrice();
+				forwardInTimeSpy.should.be.calledTwice();
+				feedMrFusionSpy.should.be.calledOnce();
 				store.dispose();
 			} );
 			it( "Should support store dependency ordering with mixin handler collision", function() {
@@ -306,143 +306,6 @@ describe( "luxJS - Store", function() {
 				store3.dispose();
 			} );
 		} );
-		describe( "When using extend to create an extended constructor function", function() {
-			it( "Should properly handle one level of inheritance", function() {
-				var handlerInvoked = false;
-				var MyStore = lux.Store.extend( {
-					state: {
-						dontblink: true,
-						angelsHavePhonebox: true
-					},
-					handlers: {
-						angelicTouch: function() {
-							handlerInvoked = true;
-						}
-					},
-					someCustomAccessor: function() {
-						return this.getState().angelsHavePhonebox;
-					}
-				} );
-				var store = new MyStore( { namespace: "levelone" } );
-				store.namespace.should.equal( "levelone" );
-				store.getState().should.eql( {
-					dontblink: true,
-					angelsHavePhonebox: true
-				} );
-				store.someCustomAccessor().should.be.ok;
-				var creator = lux.actionCreator( {
-					getActionGroup: [ "levelone" ]
-				} );
-
-				creator.angelicTouch();
-				handlerInvoked.should.be.true;
-				store.dispose();
-			} );
-			it( "Should properly handle more than one level of inheritance", function() {
-				var angelicTouchInvoked = false;
-				var listenToEasterEggsInvoked = false;
-				var keyInTardisInvoked = false;
-				var GrandparentStore = lux.Store.extend( {
-					state: {
-						dontblink: true,
-						angelsHavePhonebox: true
-					},
-					handlers: {
-						angelicTouch: function() {
-							angelicTouchInvoked = true;
-						}
-					},
-					someCustomAccessor: function() {
-						return this.getState().angelsHavePhonebox;
-					}
-				} );
-				var ParentStore = GrandparentStore.extend( {
-					state: {
-						doctor: "wibbly-wobbly timey-wimey"
-					},
-					handlers: {
-						listenToEasterEggs: function() {
-							listenToEasterEggsInvoked = true;
-						}
-					},
-					someOtherAccessor: function() {
-						return this.getState().doctor;
-					}
-				} );
-				var ChildStore = ParentStore.extend( {
-					state: {
-						author: "Moffat"
-					},
-					handlers: {
-						keyInTardis: function() {
-							keyInTardisInvoked = true;
-						}
-					},
-					andYetAnotherAccessor: function() {
-						return this.getState().author;
-					}
-				} );
-				var store = new ChildStore( { namespace: "weepingangels" } );
-				store.namespace.should.equal( "weepingangels" );
-				store.getState().should.eql( {
-					dontblink: true,
-					angelsHavePhonebox: true,
-					doctor: "wibbly-wobbly timey-wimey",
-					author: "Moffat"
-				} );
-				store.someCustomAccessor().should.be.ok;
-				store.someOtherAccessor().should.equal( "wibbly-wobbly timey-wimey" );
-				store.andYetAnotherAccessor().should.equal( "Moffat" );
-				var creator = lux.actionCreator( {
-					getActionGroup: [ "weepingangels" ]
-				} );
-
-				creator.angelicTouch();
-				creator.listenToEasterEggs();
-				creator.keyInTardis();
-				angelicTouchInvoked.should.be.true;
-				listenToEasterEggsInvoked.should.be.true;
-				keyInTardisInvoked.should.be.true;
-				store.dispose();
-			} );
-			it( "Should not mutate original mixins as part of store construction", function() {
-				var mixin = {
-					state: {
-						danglingMixin: true
-					},
-					handlers: {
-						justStopIt: function() {}
-					}
-				};
-				var storeA = storeFactory( {}, mixin );
-				var storeB = storeFactory( {}, mixin, { namespace: "WAT" } );
-
-				storeB.getState().should.eql( {
-					danglingMixin: true
-				} );
-
-				storeA.dispose();
-				storeB.dispose();
-			} );
-			it( "Should be able to create, dispose and re-create a store", function() {
-				var mixin = {
-					state: {
-						danglingMixin: true
-					},
-					handlers: {
-						justStopIt: function() {}
-					}
-				};
-				var Store = lux.Store.extend( { namespace: "wat" }, mixin );
-				var store = new Store();
-				store.dispose();
-				store = new Store();
-				store.getState().should.eql( {
-					danglingMixin: true
-				} );
-				store.dispose();
-			} );
-		} );
 	} );
 	describe( "When using a Store", function() {
 		it( "Should only allow setState while handling an action", function() {
@@ -465,11 +328,11 @@ describe( "luxJS - Store", function() {
 				getActions: [ "anAction" ]
 			} );
 
-			store.getState().flag.should.be.false;
+			store.getState().flag.should.be.false();
 
 			creator.anAction();
 
-			store.getState().flag.should.be.true;
+			store.getState().flag.should.be.true();
 			store.dispose();
 		} );
 		it( "Should only allow replaceState while handling an action", function() {
@@ -494,7 +357,7 @@ describe( "luxJS - Store", function() {
 
 			creator.anotherAction();
 
-			store.getState().flag.should.be.true;
+			store.getState().flag.should.be.true();
 			store.dispose();
 		} );
 		it( "Should replace state if replaceState is called during an action cycle", function() {
@@ -524,7 +387,7 @@ describe( "luxJS - Store", function() {
 			store.getState().should.not.have.property( "lots" );
 			store.getState().should.not.have.property( "andLots" );
 			store.getState().should.not.have.property( "ofKeys" );
-			store.getState().replaced.should.be.true;
+			store.getState().replaced.should.be.true();
 			store.dispose();
 		} );
 		it( "Should wait for other stores to update before dependent action is handled", function() {
@@ -536,7 +399,7 @@ describe( "luxJS - Store", function() {
 					myTest: {
 						waitFor: [ "storeOne" ],
 						handler: function() {
-							storeOne.should.be.calledOnce;
+							storeOne.should.be.calledOnce();
 							storeTwo();
 						}
 					}
@@ -554,8 +417,8 @@ describe( "luxJS - Store", function() {
 			} );
 
 			creator.myTest();
-			storeOne.should.be.calledOnce;
-			storeTwo.should.be.calledOnce;
+			storeOne.should.be.calledOnce();
+			storeTwo.should.be.calledOnce();
 			store.dispose();
 			otherStore.dispose();
 		} );
@@ -572,7 +435,7 @@ describe( "luxJS - Store", function() {
 			} );
 
 			lux.dispatch( "myTest" );
-			storeOne.should.be.calledOnce;
+			storeOne.should.be.calledOnce();
 
 			console.warn.should.be.calledOnce.and.calledWithMatch( /doesNotExist/ );
 			console.warn.restore();
@@ -609,8 +472,8 @@ describe( "luxJS - Store", function() {
 
 			creator.myTest.should.throw( /circular dependency/i );
 
-			storeOne.should.not.be.called;
-			storeTwo.should.not.be.called;
+			storeOne.should.not.be.called();
+			storeTwo.should.not.be.called();
 			circular1.dispose();
 			circular2.dispose();
 		} );
@@ -666,10 +529,10 @@ describe( "luxJS - Store", function() {
 
 			creator.myTest.should.throw( /circular dependency/i );
 
-			storeOne.should.not.be.called;
-			storeTwo.should.not.be.called;
-			storeThree.should.not.be.called;
-			storeFour.should.not.be.called;
+			storeOne.should.not.be.called();
+			storeTwo.should.not.be.called();
+			storeThree.should.not.be.called();
+			storeFour.should.not.be.called();
 			circular1.dispose();
 			circular2.dispose();
 			circular3.dispose();
@@ -700,11 +563,11 @@ describe( "luxJS - Store", function() {
 			} );
 
 			creator.change();
-			onChange.should.be.calledOnce;
+			onChange.should.be.calledOnce();
 			creator.inferredChange();
-			onChange.should.be.calledTwice;
+			onChange.should.be.calledTwice();
 			creator.noChange();
-			onChange.should.be.calledTwice;
+			onChange.should.be.calledTwice();
 			store.dispose();
 		} );
 		it( "Should publish a 'changed' message when flush is called and there are changes", function() {
@@ -720,7 +583,7 @@ describe( "luxJS - Store", function() {
 				getActions: [ "one" ]
 			} );
 			creator.one();
-			handler.should.be.calledOnce;
+			handler.should.be.calledOnce();
 			store.dispose();
 		} );
 		it( "Should not swallow exceptions if one occurs in a store handler", function() {
@@ -738,7 +601,7 @@ describe( "luxJS - Store", function() {
 
 			( function() {
 				creator.taseMeBro();
-			} ).should.throw;
+			} ).should.throw( /Don't Tase Me Bro/ );
 			store.dispose();
 		} );
 	} );
@@ -774,10 +637,19 @@ describe( "luxJS - Store", function() {
 				return isPresent;
 			};
 			var store = storeFactory();
-			storeIsInActionMap().should.be.true;
+			storeIsInActionMap().should.be.true();
 			store.dispose();
 			store = undefined;
-			storeIsInActionMap().should.be.false;
+			storeIsInActionMap().should.be.false();
+		} );
+		describe( "via lux.removeStore", function() {
+			it( "should call store.dispose", function() {
+				var store = storeFactory();
+				var spy = sinon.spy( store, "dispose" );
+				lux.removeStore( "storeOne" );
+				spy.should.be.calledOnce();
+				spy.restore();
+			} );
 		} );
 	} );
 } );

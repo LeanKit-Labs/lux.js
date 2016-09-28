@@ -32,10 +32,13 @@ function handlePreNotify( data ) {
 export var storeMixin = {
 	setup: function() {
 		const __lux = ensureLuxProp( this );
-		const stores = this.stores = ( this.stores || {} );
+		const stores = this.stores;
+		if ( !stores ) {
+			throw new Error( "Your component must provide a \"stores\" key" );
+		}
 
 		if ( !stores.listenTo || !stores.listenTo.length ) {
-			throw new Error( `listenTo must contain at least one store namespace` );
+			throw new Error( "listenTo must contain at least one store namespace" );
 		}
 
 		const listenTo = typeof stores.listenTo === "string" ? [ stores.listenTo ] : stores.listenTo;

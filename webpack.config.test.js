@@ -19,7 +19,6 @@ module.exports = {
 				exclude: /node_modules/,
 				loader: "babel-loader",
 				query: {
-					auxiliaryCommentBefore: "istanbul ignore next",
 					compact: false,
 					presets: [
 						"es2015-without-strict",
