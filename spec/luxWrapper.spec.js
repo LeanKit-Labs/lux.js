@@ -79,7 +79,6 @@ describe( "luxWrapper", function() {
 			store2 = null;
 		} );
 		it( "should call getState to set up initial wrapper state", function() {
-			console.log( getState.getCall( 0 ).args );
 			getState.should.be.calledOnce();
 		} );
 		describe( "when one store updates", function() {
@@ -183,7 +182,7 @@ describe( "luxWrapper", function() {
 					e.hasOwnProperty( "type" );
 			}
 			utils.Simulate.doubleClick( ReactDOM.findDOMNode( targetDiv ) );
-			fakeActionStub2.should.be.calledOnce;
+			fakeActionStub2.should.be.calledOnce();
 			isSyntheticEvent( fakeActionStub2.getCall( 0 ).args[ 0 ] ).should.equal( true );
 		} );
 		it( "should throw if invalid action values are provided", function() {
@@ -199,7 +198,7 @@ describe( "luxWrapper", function() {
 					)
 				);
 				component = utils.renderIntoDocument( container );
-			} ).should.throw( /The values provided to the LuxContainer actions property must be a string or a function/ );
+			} ).should.throw( /The values provided to the luxWrapper actions parameter must be a string or a function/ );
 		} );
 	} );
 } );

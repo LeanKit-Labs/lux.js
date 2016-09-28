@@ -33,7 +33,7 @@ describe( "luxJS - Dispatcher", function() {
 
 		subscription.unsubscribe();
 
-		handler.should.be.calledOnce;
+		handler.should.be.calledOnce();
 		handler.lastCall.args[ 0 ].actionType.should.equal( testAction );
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 	} );
@@ -63,7 +63,7 @@ describe( "luxJS - Dispatcher", function() {
 		alphaSubscription.unsubscribe();
 		betaSubscription.unsubscribe();
 
-		handler.should.be.calledTwice;
+		handler.should.be.calledTwice();
 		handler.firstCall.args[ 1 ].topic.should.equal( "beta.handle.test" );
 		handler.secondCall.args[ 1 ].topic.should.equal( "alpha.handle.test" );
 	} );
@@ -99,7 +99,7 @@ describe( "luxJS - Dispatcher", function() {
 		alphaSubscription.unsubscribe();
 		betaSubscription.unsubscribe();
 
-		handler.should.be.calledThrice;
+		handler.should.be.calledThrice();
 		handler.firstCall.args[ 1 ].topic.should.equal( "alpha.handle.test" );
 		handler.secondCall.args[ 1 ].topic.should.equal( "alpha.handle.test" );
 		handler.lastCall.args[ 1 ].topic.should.equal( "beta.handle.test" );
@@ -132,7 +132,7 @@ describe( "luxJS - Dispatcher", function() {
 		alphaSubscription.unsubscribe();
 		betaSubscription.unsubscribe();
 
-		handler.should.be.calledOnce;
+		handler.should.be.calledOnce();
 		handler.firstCall.args[ 1 ].topic.should.equal( "beta.handle.test" );
 	} );
 
@@ -152,7 +152,7 @@ describe( "luxJS - Dispatcher", function() {
 
 		subscription.unsubscribe();
 
-		handler.should.be.calledOnce;
+		handler.should.be.calledOnce();
 		handler.lastCall.args[ 0 ].action.actionType.should.equal( testAction );
 		handler.lastCall.args[ 1 ].channel.should.equal( "lux.dispatcher" ); // test that this is an envelope
 	} );
@@ -162,7 +162,7 @@ describe( "luxJS - Dispatcher", function() {
 
 		dispatcherChannel.publish( "alpha.handled.test" );
 
-		dispatcher.handle.should.not.be.called;
+		dispatcher.handle.should.not.be.called();
 	} );
 
 	it( "should unsubscribe and remove all subscriptions when disposed", function() {
@@ -181,6 +181,12 @@ describe( "luxJS - Dispatcher", function() {
 		beforeEach( function() {
 			namespace = "alpha";
 			prenotifySent = false;
+			dispatcher.registerStore( {
+				namespace: "beta",
+				actions: [
+					{ actionType: "test" }
+				]
+			} );
 			dispatcher.registerStore( {
 				namespace: "alpha",
 				actions: [
@@ -208,7 +214,7 @@ describe( "luxJS - Dispatcher", function() {
 			dispatcher.handleActionDispatch( {
 				actionType: testAction
 			} );
-			prenotifySent.should.be.true;
+			prenotifySent.should.be.true();
 		} );
 
 		it( "should not send a prenotify message if there are no stores that updated", function() {
@@ -216,7 +222,7 @@ describe( "luxJS - Dispatcher", function() {
 			dispatcher.handleActionDispatch( {
 				actionType: testAction
 			} );
-			prenotifySent.should.be.false;
+			prenotifySent.should.be.false();
 		} );
 	} );
 } );

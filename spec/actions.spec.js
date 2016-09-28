@@ -14,7 +14,7 @@ describe( "luxJS - Actions", function() {
 		} );
 		it( "should trigger the correct action", function() {
 			lux.dispatch( "globalDispatch" );
-			spy.should.be.calledOnce;
+			spy.should.be.calledOnce();
 		} );
 	} );
 
@@ -34,7 +34,7 @@ describe( "luxJS - Actions", function() {
 			// ensure that the method called is actually
 			// the one we defined via customActionCreator
 			actionCreator[ actionName ]();
-			customAction[ actionName ].should.be.calledOnce;
+			customAction[ actionName ].should.be.calledOnce();
 		} );
 
 		it( "Should overwrite any existing action", function() {
@@ -57,8 +57,8 @@ describe( "luxJS - Actions", function() {
 
 			// ensure that the method is the newly overwritten one
 			actionCreator[ actionName ]();
-			handlerTwo.should.be.calledOnce;
-			handlerOne.should.not.be.called;
+			handlerTwo.should.be.calledOnce();
+			handlerOne.should.not.be.called();
 		} );
 
 		it( "Should not be overwritten by automatic action creation", function() {
@@ -82,8 +82,8 @@ describe( "luxJS - Actions", function() {
 
 			actionCreator.automaticActionCreationTest();
 
-			handler.should.be.calledOnce;
-			wrongHandler.should.not.be.called;
+			handler.should.be.calledOnce();
+			wrongHandler.should.not.be.called();
 		} );
 	} );
 
@@ -91,7 +91,7 @@ describe( "luxJS - Actions", function() {
 		it( "Should take input object and add luxActionCreatorMixin", function() {
 			var actionCreator = lux.actionCreator( {} );
 
-			actionCreator.dispatch.should.be.a.Function;
+			actionCreator.dispatch.should.be.a( "function" );
 		} );
 	} );
 	describe( "When calling actionListener", function() {
@@ -125,7 +125,7 @@ describe( "luxJS - Actions", function() {
 			} );
 
 			// action creator would add dispatch method and action listener would listen for it
-			actionCreatorListener.dispatch.should.be.a.Function;
+			actionCreatorListener.dispatch.should.be.a( "function" );
 			actionCreatorListener.dispatch( "testAction", testValue );
 
 			handler.should.be.calledOnce
