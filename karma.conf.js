@@ -64,6 +64,14 @@ module.exports = function( config ) {
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browsers: [ "Chrome" /*, "Safari", "Firefox" */ ],
 
+		coverageReporter: {
+			reporters: [
+				{ type: "html", subdir: "client" },
+				{ type: "text-summary" }
+			],
+			dir: "coverage"
+		},
+
 		webpackServer: {
 			quiet: true,
 			stats: {
