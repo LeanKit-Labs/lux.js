@@ -306,143 +306,6 @@ describe( "luxJS - Store", function() {
 				store3.dispose();
 			} );
 		} );
-		describe( "When using extend to create an extended constructor function", function() {
-			it( "Should properly handle one level of inheritance", function() {
-				var handlerInvoked = false;
-				var MyStore = lux.Store.extend( {
-					state: {
-						dontblink: true,
-						angelsHavePhonebox: true
-					},
-					handlers: {
-						angelicTouch: function() {
-							handlerInvoked = true;
-						}
-					},
-					someCustomAccessor: function() {
-						return this.getState().angelsHavePhonebox;
-					}
-				} );
-				var store = new MyStore( { namespace: "levelone" } );
-				store.namespace.should.equal( "levelone" );
-				store.getState().should.eql( {
-					dontblink: true,
-					angelsHavePhonebox: true
-				} );
-				store.someCustomAccessor().should.be.ok;
-				var creator = lux.actionCreator( {
-					getActionGroup: [ "levelone" ]
-				} );
-
-				creator.angelicTouch();
-				handlerInvoked.should.be.true;
-				store.dispose();
-			} );
-			it( "Should properly handle more than one level of inheritance", function() {
-				var angelicTouchInvoked = false;
-				var listenToEasterEggsInvoked = false;
-				var keyInTardisInvoked = false;
-				var GrandparentStore = lux.Store.extend( {
-					state: {
-						dontblink: true,
-						angelsHavePhonebox: true
-					},
-					handlers: {
-						angelicTouch: function() {
-							angelicTouchInvoked = true;
-						}
-					},
-					someCustomAccessor: function() {
-						return this.getState().angelsHavePhonebox;
-					}
-				} );
-				var ParentStore = GrandparentStore.extend( {
-					state: {
-						doctor: "wibbly-wobbly timey-wimey"
-					},
-					handlers: {
-						listenToEasterEggs: function() {
-							listenToEasterEggsInvoked = true;
-						}
-					},
-					someOtherAccessor: function() {
-						return this.getState().doctor;
-					}
-				} );
-				var ChildStore = ParentStore.extend( {
-					state: {
-						author: "Moffat"
-					},
-					handlers: {
-						keyInTardis: function() {
-							keyInTardisInvoked = true;
-						}
-					},
-					andYetAnotherAccessor: function() {
-						return this.getState().author;
-					}
-				} );
-				var store = new ChildStore( { namespace: "weepingangels" } );
-				store.namespace.should.equal( "weepingangels" );
-				store.getState().should.eql( {
-					dontblink: true,
-					angelsHavePhonebox: true,
-					doctor: "wibbly-wobbly timey-wimey",
-					author: "Moffat"
-				} );
-				store.someCustomAccessor().should.be.ok;
-				store.someOtherAccessor().should.equal( "wibbly-wobbly timey-wimey" );
-				store.andYetAnotherAccessor().should.equal( "Moffat" );
-				var creator = lux.actionCreator( {
-					getActionGroup: [ "weepingangels" ]
-				} );
-
-				creator.angelicTouch();
-				creator.listenToEasterEggs();
-				creator.keyInTardis();
-				angelicTouchInvoked.should.be.true;
-				listenToEasterEggsInvoked.should.be.true;
-				keyInTardisInvoked.should.be.true;
-				store.dispose();
-			} );
-			it( "Should not mutate original mixins as part of store construction", function() {
-				var mixin = {
-					state: {
-						danglingMixin: true
-					},
-					handlers: {
-						justStopIt: function() {}
-					}
-				};
-				var storeA = storeFactory( {}, mixin );
-				var storeB = storeFactory( {}, mixin, { namespace: "WAT" } );
-
-				storeB.getState().should.eql( {
-					danglingMixin: true
-				} );
-
-				storeA.dispose();
-				storeB.dispose();
-			} );
-			it( "Should be able to create, dispose and re-create a store", function() {
-				var mixin = {
-					state: {
-						danglingMixin: true
-					},
-					handlers: {
-						justStopIt: function() {}
-					}
-				};
-				var Store = lux.Store.extend( { namespace: "wat" }, mixin );
-				var store = new Store();
-				store.dispose();
-				store = new Store();
-				store.getState().should.eql( {
-					danglingMixin: true
-				} );
-				store.dispose();
-			} );
-		} );
 	} );
 	describe( "When using a Store", function() {
 		it( "Should only allow setState while handling an action", function() {
@@ -778,6 +641,15 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 			store = undefined;
 			storeIsInActionMap().should.be.false;
+		} );
+		describe( "via lux.removeStore", function() {
+			it( "should call store.dispose", function() {
+				var store = storeFactory();
+				var spy = sinon.spy( store, "dispose" );
+				lux.removeStore( "storeOne" );
+				spy.should.be.calledOnce();
+				spy.restore();
+			} );
 		} );
 	} );
 } );

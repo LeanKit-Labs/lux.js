@@ -7,6 +7,7 @@ global.window = document.parentWindow;
 global.navigator = { userAgent: "Not Chrom3" };
 
 var chai = require( "chai" );
+chai.use( require( "dirty-chai" ) );
 chai.use( require( "sinon-chai" ) );
 global.should = chai.should();
 

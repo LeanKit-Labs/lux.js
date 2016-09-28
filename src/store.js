@@ -95,7 +95,7 @@ export class Store {
 	constructor( ...opt ) {
 		let [ state, handlers, options ] = processStoreArgs( ...opt );
 		ensureStoreOptions( options, handlers, this );
-		const namespace = options.namespace || this.namespace;
+		const namespace = options.namespace;
 		Object.assign( this, options );
 		stores[ namespace ] = this;
 		let inDispatch = false;

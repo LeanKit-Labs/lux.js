@@ -109,6 +109,11 @@ describe( "luxJS - Mixins", function() {
 					lux.mixin( objOne );
 				} ).should.throw( /listenTo must contain at least one store namespace/ );
 			} );
+			it( "Should throw an error when no stores property is provided", function() {
+				( function initializeMixinWithoutOnChange() {
+					lux.mixin( {} );
+				} ).should.throw( /Your component must provide a \"stores\" key/ );
+			} );
 			it( "Should call onChange when a store is changed", function() {
 				storeFactory( { namespace: "shouldChange" } );
 				var onChange = sinon.spy();

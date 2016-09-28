@@ -1,4 +1,4 @@
-var LuxContainer = lux.LuxContainer;
+var luxWrapper = lux.luxWrapper;
 function storeFactory( options ) {
 	options = Object.assign( {
 		namespace: "storeOne",
@@ -11,14 +11,26 @@ function storeFactory( options ) {
 function getMockReactComponent( options ) {
 	return React.createClass( _.extend( {
 		displayName: "MOCKT",
+		getDefaultProps: function() {
+			return { foo: "bar" };
+		},
 		render: function() {
 			return React.createElement( "div", { className: "childy" }, "This is a test DIV" );
 		}
 	}, options ) );
 }
-describe( "luxJS - LuxContainer", function() {
+
+describe( "luxWrapper", function() {
+	describe( "when generating resulting component name", function() {
+		it( "should use a displayName if provided", function() {
+			luxWrapper( getMockReactComponent(), {} ).displayName.should.equal( "LuxWrapped(MOCKT)" );
+		} );
+		it( "should use 'Component' if displayName is not provided", function() {
+			luxWrapper( getMockReactComponent( { displayName: null } ), {} ).displayName.should.equal( "LuxWrapped(Component)" );
+		} );
+	} );
 	describe( "when listening to stores", function() {
-		var store1, store2, container, child, onStoreChange, containerProps, willReceivePropsStub, component;
+		var store1, store2, container, targetComponent, getState, config, willReceivePropsStub, component;
 		beforeEach( function() {
 			store1 = storeFactory( {
 				namespace: "store1",
@@ -37,18 +49,21 @@ describe( "luxJS - LuxContainer", function() {
 				} )
 			} );
 			willReceivePropsStub = sinon.stub();
-			child = React.createElement( getMockReactComponent( {
+			targetComponent = getMockReactComponent( {
 				componentWillReceiveProps: willReceivePropsStub
-			} ) );
-			onStoreChange = sinon.spy( function( props ) {
-				return _.extend( {}, store1.getStore1State( "foo" ), store2.getStore2State( "bar" ) );
 			} );
-			containerProps = {
-				wrapperProp: "thingy",
-				stores: "store1,store2",
-				onStoreChange: onStoreChange
+			getState = sinon.stub().returns(
+				_.extend(
+					{},
+					store1.getStore1State( "foo" ),
+					store2.getStore2State( "bar" )
+				)
+			);
+			config = {
+				stores: [ "store1", "store2" ],
+				getState: getState
 			};
-			container = React.createElement( LuxContainer, containerProps, child );
+			container = React.createElement( luxWrapper( targetComponent, config ), { wrapperProp: "thingy" } );
 			component = utils.renderIntoDocument( container );
 		} );
 		afterEach( function() {
@@ -57,19 +72,24 @@ describe( "luxJS - LuxContainer", function() {
 			}
 			store1.getStore1State.reset();
 			store2.getStore2State.reset();
-			onStoreChange.reset();
+			getState.reset();
 			store1.dispose();
 			store2.dispose();
 			store1 = null;
 			store2 = null;
 		} );
+		it( "should call getState to set up initial wrapper state", function() {
+			console.log( getState.getCall( 0 ).args );
+			getState.should.be.calledOnce();
+		} );
 		describe( "when one store updates", function() {
 			beforeEach( function() {
 				lux.dispatch( "two" );
 			} );
-			it( "should invoke onStoreChange prop function", function() {
-				onStoreChange.should.be.calledOnce
-					.and.calledWithMatch( containerProps );
+			it( "should invoke getState twice", function() {
+				// getState is called for initial state
+				// and also when store state updates
+				getState.should.be.calledTwice();
 			} );
 			it( "should invoke read accessors on stores", function() {
 				store1.getStore1State.should.be.calledOnce
@@ -77,9 +97,10 @@ describe( "luxJS - LuxContainer", function() {
 				store2.getStore2State.should.be.calledOnce
 					.and.calledWithMatch( "bar" );
 			} );
-			it( "should pass expected props to the child", function() {
+			it( "should pass expected props to the targetComponent", function() {
 				willReceivePropsStub.should.be.calledOnce
 					.and.calledWith( {
+						foo: "bar",
 						wrapperProp: "thingy",
 						store2: "statey state state",
 						store1: "state"
@@ -90,9 +111,10 @@ describe( "luxJS - LuxContainer", function() {
 			beforeEach( function() {
 				lux.dispatch( "one" );
 			} );
-			it( "should invoke onStoreChange prop function once", function() {
-				onStoreChange.should.be.calledOnce
-					.and.calledWithMatch( containerProps );
+			it( "should invoke getState twice", function() {
+				// getState is called for initial state
+				// and also when store state updates
+				getState.should.be.calledTwice();
 			} );
 			it( "should invoke read accessors on stores", function() {
 				store1.getStore1State.should.be.calledOnce
@@ -100,8 +122,9 @@ describe( "luxJS - LuxContainer", function() {
 				store2.getStore2State.should.be.calledOnce
 					.and.calledWithMatch( "bar" );
 			} );
-			it( "should pass expected props to the child", function() {
+			it( "should pass expected props to the targetComponent", function() {
 				willReceivePropsStub.should.be.calledWith( {
+						foo: "bar",
 						wrapperProp: "thingy",
 						store2: "statey state state",
 						store1: "state"
@@ -110,16 +133,16 @@ describe( "luxJS - LuxContainer", function() {
 		} );
 	} );
 	describe( "when mapping prop handlers to action creators", function() {
-		var container, child, containerProps, component, fakeActionStub, myChild, fakeActionStub2, targetDiv;
+		var container, targetComponent, config, component, fakeActionStub, fakeActionStub2, targetDiv;
 		beforeEach( function() {
 			fakeActionStub = sinon.stub();
 			fakeActionStub2 = sinon.stub();
 			lux.actionListener( {
 				handlers: {
-					fakeActionBecauseClickyClick: fakeActionStub
+					fakeActionBecauseClicketyClick: fakeActionStub
 				}
 			} );
-			myChild = React.createClass( {
+			targetComponent = React.createClass( {
 				displayName: "ActionMockt",
 				handleClick: function( e ) {
 					this.props.onThingThang( e, "another", "value" );
@@ -131,17 +154,16 @@ describe( "luxJS - LuxContainer", function() {
 					}, "This is a test DIV" );
 				}
 			} );
-			child = React.createElement( myChild );
-			containerProps = {
+			config = {
 				wrapperProp: "thingy",
 				actions: {
-					onThingThang: "fakeActionBecauseClickyClick",
+					onThingThang: "fakeActionBecauseClicketyClick",
 					onAnotherThang: fakeActionStub2
 				}
 			};
-			container = React.createElement( LuxContainer, containerProps, child );
+			container = React.createElement( luxWrapper( targetComponent, config ), { wrapperProp: "thingy" } );
 			component = utils.renderIntoDocument( container );
-			targetDiv = utils.findRenderedComponentWithType( component, myChild );
+			targetDiv = utils.findRenderedComponentWithType( component, targetComponent );
 		} );
 		afterEach( function() {
 			if ( component ) {
@@ -167,13 +189,14 @@ describe( "luxJS - LuxContainer", function() {
 		it( "should throw if invalid action values are provided", function() {
 			( function() {
 				container = React.createElement(
-					LuxContainer,
-					{
-						actions: {
-							notGonnaWork: 2
+					luxWrapper(
+						targetComponent,
+						{
+							actions: {
+								notGonnaWork: 2
+							}
 						}
-					},
-					child
+					)
 				);
 				component = utils.renderIntoDocument( container );
 			} ).should.throw( /The values provided to the LuxContainer actions property must be a string or a function/ );

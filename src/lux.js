@@ -20,9 +20,10 @@ import {
 	actionCreator,
 	actionCreatorListener,
 	dispatch,
-	LuxContainer
+	luxWrapper
 } from "./mixins";
 
+/* istanbul ignore next */
 function publishAction( ...args ) {
 	if ( console && typeof console.log === "function" ) {
 		console.log( "lux.publishAction has been deprecated and will be removed in future releases. Please use lux.dispatch." );
@@ -31,8 +32,6 @@ function publishAction( ...args ) {
 }
 
 import { Store, stores, removeStore } from "./store";
-import { extend } from "./extend";
-Store.extend = extend;
 
 import dispatcher from "./dispatcher";
 
@@ -52,5 +51,5 @@ export default {
 	Store,
 	stores,
 	utils,
-	LuxContainer
+	luxWrapper
 };

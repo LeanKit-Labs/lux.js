@@ -5,7 +5,6 @@ export const actions = Object.create( null );
 export const actionGroups = Object.create( null );
 
 export function generateActionCreator( actionList ) {
-	actionList = ( typeof actionList === "string" ) ? [ actionList ] : actionList;
 	actionList.forEach( function( action ) {
 		if ( !actions[ action ] ) {
 			actions[ action ] = function() {
