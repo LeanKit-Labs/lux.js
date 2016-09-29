@@ -2,7 +2,7 @@ var pkg = require( "./package.json" );
 var _ = require( "lodash" );
 var webpack = require( "webpack" );
 var path = require( "path" );
-const CleanWebpackPlugin = require( "clean-webpack-plugin" );
+const cleanWebpackPlugin = require( "clean-webpack-plugin" );
 
 var banner = [
 	" * <%= pkg.name %> - <%= pkg.description %>",
@@ -13,14 +13,19 @@ var banner = [
 ].join( "\n" );
 var header = _.template( banner )( { pkg: pkg } );
 
+let source = path.join( __dirname, "src", "lux.js" );
+
 module.exports = {
-	entry: path.join( __dirname, "src", "lux.js" ),
+	entry: {
+		"lux": source,
+		"lux.min": source
+	},
 	output: {
 		path: path.join( __dirname, "lib" ),
 		publicPath: "./js/",
 		library: "lux",
 		libraryTarget: "umd",
-		filename: "lux.min.js"
+		filename: "[name].js"
 	},
 	devtool: "source-map",
 	externals: [
@@ -59,12 +64,13 @@ module.exports = {
 					]
 	},
 	plugins: [
-		new CleanWebpackPlugin( [ "lib" ], {
+		new cleanWebpackPlugin( [ "lib" ], {
 			root: __dirname,
 			verbose: true,
 			dry: false
 		} ),
-		new webpack.optimize.UglifyJsPlugin(),
+		// new unminifiedWebpackPlugin(),
+		new webpack.optimize.UglifyJsPlugin( { include: /\.min\.js$/, minimize: true } ),
 		new webpack.BannerPlugin( header )
 	]
 };
