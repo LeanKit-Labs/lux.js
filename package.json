@@ -45,6 +45,7 @@
     "build": "webpack --config webpack.config.js",
     "pretest": "npm run lint",
     "test": "karma start --no-auto-watch --single-run",
+    "watch": "npm run lint && karma start",
     "coverage": "npm run test",
     "lint": "$(npm bin)/eslint --ext=js,jsx ./spec/ ./src/ --fix"
   },
