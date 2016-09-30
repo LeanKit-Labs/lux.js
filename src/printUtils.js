@@ -1,4 +1,7 @@
 // NOTE - these will eventually live in their own add-on lib or in a debug build of lux
+
+/* eslint  "no-console":"off" */
+
 import { actions, getGroupsWithAction } from "./actions";
 import dispatcher from "./dispatcher";
 
@@ -31,16 +34,16 @@ export function printStoreDepTree( actionType ) {
 	actionType.forEach( function( at ) {
 		dispatcher.getStoresHandling( at )
 			.generations.forEach( function( x ) {
-			while ( x.length ) {
-				var t = x.pop();
-				tree.push( {
-					"action type": at,
-					"store namespace": t.namespace,
-					"waits for": t.waitFor.join( "," ),
-					generation: t.gen
-				} );
-			}
-		} );
+				while ( x.length ) {
+					const t = x.pop();
+					tree.push( {
+						"action type": at,
+						"store namespace": t.namespace,
+						"waits for": t.waitFor.join( "," ),
+						generation: t.gen
+					} );
+				}
+			} );
 		if ( console && console.table ) {
 			console.group( `Store Dependency List for ${at}` );
 			console.table( tree );

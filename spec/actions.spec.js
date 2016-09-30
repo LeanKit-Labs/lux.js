@@ -42,7 +42,7 @@ describe( "luxJS - Actions", function() {
 			var handlerOne = sinon.spy();
 			var handlerTwo = sinon.spy();
 			var customAction = {
-				[ actionName]: handlerOne
+				[ actionName ]: handlerOne
 			};
 
 			lux.customActionCreator( customAction );

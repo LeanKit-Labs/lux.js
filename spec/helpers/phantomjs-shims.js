@@ -1,5 +1,7 @@
 // From https://github.com/newtriks/react-automation-example/blob/master/test/helpers/phantomjs-shims.js
 
+/* eslint-disable consistent-this */
+
 ( function() {
 	var Ap = Array.prototype;
 	var slice = Ap.slice;
@@ -32,4 +34,6 @@
 			return bound;
 		};
 	}
-} )();
+}() );
+
+/* eslint-enable consistent-this */

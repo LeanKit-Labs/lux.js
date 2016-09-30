@@ -14,8 +14,9 @@ export default function luxWrapper( Component, { actions, stores, getState } ) {
 		}
 
 		componentWillUnmount() {
-			for ( let [ key, sub ] of entries( this.__lux.subscriptions ) ) {
+			for ( const [ key, sub ] of entries( this.__lux.subscriptions ) ) {
 				let split;
+				// eslint-disable-next-line no-cond-assign
 				if ( key === "prenotify" || ( ( split = key.split( "." ) ) && split.pop() === "changed" ) ) {
 					sub.unsubscribe();
 				}

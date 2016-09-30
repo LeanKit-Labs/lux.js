@@ -1,3 +1,4 @@
+
 var luxWrapper = lux.luxWrapper;
 function storeFactory( options ) {
 	options = Object.assign( {
@@ -15,7 +16,7 @@ function getMockReactComponent( options ) {
 			return { foo: "bar" };
 		},
 		render: function() {
-			return React.createElement( "div", { className: "childy" }, "This is a test DIV" );
+			return React.createElement( "div", { displayName: "MOM", className: "childy" }, "This is a test DIV" );
 		}
 	}, options ) );
 }
@@ -123,11 +124,11 @@ describe( "luxWrapper", function() {
 			} );
 			it( "should pass expected props to the targetComponent", function() {
 				willReceivePropsStub.should.be.calledWith( {
-						foo: "bar",
-						wrapperProp: "thingy",
-						store2: "statey state state",
-						store1: "state"
-					} );
+					foo: "bar",
+					wrapperProp: "thingy",
+					store2: "statey state state",
+					store1: "state"
+				} );
 			} );
 		} );
 	} );
@@ -142,6 +143,10 @@ describe( "luxWrapper", function() {
 				}
 			} );
 			targetComponent = React.createClass( {
+				propTypes: {
+					onThingThang: React.PropTypes.string,
+					onAnotherThang: React.PropTypes.string
+				},
 				displayName: "ActionMockt",
 				handleClick: function( e ) {
 					this.props.onThingThang( e, "another", "value" );

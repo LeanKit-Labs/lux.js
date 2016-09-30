@@ -1,4 +1,4 @@
-"use strict";
+
 import _ from "lodash";
 import { dispatcherChannel, actionChannel } from "./bus";
 import { entries } from "./utils";
@@ -20,6 +20,7 @@ function calculateGen( store, lookup, gen, actionType, namespaces ) {
 					calcdGen = thisGen;
 				}
 			} else {
+				// eslint-disable-next-line
 				console.warn( `The "${actionType}" action in the "${store.namespace}" store waits for "${dep}" but a store with that namespace does not participate in this action.` );
 			}
 		} );
@@ -30,9 +31,9 @@ function calculateGen( store, lookup, gen, actionType, namespaces ) {
 function buildGenerations( stores, actionType ) {
 	const tree = [];
 	const lookup = {};
-	stores.forEach( ( store ) => lookup[ store.namespace ] = store );
-	stores.forEach( ( store ) => store.gen = calculateGen( store, lookup, 0, actionType ) );
 	/*eslint-disable */
+	stores.forEach( store => lookup[ store.namespace ] = store );
+	stores.forEach( store => store.gen = calculateGen( store, lookup, 0, actionType ) );
 	for ( let [ key, item ] of entries( lookup ) ) {
 		tree[ item.gen ] = tree[ item.gen ] || [];
 		tree[ item.gen ].push( item );
@@ -42,9 +43,9 @@ function buildGenerations( stores, actionType ) {
 }
 
 function processGeneration( generation, action ) {
-	generation.map( ( store ) => {
+	generation.map( store => {
 		const data = Object.assign( {
-			deps: _.pick( this.stores, store.waitFor )
+			deps: _.pick( this.stores, store.waitFor ) // eslint-disable-line
 		}, action );
 		dispatcherChannel.publish(
 			`${store.namespace}.handle.${action.actionType}`,
@@ -60,16 +61,16 @@ class Dispatcher extends machina.BehavioralFsm {
 			actionMap: {},
 			states: {
 				ready: {
-					_onEnter: function() {
+					_onEnter: () => {
 						this.actionContext = undefined;
 					},
 					"action.dispatch": "dispatching"
 				},
 				dispatching: {
-					_onEnter: function( luxAction ) {
+					_onEnter: luxAction => {
 						this.actionContext = luxAction;
 						if ( luxAction.generations.length ) {
-							for ( var generation of luxAction.generations ) {
+							for ( const generation of luxAction.generations ) {
 								processGeneration.call( luxAction, generation, luxAction.action );
 							}
 							this.transition( luxAction, "notifying" );
@@ -77,19 +78,19 @@ class Dispatcher extends machina.BehavioralFsm {
 							this.transition( luxAction, "nothandled" );
 						}
 					},
-					"action.handled": function( luxAction, data ) {
+					"action.handled": ( luxAction, data ) => {
 						if ( data.hasChanged ) {
 							luxAction.updated.push( data.namespace );
 						}
 					},
-					_onExit: function( luxAction ) {
+					_onExit: luxAction => {
 						if ( luxAction.updated.length ) {
 							dispatcherChannel.publish( "prenotify", { stores: luxAction.updated } );
 						}
 					}
 				},
 				notifying: {
-					_onEnter: function( luxAction ) {
+					_onEnter: luxAction => {
 						dispatcherChannel.publish( "notify", {
 							action: luxAction.action
 						} );
@@ -106,6 +107,7 @@ class Dispatcher extends machina.BehavioralFsm {
 			}
 		} );
 		this.createSubscribers();
+	// eslint-enable object-shorthand
 	}
 
 	handleActionDispatch( data ) {
@@ -117,14 +119,13 @@ class Dispatcher extends machina.BehavioralFsm {
 	}
 
 	registerStore( storeMeta ) {
-		for ( let actionDef of storeMeta.actions ) {
-			let action;
+		for ( const actionDef of storeMeta.actions ) {
 			const actionName = actionDef.actionType;
 			const actionMeta = {
 				namespace: storeMeta.namespace,
 				waitFor: actionDef.waitFor
 			};
-			action = this.actionMap[ actionName ] = this.actionMap[ actionName ] || [];
+			const action = this.actionMap[ actionName ] = this.actionMap[ actionName ] || [];
 			action.push( actionMeta );
 		}
 	}
@@ -151,14 +152,14 @@ class Dispatcher extends machina.BehavioralFsm {
 			),
 			dispatcherChannel.subscribe(
 				"*.handled.*",
-				( data ) => this.handle( this.actionContext, "action.handled", data )
+				data => this.handle( this.actionContext, "action.handled", data )
 			).constraint( () => !!this.actionContext )
 		];
 	}
 
 	dispose() {
 		if ( this.__subscriptions ) {
-			this.__subscriptions.forEach( ( subscription ) => subscription.unsubscribe() );
+			this.__subscriptions.forEach( subscription => subscription.unsubscribe() );
 			this.__subscriptions = null;
 		}
 	}

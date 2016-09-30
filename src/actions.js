@@ -8,7 +8,7 @@ export function generateActionCreator( actionList ) {
 	actionList.forEach( function( action ) {
 		if ( !actions[ action ] ) {
 			actions[ action ] = function() {
-				var args = Array.from( arguments );
+				const args = Array.from( arguments );
 				actionChannel.publish( {
 					topic: `execute.${action}`,
 					data: {
@@ -27,9 +27,8 @@ export function generateActionCreator( actionList ) {
 export function getActionGroup( group ) {
 	if ( actionGroups[ group ] ) {
 		return _.pick( actions, actionGroups[ group ] );
-	} else {
-		throw new Error( `There is no action group named '${group}'` );
 	}
+	throw new Error( `There is no action group named '${group}'` );
 }
 
 // This method is deprecated, but will remain as
@@ -37,7 +36,7 @@ export function getActionGroup( group ) {
 /* istanbul ignore next */
 export function getGroupsWithAction( actionName ) {
 	const groups = [];
-	for ( var [ group, list ] of entries( actionGroups ) ) {
+	for ( const [ group, list ] of entries( actionGroups ) ) {
 		if ( list.indexOf( actionName ) >= 0 ) {
 			groups.push( group );
 		}

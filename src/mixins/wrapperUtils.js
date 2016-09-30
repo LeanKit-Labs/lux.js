@@ -23,7 +23,7 @@ export function gateKeeper( instance, { getState }, store ) {
 
 export function handlePreNotify( instance, stores, data ) {
 	instance.__lux.waitFor = data.stores.filter(
-		( item ) => stores.indexOf( item ) > -1
+		item => stores.indexOf( item ) > -1
 	);
 }
 
@@ -33,7 +33,7 @@ export function setupStoreListener( instance, { stores, getState } ) {
 	__lux.heardFrom = [];
 
 	if ( stores && stores.length ) {
-		stores.forEach( ( store ) => {
+		stores.forEach( store => {
 			__lux.subscriptions[ `${ store }.changed` ] = storeChannel.subscribe(
 				`${ store }.changed`,
 				() => gateKeeper( instance, { getState }, store )
@@ -42,7 +42,7 @@ export function setupStoreListener( instance, { stores, getState } ) {
 
 		__lux.subscriptions.prenotify = dispatcherChannel.subscribe(
 			"prenotify",
-			( data ) => handlePreNotify( instance, stores, data )
+			data => handlePreNotify( instance, stores, data )
 		);
 	}
 }
@@ -63,11 +63,12 @@ export function getDefaultActionCreator( action ) {
 			dispatch( action, ...args );
 		};
 	}
+	return undefined;
 }
 
 export function setupActionMap( instance, { actions } ) {
 	instance.propToAction = {};
-	for ( let [ childProp, action ] of entries( actions || {} ) ) {
+	for ( const [ childProp, action ] of entries( actions || {} ) ) {
 		let actionCreator = action; // assumes function by default
 		if ( isString( action ) ) {
 			actionCreator = getDefaultActionCreator( action );
