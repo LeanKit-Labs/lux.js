@@ -1,3 +1,7 @@
+// **********************************************
+// *   wrapper utilities                        *
+// **********************************************
+
 import { ensureLuxProp, entries } from "../utils";
 import { storeChannel, dispatcherChannel } from "../bus";
 import { dispatch } from "./actionCreator";

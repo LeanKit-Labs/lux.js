@@ -45,7 +45,7 @@ function buildGenerations( stores, actionType ) {
 function processGeneration( generation, action ) {
 	generation.map( store => {
 		const data = Object.assign( {
-			deps: _.pick( this.stores, store.waitFor ) // eslint-disable-line
+			deps: _.pick( this.stores, store.waitFor ) // eslint-disable-line no-invalid-this
 		}, action );
 		dispatcherChannel.publish(
 			`${store.namespace}.handle.${action.actionType}`,
@@ -61,13 +61,13 @@ class Dispatcher extends machina.BehavioralFsm {
 			actionMap: {},
 			states: {
 				ready: {
-					_onEnter: () => {
+					_onEnter() {
 						this.actionContext = undefined;
 					},
 					"action.dispatch": "dispatching"
 				},
 				dispatching: {
-					_onEnter: luxAction => {
+					_onEnter( luxAction ) {
 						this.actionContext = luxAction;
 						if ( luxAction.generations.length ) {
 							for ( const generation of luxAction.generations ) {
@@ -78,19 +78,19 @@ class Dispatcher extends machina.BehavioralFsm {
 							this.transition( luxAction, "nothandled" );
 						}
 					},
-					"action.handled": ( luxAction, data ) => {
+					"action.handled"( luxAction, data ) {
 						if ( data.hasChanged ) {
 							luxAction.updated.push( data.namespace );
 						}
 					},
-					_onExit: luxAction => {
+					_onExit( luxAction ) {
 						if ( luxAction.updated.length ) {
 							dispatcherChannel.publish( "prenotify", { stores: luxAction.updated } );
 						}
 					}
 				},
 				notifying: {
-					_onEnter: luxAction => {
+					_onEnter( luxAction ) {
 						dispatcherChannel.publish( "notify", {
 							action: luxAction.action
 						} );

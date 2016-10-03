@@ -69,7 +69,6 @@ module.exports = {
 			verbose: true,
 			dry: false
 		} ),
-		// new unminifiedWebpackPlugin(),
 		new webpack.optimize.UglifyJsPlugin( { include: /\.min\.js$/, minimize: true } ),
 		new webpack.BannerPlugin( header )
 	]

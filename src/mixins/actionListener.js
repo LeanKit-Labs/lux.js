@@ -1,11 +1,11 @@
+// **********************************************
+// *            Action Listener Mixin           *
+// **********************************************
 
-
-/** *******************************************
-*            Action Listener Mixin           *
-**********************************************/
 import { actionChannel } from "../bus";
 import { ensureLuxProp } from "../utils";
 import { generateActionCreator, addToActionGroup } from "../actions";
+
 export function actionListenerMixin( { handlers, handlerFn, context, channel, topic } = {} ) {
 	return {
 		setup() {

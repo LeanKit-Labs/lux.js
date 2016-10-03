@@ -1,7 +1,10 @@
-// Setup for running Mocha via Node
+// Setup for running Mocha via
+
+require( "babel-polyfill" );
+
 var jsdom = require( "jsdom" ).jsdom;
 global.document = jsdom( "<html><body></body></html>" );
-global.window = document.parentWindow;
+global.window = document.defaultView;
 
 // For React (And its stupid console statement );
 global.navigator = { userAgent: "Not Chrom3" };

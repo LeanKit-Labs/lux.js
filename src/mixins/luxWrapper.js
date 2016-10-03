@@ -1,3 +1,7 @@
+// **********************************************
+// *   Generalized Mixin Behavior for non-lux   *
+// **********************************************
+
 import React from "react";
 import { setupStoreListener, setupActionMap } from "./wrapperUtils";
 import { entries } from "../utils";

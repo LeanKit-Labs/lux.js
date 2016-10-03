@@ -1,9 +1,9 @@
+// *******************************************
+// *           Action Creator Mixin          *
+// *******************************************
 
 import { entries } from "../utils";
 import { getActionGroup, actions } from "../actions";
-/** *******************************************
-*           Action Creator Mixin          *
-**********************************************/
 
 export function dispatch( action, ...args ) {
 	if ( actions[ action ] ) {

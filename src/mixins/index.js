@@ -1,12 +1,11 @@
+// **********************************************
+// *   Generalized Mixin Behavior for non-lux   *
+// **********************************************
 
 import { storeMixin, storeReactMixin } from "./store";
 import { actionCreatorMixin, actionCreatorReactMixin, dispatch } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
 import luxWrapper from "./luxWrapper";
-
-/** *******************************************
- *   Generalized Mixin Behavior for non-lux   *
- **********************************************/
 
 function mixin( context, ...mixins ) {
 	if ( mixins.length === 0 ) {
