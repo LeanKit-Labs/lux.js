@@ -15,7 +15,7 @@ module.exports = {
 		loaders: [
 			{ test: /sinon.*\.js/, loader: "imports?define=>false" },
 			{
-				test: /\.spec\.js$/,
+				test: /\.js$/,
 				exclude: /node_modules/,
 				loader: "babel-loader",
 				query: {
@@ -24,7 +24,12 @@ module.exports = {
 						"es2015-without-strict",
 						"stage-0"
 					],
-					plugins: [ "add-module-exports" ]
+					plugins: [ "add-module-exports",
+						[
+							"istanbul",
+							{ exclude: [ "spec/**/*" ] }
+						]
+					]
 				}
 			}
 		],
@@ -38,7 +43,7 @@ module.exports = {
 		alias: {
 			"when.parallel": "when/parallel",
 			"when.pipeline": "when/pipeline",
-			lux: path.join( __dirname, "./lib/lux.js" )
+			lux: path.join( __dirname, "./src/lux.js" )
 		}
 	}
 };

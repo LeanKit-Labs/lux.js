@@ -1,14 +1,14 @@
-"use strict";
-/*********************************************
-*                 Store Mixin                *
-**********************************************/
+// **********************************************
+// *                 Store Mixin                *
+// **********************************************
+
 import { storeChannel, dispatcherChannel } from "../bus";
 import { ensureLuxProp, entries } from "../utils";
 
-function gateKeeper( store, data ) {
+function gateKeeper( instance, store, data ) {
 	const payload = {};
 	payload[ store ] = true;
-	const __lux = this.__lux;
+	const __lux = instance.__lux;
 
 	const found = __lux.waitFor.indexOf( store );
 
@@ -18,19 +18,19 @@ function gateKeeper( store, data ) {
 
 		if ( __lux.waitFor.length === 0 ) {
 			__lux.heardFrom = [];
-			this.stores.onChange.call( this, payload );
+			instance.stores.onChange.call( instance, payload );
 		}
 	}
 }
 
-function handlePreNotify( data ) {
-	this.__lux.waitFor = data.stores.filter(
-		( item ) => this.stores.listenTo.indexOf( item ) > -1
+function handlePreNotify( instance, data ) {
+	instance.__lux.waitFor = data.stores.filter(
+		item => instance.stores.listenTo.indexOf( item ) > -1
 	);
 }
 
-export var storeMixin = {
-	setup: function() {
+export const storeMixin = {
+	setup() {
 		const __lux = ensureLuxProp( this );
 		const stores = this.stores;
 		if ( !stores ) {
@@ -50,15 +50,16 @@ export var storeMixin = {
 		__lux.waitFor = [];
 		__lux.heardFrom = [];
 
-		listenTo.forEach( ( store ) => {
-			__lux.subscriptions[ `${store}.changed` ] = storeChannel.subscribe( `${store}.changed`, () => gateKeeper.call( this, store ) );
+		listenTo.forEach( store => {
+			__lux.subscriptions[ `${store}.changed` ] = storeChannel.subscribe( `${store}.changed`, () => gateKeeper( this, store ) );
 		} );
 
-		__lux.subscriptions.prenotify = dispatcherChannel.subscribe( "prenotify", ( data ) => handlePreNotify.call( this, data ) );
+		__lux.subscriptions.prenotify = dispatcherChannel.subscribe( "prenotify", data => handlePreNotify( this, data ) );
 	},
-	teardown: function() {
-		for ( let [ key, sub ] of entries( this.__lux.subscriptions ) ) {
+	teardown() {
+		for ( const [ key, sub ] of entries( this.__lux.subscriptions ) ) {
 			let split;
+			// eslint-disable-next-line no-cond-assign
 			if ( key === "prenotify" || ( ( split = key.split( "." ) ) && split.pop() === "changed" ) ) {
 				sub.unsubscribe();
 			}
@@ -71,3 +72,4 @@ export const storeReactMixin = {
 	componentWillMount: storeMixin.setup,
 	componentWillUnmount: storeMixin.teardown
 };
+

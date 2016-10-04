@@ -1,4 +1,4 @@
-"use strict";
+
 
 export function ensureLuxProp( context ) {
 	const __lux = context.__lux = ( context.__lux || {} );
@@ -9,11 +9,11 @@ export function ensureLuxProp( context ) {
 	return __lux;
 }
 
-export function* entries( obj ) {
+export function *entries( obj ) {
 	if ( [ "object", "function" ].indexOf( typeof obj ) === -1 ) {
 		obj = {};
 	}
-	for ( let k of Object.keys( obj ) ) {
+	for ( const k of Object.keys( obj ) ) {
 		yield [ k, obj[ k ] ];
 	}
 }

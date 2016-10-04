@@ -1,4 +1,5 @@
 describe( "luxJS - Store", function() {
+	// eslint-disable-next-line max-params
 	function storeFactory( options, m1, m2, m3, m4, m5, m6, m7 ) {
 		options = Object.assign( {
 			namespace: "storeOne",
@@ -35,6 +36,7 @@ describe( "luxJS - Store", function() {
 					} );
 				} ).should.throw( /must have a namespace/ );
 			} );
+
 			it( "Should throw an error if there are no action handlers", function() {
 				var tmpStore;
 				( function() {
@@ -248,15 +250,15 @@ describe( "luxJS - Store", function() {
 						}
 					}
 				}, {
-						handlers: {
-							backInTime: {
-								waitFor: [ "mefirst" ],
-								handler: function() {
-									invocations.push( "mesecond-mixin2" );
-								}
+					handlers: {
+						backInTime: {
+							waitFor: [ "mefirst" ],
+							handler: function() {
+								invocations.push( "mesecond-mixin2" );
 							}
 						}
-					} );
+					}
+				} );
 
 				var store3 = storeFactory(
 					{
@@ -437,8 +439,10 @@ describe( "luxJS - Store", function() {
 			lux.dispatch( "myTest" );
 			storeOne.should.be.calledOnce();
 
+			/* eslint-disable no-console */
 			console.warn.should.be.calledOnce.and.calledWithMatch( /doesNotExist/ );
 			console.warn.restore();
+			/* eslint-enable no-console */
 
 			store.dispose();
 		} );

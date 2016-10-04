@@ -25,9 +25,9 @@ module.exports = function( config ) {
 
 		// list of files / patterns to load in the browser
 		files: [
-		"spec/helpers/phantomjs-shims.js",
-		"spec/helpers/karma-setup.js",
-		"spec/**/*.spec.*"
+			"spec/helpers/phantomjs-shims.js",
+			"spec/helpers/karma-setup.js",
+			"spec/**/*.spec.*"
 		],
 
 		// list of files to exclude
@@ -62,7 +62,15 @@ module.exports = function( config ) {
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: [ "Chrome" /*, "Safari", "Firefox" */ ],
+		browsers: [ "Chrome" /* , "Safari", "Firefox" */ ],
+
+		coverageReporter: {
+			reporters: [
+				{ type: "html", subdir: "client" },
+				{ type: "text-summary" }
+			],
+			dir: "coverage"
+		},
 
 		webpackServer: {
 			quiet: true,

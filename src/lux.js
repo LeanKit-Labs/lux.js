@@ -1,4 +1,4 @@
-"use strict";
+
 
 /* istanbul ignore next */
 if ( !( typeof global === "undefined" ? window : global )._babelPolyfill ) {
@@ -25,9 +25,11 @@ import {
 
 /* istanbul ignore next */
 function publishAction( ...args ) {
+	/* eslint-disable no-console */
 	if ( console && typeof console.log === "function" ) {
 		console.log( "lux.publishAction has been deprecated and will be removed in future releases. Please use lux.dispatch." );
 	}
+	/* eslint-enable no-console */
 	dispatch( ...args );
 }
 

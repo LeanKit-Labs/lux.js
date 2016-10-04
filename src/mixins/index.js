@@ -1,25 +1,18 @@
-"use strict";
+// **********************************************
+// *   Generalized Mixin Behavior for non-lux   *
+// **********************************************
 
 import { storeMixin, storeReactMixin } from "./store";
 import { actionCreatorMixin, actionCreatorReactMixin, dispatch } from "./actionCreator";
 import { actionListenerMixin } from "./actionListener";
 import luxWrapper from "./luxWrapper";
 
-/*********************************************
-*   Generalized Mixin Behavior for non-lux   *
-**********************************************/
-const luxMixinCleanup = function() {
-	this.__lux.cleanup.forEach( ( method ) => method.call( this ) );
-	this.__lux.cleanup = undefined;
-	delete this.__lux.cleanup;
-};
-
 function mixin( context, ...mixins ) {
 	if ( mixins.length === 0 ) {
 		mixins = [ storeMixin, actionCreatorMixin ];
 	}
 
-	mixins.forEach( ( mxn ) => {
+	mixins.forEach( mxn => {
 		if ( typeof mxn === "function" ) {
 			mxn = mxn();
 		}
@@ -34,7 +27,11 @@ function mixin( context, ...mixins ) {
 			context.__lux.cleanup.push( mxn.teardown );
 		}
 	} );
-	context.luxCleanup = luxMixinCleanup;
+	context.luxCleanup = () => {
+		context.__lux.cleanup.forEach( method => method.call( context ) );
+		context.__lux.cleanup = undefined;
+		delete context.__lux.cleanup;
+	};
 	return context;
 }
 

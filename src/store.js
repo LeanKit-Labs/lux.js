@@ -8,7 +8,7 @@ export const stores = {};
 
 function buildActionList( handlers ) {
 	const actionList = [];
-	for ( let [ key, handler ] of entries( handlers ) ) {
+	for ( const [ key, handler ] of entries( handlers ) ) {
 		actionList.push( {
 			actionType: key,
 			waitFor: handler.waitFor || []
@@ -33,7 +33,7 @@ function ensureStoreOptions( options, handlers, store ) {
 function getHandlerObject( key, listeners ) {
 	return {
 		waitFor: [],
-		handler: function() {
+		handler() {
 			let changed = 0;
 			const args = Array.from( arguments );
 			listeners[ key ].forEach( function( listener ) {
@@ -71,7 +71,7 @@ function processStoreArgs( ...options ) {
 			_.merge( state, opt.state );
 			if ( opt.handlers ) {
 				Object.keys( opt.handlers ).forEach( function( key ) {
-					let handler = opt.handlers[ key ];
+					const handler = opt.handlers[ key ];
 					// set up the actual handler method that will be executed
 					// as the store handles a dispatched action
 					handlers[ key ] = handlers[ key ] || getHandlerObject( key, listeners );
@@ -93,7 +93,7 @@ function processStoreArgs( ...options ) {
 export class Store {
 
 	constructor( ...opt ) {
-		let [ state, handlers, options ] = processStoreArgs( ...opt );
+		let [ state, handlers, options ] = processStoreArgs( ...opt );  // eslint-disable-line prefer-const
 		ensureStoreOptions( options, handlers, this );
 		const namespace = options.namespace;
 		Object.assign( this, options );
@@ -135,12 +135,12 @@ export class Store {
 			context: this,
 			channel: dispatcherChannel,
 			topic: `${namespace}.handle.*`,
-			handlers: handlers,
+			handlers,
 			handlerFn: function( data ) {
 				if ( handlers.hasOwnProperty( data.actionType ) ) {
 					inDispatch = true;
-					var res = handlers[ data.actionType ].handler.apply( this, data.actionArgs.concat( data.deps ) );
-					this.hasChanged = ( res === false ) ? false : true;
+					const res = handlers[ data.actionType ].handler.apply( this, data.actionArgs.concat( data.deps ) );
+					this.hasChanged = !( res === false );
 					dispatcherChannel.publish(
 						`${this.namespace}.handled.${data.actionType}`,
 						{ hasChanged: this.hasChanged, namespace: this.namespace }
@@ -150,7 +150,7 @@ export class Store {
 		} ) );
 
 		this.__subscription = {
-			notify: dispatcherChannel.subscribe( `notify`, () => this.flush() )
+			notify: dispatcherChannel.subscribe( "notify", () => this.flush() )
 					.constraint( () => inDispatch )
 		};
 

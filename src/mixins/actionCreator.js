@@ -1,9 +1,9 @@
-"use strict";
+// *******************************************
+// *           Action Creator Mixin          *
+// *******************************************
+
 import { entries } from "../utils";
 import { getActionGroup, actions } from "../actions";
-/*********************************************
-*           Action Creator Mixin          *
-**********************************************/
 
 export function dispatch( action, ...args ) {
 	if ( actions[ action ] ) {
@@ -14,7 +14,7 @@ export function dispatch( action, ...args ) {
 }
 
 export const actionCreatorMixin = {
-	setup: function() {
+	setup() {
 		this.getActionGroup = this.getActionGroup || [];
 		this.getActions = this.getActions || [];
 
@@ -27,8 +27,8 @@ export const actionCreatorMixin = {
 				this[ k ] = v;
 			}
 		};
-		this.getActionGroup.forEach( ( group ) => {
-			for ( let [ k, v ] of entries( getActionGroup( group ) ) ) {
+		this.getActionGroup.forEach( group => {
+			for ( const [ k, v ] of entries( getActionGroup( group ) ) ) {
 				addActionIfNotPresent( k, v );
 			}
 		} );
@@ -41,12 +41,10 @@ export const actionCreatorMixin = {
 			} );
 		}
 	},
-	mixin: {
-		dispatch: dispatch
-	}
+	mixin: { dispatch }
 };
 
 export const actionCreatorReactMixin = {
 	componentWillMount: actionCreatorMixin.setup,
-	dispatch: dispatch
+	dispatch
 };
