@@ -1,6 +1,6 @@
 {
   "name": "lux.js",
-  "version": "2.0.0-3",
+  "version": "2.0.0-4",
   "homepage": "https://github.com/LeanKit-Labs/lux.js",
   "description": "Flux-based architecture for using ReactJS at LeanKit",
   "author": "Jim Cowart",
@@ -31,6 +31,10 @@
       "name": "Alex Robson",
       "email": "WhyNotJustComment@OnMyBlog.com",
       "url": "http://nerdventure.io/"
+    },
+    {
+      "name": "John Mathis",
+      "url": "https://github.com/JohnDMathis"
     }
   ],
   "main": "./lib/lux.js",
