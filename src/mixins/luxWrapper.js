@@ -8,8 +8,8 @@ import { entries } from "../utils";
 
 export default function luxWrapper( Component, { actions, stores, getState } ) {
 	class LuxWrapper extends React.Component {
-		constructor( props ) {
-			super( props );
+		constructor( props, context ) {
+			super( props, context );
 			setupStoreListener( this, { stores, getState } );
 			setupActionMap( this, { actions } );
 			if ( getState ) {
