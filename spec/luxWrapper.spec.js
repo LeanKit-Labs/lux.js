@@ -82,6 +82,9 @@ describe( "luxWrapper", function() {
 		it( "should call getState to set up initial wrapper state", function() {
 			getState.should.be.calledOnce();
 		} );
+		it( "should pass component props and onChange initial payload to the getState method", function() {
+			getState.should.be.calledWithExactly( { wrapperProp: "thingy" }, { store1: true, store2: true } );
+		} );
 		describe( "when one store updates", function() {
 			beforeEach( function() {
 				lux.dispatch( "two" );
@@ -90,6 +93,8 @@ describe( "luxWrapper", function() {
 				// getState is called for initial state
 				// and also when store state updates
 				getState.should.be.calledTwice();
+				getState.firstCall.should.be.calledWithExactly( { wrapperProp: "thingy" }, { store1: true, store2: true } );
+				getState.secondCall.should.be.calledWithExactly( { wrapperProp: "thingy" }, { store2: true } );
 			} );
 			it( "should invoke read accessors on stores", function() {
 				store1.getStore1State.should.be.calledOnce
@@ -144,8 +149,8 @@ describe( "luxWrapper", function() {
 			} );
 			targetComponent = React.createClass( {
 				propTypes: {
-					onThingThang: React.PropTypes.string,
-					onAnotherThang: React.PropTypes.string
+					onThingThang: React.PropTypes.func,
+					onAnotherThang: React.PropTypes.func
 				},
 				displayName: "ActionMockt",
 				handleClick: function( e ) {

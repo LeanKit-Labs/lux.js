@@ -13,7 +13,11 @@ export default function luxWrapper( Component, { actions, stores, getState } ) {
 			setupStoreListener( this, { stores, getState } );
 			setupActionMap( this, { actions } );
 			if ( getState ) {
-				this.state = getState();
+				const initialPayload = ( stores || [] ).reduce( ( m, s ) => {
+					m[ s ] = true;
+					return m;
+				}, {} );
+				this.state = getState( props, initialPayload );
 			}
 		}
 
