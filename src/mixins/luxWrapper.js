@@ -6,8 +6,8 @@ import React from "react";
 import { setupStoreListener, setupActionMap } from "./wrapperUtils";
 import { entries } from "../utils";
 
-export default function luxWrapper( Component, { actions, stores, getState } ) {
-	class LuxWrapper extends React.Component {
+export default function luxWrapper( Component, { actions, stores, getState, pureComponent = false } ) {
+	class LuxWrapper extends React[ pureComponent ? "PureComponent" : "Component" ] {
 		constructor( props, context ) {
 			super( props, context );
 			setupStoreListener( this, { stores, getState } );
