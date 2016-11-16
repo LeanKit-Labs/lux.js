@@ -22,6 +22,20 @@ function getMockReactComponent( options ) {
 }
 
 describe( "luxWrapper", function() {
+	describe( "when generating the component", () => {
+		it( "should default to using React.Component", () => {
+			const ComponentClass = luxWrapper( getMockReactComponent(), {} );
+			const component = utils.renderIntoDocument( React.createElement( ComponentClass ) );
+			component.should.be.an.instanceOf( React.Component );
+			ReactDOM.unmountComponentAtNode( ReactDOM.findDOMNode( component ).parentNode );
+		} );
+		it( "should support using React.PureComponent", () => {
+			const ComponentClass = luxWrapper( getMockReactComponent(), { pureComponent: true } );
+			const component = utils.renderIntoDocument( React.createElement( ComponentClass ) );
+			component.should.be.an.instanceOf( React.PureComponent );
+			ReactDOM.unmountComponentAtNode( ReactDOM.findDOMNode( component ).parentNode );
+		} );
+	} );
 	describe( "when generating resulting component name", function() {
 		it( "should use a displayName if provided", function() {
 			luxWrapper( getMockReactComponent(), {} ).displayName.should.equal( "LuxWrapped(MOCKT)" );
