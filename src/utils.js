@@ -1,4 +1,4 @@
-
+import { printActions, printStoreDepTree } from "./printUtils";
 
 export function ensureLuxProp( context ) {
 	const __lux = context.__lux = ( context.__lux || {} );
@@ -17,3 +17,5 @@ export function *entries( obj ) {
 		yield [ k, obj[ k ] ];
 	}
 }
+
+export default { printActions, printStoreDepTree };
