@@ -6,7 +6,18 @@ import React from "react";
 import { setupStoreListener, setupActionMap } from "./wrapperUtils";
 import { entries } from "../utils";
 
-export default function luxWrapper( Component, { actions, stores, getState, pureComponent = false } ) {
+export default function luxWrapper( Component, {
+	actions,
+	stores,
+	getState,
+	pureComponent = false,
+	componentWillMount,
+	componentDidMount,
+	componentWillReceiveProps,
+	componentWillUpdate,
+	componentDidUpdate,
+	componentWillUnmount
+} ) {
 	class LuxWrapper extends React[ pureComponent ? "PureComponent" : "Component" ] {
 		constructor( props, context ) {
 			super( props, context );
@@ -21,7 +32,40 @@ export default function luxWrapper( Component, { actions, stores, getState, pure
 			}
 		}
 
-		componentWillUnmount() {
+		componentWillMount( ...args ) {
+			if ( componentWillMount ) {
+				componentWillMount.apply( this, args );
+			}
+		}
+
+		componentDidMount( ...args ) {
+			if ( componentDidMount ) {
+				componentDidMount.apply( this, args );
+			}
+		}
+
+		componentWillReceiveProps( ...args ) {
+			if ( componentWillReceiveProps ) {
+				componentWillReceiveProps.apply( this, args );
+			}
+		}
+
+		componentWillUpdate( ...args ) {
+			if ( componentWillUpdate ) {
+				componentWillUpdate.apply( this, args );
+			}
+		}
+
+		componentDidUpdate( ...args ) {
+			if ( componentDidUpdate ) {
+				componentDidUpdate.apply( this, args );
+			}
+		}
+
+		componentWillUnmount( ...args ) {
+			if ( componentWillUnmount ) {
+				componentWillUnmount.apply( this, args );
+			}
 			for ( const [ key, sub ] of entries( this.__lux.subscriptions ) ) {
 				let split;
 				// eslint-disable-next-line no-cond-assign
