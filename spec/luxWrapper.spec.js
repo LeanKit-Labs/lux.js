@@ -36,6 +36,7 @@ describe( "luxWrapper", function() {
 			ReactDOM.unmountComponentAtNode( ReactDOM.findDOMNode( component ).parentNode );
 		} );
 	} );
+
 	describe( "when generating resulting component name", function() {
 		it( "should use a displayName if provided", function() {
 			luxWrapper( getMockReactComponent(), {} ).displayName.should.equal( "LuxWrapped(MOCKT)" );
@@ -44,6 +45,7 @@ describe( "luxWrapper", function() {
 			luxWrapper( getMockReactComponent( { displayName: null } ), {} ).displayName.should.equal( "LuxWrapped(Component)" );
 		} );
 	} );
+
 	describe( "when listening to stores", function() {
 		var store1, store2, container, targetComponent, getState, config, willReceivePropsStub, component;
 		beforeEach( function() {
@@ -151,6 +153,7 @@ describe( "luxWrapper", function() {
 			} );
 		} );
 	} );
+
 	describe( "when mapping prop handlers to action creators", function() {
 		var container, targetComponent, config, component, fakeActionStub, fakeActionStub2, targetDiv;
 		beforeEach( function() {
@@ -223,6 +226,72 @@ describe( "luxWrapper", function() {
 				);
 				component = utils.renderIntoDocument( container );
 			} ).should.throw( /The values provided to the luxWrapper actions parameter must be a string or a function/ );
+		} );
+	} );
+
+	describe( "when passing lifecyle methods", () => {
+		let component,
+			componentWillMount,
+			componentDidMount,
+			componentWillReceiveProps,
+			componentWillUpdate,
+			componentDidUpdate,
+			componentWillUnmount,
+			ComponentClass,
+			el;
+
+		beforeEach( () => {
+			componentWillMount = sinon.stub();
+			componentDidMount = sinon.stub();
+			componentWillReceiveProps = sinon.stub();
+			componentWillUpdate = sinon.stub();
+			componentDidUpdate = sinon.stub();
+			componentWillUnmount = sinon.stub();
+
+			el = document.createElement( "div" );
+			document.body.appendChild( el );
+
+			ComponentClass = luxWrapper( getMockReactComponent(), {
+				componentWillMount,
+				componentDidMount,
+				componentWillReceiveProps,
+				componentWillUpdate,
+				componentDidUpdate,
+				componentWillUnmount
+			} );
+			component = ReactDOM.render( React.createElement( ComponentClass ), el );
+		} );
+
+		it( "should invoke componentWillMount", () => {
+			componentWillMount.should.be.calledOnce();
+		} );
+
+		it( "should invoke componentDidMount", () => {
+			componentDidMount.should.be.calledOnce();
+		} );
+
+		it( "should invoke componentWillReceiveProps", () => {
+			component = ReactDOM.render( React.createElement( ComponentClass, { cal: "zone" } ), el );
+			componentWillReceiveProps.should.be.calledOnce.and.calledWithMatch( { cal: "zone" } );
+		} );
+
+		it( "should invoke componentWillUpdate", () => {
+			component = ReactDOM.render( React.createElement( ComponentClass, { cal: "zone" } ), el );
+			componentWillUpdate.should.be.calledOnce.and.calledWithMatch( { cal: "zone" } )();
+		} );
+
+		it( "should invoke componentDidUpdate", () => {
+			ReactDOM.render( React.createElement( ComponentClass, { cal: "ories" } ), el );
+			componentDidUpdate.reset();
+			ReactDOM.render( React.createElement( ComponentClass, { cal: "zone" } ), el );
+			componentDidUpdate.should.be.calledOnce.and.calledWithMatch( { cal: "ories" } );
+		} );
+
+		it( "should invoke componentWillUnmount", () => {
+			if ( component ) {
+				ReactDOM.unmountComponentAtNode( ReactDOM.findDOMNode( component ).parentNode );
+			}
+			componentWillUnmount.should.be.calledOnce();
 		} );
 	} );
 } );
