@@ -18,17 +18,23 @@ export default function luxWrapper( Component, {
 	componentDidUpdate,
 	componentWillUnmount
 } ) {
+	const getStateTakesProps = getState && getState.length;
+
+	function getComponentState( instance, props ) {
+		const initialPayload = ( stores || [] ).reduce( ( m, s ) => {
+			m[ s ] = true;
+			return m;
+		}, {} );
+		return getState( props, initialPayload );
+	}
+
 	class LuxWrapper extends React[ pureComponent ? "PureComponent" : "Component" ] {
 		constructor( props, context ) {
 			super( props, context );
 			setupStoreListener( this, { stores, getState } );
 			setupActionMap( this, { actions } );
 			if ( getState ) {
-				const initialPayload = ( stores || [] ).reduce( ( m, s ) => {
-					m[ s ] = true;
-					return m;
-				}, {} );
-				this.state = getState( props, initialPayload );
+				this.state = getComponentState( this, props );
 			}
 		}
 
@@ -45,6 +51,9 @@ export default function luxWrapper( Component, {
 		}
 
 		componentWillReceiveProps( ...args ) {
+			if ( getState && getStateTakesProps ) {
+				this.setState( getComponentState( this, ...args ) );
+			}
 			if ( componentWillReceiveProps ) {
 				componentWillReceiveProps.apply( this, args );
 			}

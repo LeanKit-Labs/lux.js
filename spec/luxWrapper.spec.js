@@ -293,5 +293,39 @@ describe( "luxWrapper", function() {
 			}
 			componentWillUnmount.should.be.calledOnce();
 		} );
+
+		describe( "getState + componentWillReceiveProps", () => {
+			it( "should call getState if it takes props as an argument", () => {
+				let getStateCalled = false;
+				ComponentClass = luxWrapper( getMockReactComponent(), {
+					stores: [ "store1", "store2" ],
+					getState( props ) {
+						getStateCalled = true;
+					}
+				} );
+				// first render
+				component = ReactDOM.render( React.createElement( ComponentClass ), el );
+				getStateCalled = false;
+				// re-render to trigger componentWillReceiveProps
+				component = ReactDOM.render( React.createElement( ComponentClass, { cal: "zone" } ), el );
+				getStateCalled.should.be.true();
+			} );
+
+			it( "should not call getState if it doesn't take props as an argument", () => {
+				let getStateCalled = false;
+				ComponentClass = luxWrapper( getMockReactComponent(), {
+					stores: [ "store1", "store2" ],
+					getState() {
+						getStateCalled = true;
+					}
+				} );
+				// first render
+				component = ReactDOM.render( React.createElement( ComponentClass ), el );
+				getStateCalled = false;
+				// re-render to trigger componentWillReceiveProps
+				component = ReactDOM.render( React.createElement( ComponentClass, { cal: "zone" } ), el );
+				getStateCalled.should.be.false();
+			} );
+		} );
 	} );
 } );
