@@ -8,7 +8,7 @@ _.extend( webpackConfig, {
 	devtool: "inline-source-map"
 } );
 
-var reporters = [ "spec", "progress", "coverage" ];
+var reporters = [ "spec", "coverage" ];
 
 delete webpackConfig.output;
 delete webpackConfig.entry;

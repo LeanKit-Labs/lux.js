@@ -18,8 +18,6 @@ export default function luxWrapper( Component, {
 	componentDidUpdate,
 	componentWillUnmount
 } ) {
-	const getStateTakesProps = getState && getState.length;
-
 	function getComponentState( instance, props ) {
 		const initialPayload = ( stores || [] ).reduce( ( m, s ) => {
 			m[ s ] = true;
@@ -51,7 +49,7 @@ export default function luxWrapper( Component, {
 		}
 
 		componentWillReceiveProps( ...args ) {
-			if ( getState && getStateTakesProps ) {
+			if ( getState ) {
 				this.setState( getComponentState( this, ...args ) );
 			}
 			if ( componentWillReceiveProps ) {

@@ -26,18 +26,13 @@ module.exports = {
 					],
 					plugins: [ "add-module-exports",
 						[
-							"istanbul",
+							"babel-plugin-istanbul",
 							{ exclude: [ "spec/**/*" ] }
 						]
 					]
 				}
 			}
-		],
-		postLoaders: [ {
-			test: /\.js$/,
-			exclude: /(spec|node_modules)\//,
-			loader: "istanbul-instrumenter"
-		} ]
+		]
 	},
 	resolve: {
 		alias: {

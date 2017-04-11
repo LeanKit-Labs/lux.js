@@ -1,5 +1,5 @@
 module.exports = {
-	extends: ["leankit/test","leankit/react"],
+	extends: ["leankit/react", "leankit/test"],
 	globals:{
 		React:true,
 		ReactDOM:true,
