@@ -45,11 +45,11 @@ export function printStoreDepTree( actionType ) {
 				}
 			} );
 		if ( console && console.table ) {
-			console.group( `Store Dependency List for ${at}` );
+			console.group( `Store Dependency List for ${ at }` );
 			console.table( tree );
 			console.groupEnd();
 		} else if ( console && console.log ) {
-			console.log( `Store Dependency List for ${at}:` );
+			console.log( `Store Dependency List for ${ at }:` );
 			console.log( tree );
 		}
 		tree = [];

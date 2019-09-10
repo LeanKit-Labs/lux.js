@@ -1,9 +1,9 @@
-var luxWrapper = lux.luxWrapper;
+const luxWrapper = lux.luxWrapper;
 function storeFactory( options ) {
 	options = Object.assign( {
 		namespace: "storeOne",
 		handlers: {
-			one: function() {}
+			one() {}
 		}
 	}, options || {} );
 	return new lux.Store( options );
@@ -11,10 +11,10 @@ function storeFactory( options ) {
 function getMockReactComponent( options ) {
 	return createReactClass( _.extend( {
 		displayName: "MOCKT",
-		getDefaultProps: function() {
+		getDefaultProps() {
 			return { foo: "bar" };
 		},
-		render: function() {
+		render() {
 			return React.createElement( "div", { className: "childy" }, "This is a test DIV" );
 		}
 	}, options ) );
@@ -46,21 +46,21 @@ describe( "luxWrapper", function() {
 	} );
 
 	describe( "when listening to stores", function() {
-		var store1, store2, container, targetComponent, getState, config, willReceivePropsStub, component;
+		let store1, store2, container, targetComponent, getState, config, willReceivePropsStub, component;
 		beforeEach( function() {
 			store1 = storeFactory( {
 				namespace: "store1",
-				getStore1State: sinon.spy( function( x ) {
+				getStore1State: sinon.spy( function() {
 					return { store1: "state" };
 				} )
 			} );
 			store2 = storeFactory( {
 				namespace: "store2",
 				handlers: {
-					one: function() {},
-					two: function() {}
+					one() {},
+					two() {}
 				},
-				getStore2State: sinon.spy( function( x ) {
+				getStore2State: sinon.spy( function() {
 					return { store2: "statey state state" };
 				} )
 			} );
@@ -77,7 +77,7 @@ describe( "luxWrapper", function() {
 			);
 			config = {
 				stores: [ "store1", "store2" ],
-				getState: getState
+				getState
 			};
 			container = React.createElement( luxWrapper( targetComponent, config ), { wrapperProp: "thingy" } );
 			component = utils.renderIntoDocument( container );
@@ -154,7 +154,7 @@ describe( "luxWrapper", function() {
 	} );
 
 	describe( "when mapping prop handlers to action creators", function() {
-		var container, targetComponent, config, component, fakeActionStub, fakeActionStub2, targetDiv;
+		let container, targetComponent, config, component, fakeActionStub, fakeActionStub2, targetDiv;
 		beforeEach( function() {
 			fakeActionStub = sinon.stub();
 			fakeActionStub2 = sinon.stub();
@@ -165,10 +165,10 @@ describe( "luxWrapper", function() {
 			} );
 			targetComponent = createReactClass( {
 				displayName: "ActionMockt",
-				handleClick: function( e ) {
+				handleClick( e ) {
 					this.props.onThingThang( e, "another", "value" );
 				},
-				render: function() {
+				render() {
 					return React.createElement( "div", {
 						onClick: this.handleClick,
 						onDoubleClick: this.props.onAnotherThang

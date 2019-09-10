@@ -1,6 +1,6 @@
 describe( "luxJS - Actions", function() {
 	describe( "lux.dispatch", function() {
-		var listener, spy;
+		let listener, spy;
 		before( function() {
 			spy = sinon.spy();
 			listener = lux.actionListener( {
@@ -20,14 +20,14 @@ describe( "luxJS - Actions", function() {
 
 	describe( "When calling customActionCreator", function() {
 		it( "Should create the new action", function() {
-			var actionName = "create-custom-action";
-			var customAction = {};
+			const actionName = "create-custom-action";
+			const customAction = {};
 
 			customAction[ actionName ] = sinon.spy();
 
 			lux.customActionCreator( customAction );
 
-			var actionCreator = lux.actionCreator( {
+			const actionCreator = lux.actionCreator( {
 				getActions: actionName
 			} );
 
@@ -38,10 +38,10 @@ describe( "luxJS - Actions", function() {
 		} );
 
 		it( "Should overwrite any existing action", function() {
-			var actionName = "overwrite-custom-action";
-			var handlerOne = sinon.spy();
-			var handlerTwo = sinon.spy();
-			var customAction = {
+			const actionName = "overwrite-custom-action";
+			const handlerOne = sinon.spy();
+			const handlerTwo = sinon.spy();
+			const customAction = {
 				[ actionName ]: handlerOne
 			};
 
@@ -51,7 +51,7 @@ describe( "luxJS - Actions", function() {
 			customAction[ actionName ] = handlerTwo;
 			lux.customActionCreator( customAction );
 
-			var actionCreator = lux.actionCreator( {
+			const actionCreator = lux.actionCreator( {
 				getActions: actionName
 			} );
 
@@ -62,8 +62,8 @@ describe( "luxJS - Actions", function() {
 		} );
 
 		it( "Should not be overwritten by automatic action creation", function() {
-			var handler = sinon.spy();
-			var wrongHandler = sinon.spy();
+			const handler = sinon.spy();
+			const wrongHandler = sinon.spy();
 
 			lux.customActionCreator( {
 				automaticActionCreationTest: handler
@@ -76,7 +76,7 @@ describe( "luxJS - Actions", function() {
 				}
 			} );
 
-			var actionCreator = lux.actionCreator( {
+			const actionCreator = lux.actionCreator( {
 				getActions: "automaticActionCreationTest"
 			} );
 
@@ -89,15 +89,15 @@ describe( "luxJS - Actions", function() {
 
 	describe( "When calling actionCreator", function() {
 		it( "Should take input object and add luxActionCreatorMixin", function() {
-			var actionCreator = lux.actionCreator( {} );
+			const actionCreator = lux.actionCreator( {} );
 
 			actionCreator.dispatch.should.be.a( "function" );
 		} );
 	} );
 	describe( "When calling actionListener", function() {
 		it( "Should take input object and add luxActionListenerMixin", function() {
-			var handler = sinon.spy();
-			var testValue = "test-value";
+			const handler = sinon.spy();
+			const testValue = "test-value";
 
 			lux.actionListener( {
 				handlers: {
@@ -105,7 +105,7 @@ describe( "luxJS - Actions", function() {
 				}
 			} );
 
-			var actionCreator = lux.actionCreator( {} );
+			const actionCreator = lux.actionCreator( {} );
 
 			actionCreator.dispatch( "testAction", testValue );
 
@@ -115,10 +115,10 @@ describe( "luxJS - Actions", function() {
 	} );
 	describe( "When calling actionCreatorListener", function() {
 		it( "Should take input object and add both luxActionListenerMixin and luxActionCreator", function() {
-			var handler = sinon.spy();
-			var testValue = "test-value";
+			const handler = sinon.spy();
+			const testValue = "test-value";
 
-			var actionCreatorListener = lux.actionCreatorListener( {
+			const actionCreatorListener = lux.actionCreatorListener( {
 				handlers: {
 					testAction: handler
 				}

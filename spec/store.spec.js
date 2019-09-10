@@ -4,7 +4,7 @@ describe( "luxJS - Store", function() {
 		options = Object.assign( {
 			namespace: "storeOne",
 			handlers: {
-				one: function() {}
+				one() {}
 			}
 		}, options || {} );
 		return new lux.Store( options, m1, m2, m3, m4, m5, m6, m7 );
@@ -12,13 +12,13 @@ describe( "luxJS - Store", function() {
 	describe( "When creating a Store", function() {
 		describe( "When validating options", function() {
 			it( "Should throw an error if the namespace is already used", function() {
-				var store = storeFactory();
-				var secondStore;
+				const store = storeFactory();
+				let secondStore;
 				( function() {
 					secondStore = new lux.Store( {
 						namespace: "storeOne",
 						handlers: {
-							one: function() {}
+							one() {}
 						}
 					} );
 				} ).should.throw( /already exists/ );
@@ -31,14 +31,14 @@ describe( "luxJS - Store", function() {
 				( function() {
 					return new lux.Store( {
 						handlers: {
-							one: function() {}
+							one() {}
 						}
 					} );
 				} ).should.throw( /must have a namespace/ );
 			} );
 
 			it( "Should throw an error if there are no action handlers", function() {
-				var tmpStore;
+				let tmpStore;
 				( function() {
 					tmpStore = new lux.Store( {
 						namespace: "storeOne"
@@ -58,7 +58,7 @@ describe( "luxJS - Store", function() {
 		} );
 		describe( "When initializing", function() {
 			it( "Should use state passed into the constructor as initial state", function() {
-				var store = storeFactory( {
+				const store = storeFactory( {
 					state: { something: true }
 				} );
 
@@ -66,8 +66,8 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should pass along any extra property or method names to the new object", function() {
-				var store = storeFactory( {
-					getSomethingCool: function() {
+				const store = storeFactory( {
+					getSomethingCool() {
 						return true;
 					}
 				} );
@@ -78,13 +78,13 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should make action creator methods for each handler", function() {
-				var store = storeFactory( {
+				const store = storeFactory( {
 					handlers: {
-						one: function() {},
-						two: function() {}
+						one() {},
+						two() {}
 					}
 				} );
-				var creator = lux.actionCreator( {
+				const creator = lux.actionCreator( {
 					getActions: [ "one", "two" ]
 				} );
 
@@ -95,13 +95,13 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should create an action group for all handlers", function() {
-				var store = storeFactory( {
+				const store = storeFactory( {
 					handlers: {
-						one: function() {},
-						two: function() {}
+						one() {},
+						two() {}
 					}
 				} );
-				var creator = lux.actionCreator( {
+				const creator = lux.actionCreator( {
 					getActionGroup: [ "storeOne" ]
 				} );
 
@@ -112,19 +112,19 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should remove action handlers from public object", function() {
-				var store = storeFactory();
+				const store = storeFactory();
 				store.should.not.have.property( "handlers" );
 				store.dispose();
 			} );
 			it( "Should remove direct access to state", function() {
-				var store = storeFactory();
+				const store = storeFactory();
 				store.should.not.have.property( "state" );
 				store.dispose();
 			} );
 		} );
 		describe( "When initializing with multiple mixins", function() {
 			it( "Should blend state passed into intial state", function() {
-				var store = storeFactory(
+				const store = storeFactory(
 					{ state: { something: true } },
 					{ state: { anotherThing: "yep" } },
 					{ state: { nested: { doc: "Great Scot!" } } },
@@ -141,14 +141,14 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should blend any extra props or methods onto the store instance", function() {
-				var store = storeFactory(
+				const store = storeFactory(
 					{
-						getSomethingCool: function() {
+						getSomethingCool() {
 							return true;
 						}
 					},
 					{
-						getSomethingEvenCooler: function() {
+						getSomethingEvenCooler() {
 							return "Truer than true";
 						}
 					}
@@ -164,21 +164,21 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should create an action group for all handlers", function() {
-				var store = storeFactory(
+				const store = storeFactory(
 					{
 						handlers: {
-							one: function() {},
-							two: function() {}
+							one() {},
+							two() {}
 						}
 					},
 					{
 						handlers: {
-							three: function() {},
-							four: function() {}
+							three() {},
+							four() {}
 						}
 					}
 				);
-				var creator = lux.actionCreator( {
+				const creator = lux.actionCreator( {
 					getActionGroup: [ "storeOne" ]
 				} );
 
@@ -190,11 +190,11 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should allow for same-named handlers from multiple mixins", function() {
-				var backInTimeSpy = sinon.spy();
-				var forwardInTimeSpy = sinon.spy();
-				var feedMrFusionSpy = sinon.spy();
+				const backInTimeSpy = sinon.spy();
+				const forwardInTimeSpy = sinon.spy();
+				const feedMrFusionSpy = sinon.spy();
 
-				var store = storeFactory(
+				const store = storeFactory(
 					{
 						namespace: "multiplicity",
 						handlers: {
@@ -215,7 +215,7 @@ describe( "luxJS - Store", function() {
 						}
 					}
 				);
-				var creator = lux.actionCreator( {
+				const creator = lux.actionCreator( {
 					getActionGroup: [ "multiplicity" ]
 				} );
 				creator.backInTime();
@@ -227,24 +227,24 @@ describe( "luxJS - Store", function() {
 				store.dispose();
 			} );
 			it( "Should support store dependency ordering with mixin handler collision", function() {
-				var invocations = [];
+				const invocations = [];
 
-				var store = storeFactory( {
+				const store = storeFactory( {
 					namespace: "mefirst",
 					handlers: {
 						backInTime: {
-							handler: function() {
+							handler() {
 								invocations.push( "mefirst" );
 							}
 						}
 					}
 				} );
 
-				var store2 = storeFactory( {
+				const store2 = storeFactory( {
 					namespace: "mesecond",
 					handlers: {
 						backInTime: {
-							handler: function() {
+							handler() {
 								invocations.push( "mesecond-mixin1" );
 							}
 						}
@@ -253,20 +253,20 @@ describe( "luxJS - Store", function() {
 					handlers: {
 						backInTime: {
 							waitFor: [ "mefirst" ],
-							handler: function() {
+							handler() {
 								invocations.push( "mesecond-mixin2" );
 							}
 						}
 					}
 				} );
 
-				var store3 = storeFactory(
+				const store3 = storeFactory(
 					{
 						namespace: "multiplicity",
 						handlers: {
 							backInTime: {
 								waitFor: [ "mefirst" ],
-								handler: function() {
+								handler() {
 									invocations.push( "multiplicity-mixin1" );
 								}
 							}
@@ -276,7 +276,7 @@ describe( "luxJS - Store", function() {
 						handlers: {
 							backInTime: {
 								waitFor: [ "mesecond" ],
-								handler: function() {
+								handler() {
 									invocations.push( "multiplicity-mixin2" );
 								}
 							}
@@ -284,14 +284,14 @@ describe( "luxJS - Store", function() {
 					},
 					{
 						handlers: {
-							backInTime: function() {
+							backInTime() {
 								invocations.push( "multiplicity-mixin3" );
 							}
 						}
 					}
 				);
 
-				var creator = lux.actionCreator( {
+				const creator = lux.actionCreator( {
 					getActionGroup: [ "multiplicity" ]
 				} );
 				creator.backInTime();
@@ -311,12 +311,12 @@ describe( "luxJS - Store", function() {
 	} );
 	describe( "When using a Store", function() {
 		it( "Should only allow setState while handling an action", function() {
-			var store = storeFactory( {
+			const store = storeFactory( {
 				state: {
 					flag: false
 				},
 				handlers: {
-					anAction: function() {
+					anAction() {
 						this.setState( { flag: true } );
 					}
 				}
@@ -326,7 +326,7 @@ describe( "luxJS - Store", function() {
 				store.setState( { flag: true } );
 			} ).should.throw( /during a dispatch cycle/ );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "anAction" ]
 			} );
 
@@ -338,10 +338,10 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should only allow replaceState while handling an action", function() {
-			var store = storeFactory( {
+			const store = storeFactory( {
 				state: {},
 				handlers: {
-					anotherAction: function() {
+					anotherAction() {
 						this.replaceState( { flag: true } );
 					}
 				}
@@ -351,7 +351,7 @@ describe( "luxJS - Store", function() {
 				store.replaceState( { flag: true } );
 			} ).should.throw( /during a dispatch cycle/ );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "anotherAction" ]
 			} );
 
@@ -363,20 +363,20 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should replace state if replaceState is called during an action cycle", function() {
-			var store = storeFactory( {
+			const store = storeFactory( {
 				state: {
 					lots: true,
 					andLots: 12345,
 					ofKeys: "yessir"
 				},
 				handlers: {
-					aReplaceAction: function() {
+					aReplaceAction() {
 						this.replaceState( { replaced: true } );
 					}
 				}
 			} );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "aReplaceAction" ]
 			} );
 
@@ -393,14 +393,14 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should wait for other stores to update before dependent action is handled", function() {
-			var storeOne = sinon.spy();
-			var storeTwo = sinon.spy();
-			var otherStore = new lux.Store( {
+			const storeOne = sinon.spy();
+			const storeTwo = sinon.spy();
+			const otherStore = new lux.Store( {
 				namespace: "store2",
 				handlers: {
 					myTest: {
 						waitFor: [ "storeOne" ],
-						handler: function() {
+						handler() {
 							storeOne.should.be.calledOnce();
 							storeTwo();
 						}
@@ -408,13 +408,13 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var store = storeFactory( {
+			const store = storeFactory( {
 				handlers: {
 					myTest: storeOne
 				}
 			} );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "myTest" ]
 			} );
 
@@ -426,8 +426,8 @@ describe( "luxJS - Store", function() {
 		} );
 		it( "Should warn when an action is dependent on a store that does not participate in that action (or does not exist)", function() {
 			sinon.stub( console, "warn" );
-			var storeOne = sinon.stub();
-			var store = storeFactory( {
+			const storeOne = sinon.stub();
+			const store = storeFactory( {
 				handlers: {
 					myTest: {
 						waitFor: [ "doesNotExist" ],
@@ -447,10 +447,10 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should throw an error when a direct circular dependency between stores is detected", function() {
-			var storeOne = sinon.spy();
-			var storeTwo = sinon.spy();
+			const storeOne = sinon.spy();
+			const storeTwo = sinon.spy();
 
-			var circular1 = new lux.Store( {
+			const circular1 = new lux.Store( {
 				namespace: "circular1",
 				handlers: {
 					myTest: {
@@ -460,7 +460,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var circular2 = new lux.Store( {
+			const circular2 = new lux.Store( {
 				namespace: "circular2",
 				handlers: {
 					myTest: {
@@ -470,7 +470,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "myTest" ]
 			} );
 
@@ -482,12 +482,12 @@ describe( "luxJS - Store", function() {
 			circular2.dispose();
 		} );
 		it( "Should throw an error when a more distant circular dependency between stores is detected", function() {
-			var storeOne = sinon.spy();
-			var storeTwo = sinon.spy();
-			var storeThree = sinon.spy();
-			var storeFour = sinon.spy();
+			const storeOne = sinon.spy();
+			const storeTwo = sinon.spy();
+			const storeThree = sinon.spy();
+			const storeFour = sinon.spy();
 
-			var circular1 = new lux.Store( {
+			const circular1 = new lux.Store( {
 				namespace: "circular1",
 				handlers: {
 					myTest: {
@@ -497,7 +497,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var circular2 = new lux.Store( {
+			const circular2 = new lux.Store( {
 				namespace: "circular2",
 				handlers: {
 					myTest: {
@@ -507,7 +507,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var circular3 = new lux.Store( {
+			const circular3 = new lux.Store( {
 				namespace: "circular3",
 				handlers: {
 					myTest: {
@@ -517,7 +517,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var circular4 = new lux.Store( {
+			const circular4 = new lux.Store( {
 				namespace: "circular4",
 				handlers: {
 					myTest: {
@@ -527,7 +527,7 @@ describe( "luxJS - Store", function() {
 				}
 			} );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "myTest" ]
 			} );
 
@@ -543,26 +543,26 @@ describe( "luxJS - Store", function() {
 			circular4.dispose();
 		} );
 		it( "Should assume there were changes unless a handler explicitly returns `false`", function() {
-			var store = storeFactory( {
+			const store = storeFactory( {
 				handlers: {
-					change: function() {
+					change() {
 						this.setState( { newVal: true } );
 					},
-					inferredChange: function() {},
-					noChange: function() {
+					inferredChange() {},
+					noChange() {
 						return false;
 					}
 				}
 			} );
-			var onChange = sinon.spy();
-			var listener = {
+			const onChange = sinon.spy();
+			const listener = {
 				stores: {
 					listenTo: "storeOne",
-					onChange: onChange
+					onChange
 				}
 			};
 			lux.mixin( listener, lux.mixin.store );
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "change", "inferredChange", "noChange" ]
 			} );
 
@@ -575,15 +575,15 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should publish a 'changed' message when flush is called and there are changes", function() {
-			var handler = sinon.spy();
+			const handler = sinon.spy();
 			postal.subscribe( {
 				channel: "lux.store",
 				topic: "storeOne.changed",
 				callback: handler
 			} ).once();
 
-			var store = storeFactory();
-			var creator = lux.actionCreator( {
+			const store = storeFactory();
+			const creator = lux.actionCreator( {
 				getActions: [ "one" ]
 			} );
 			creator.one();
@@ -591,15 +591,15 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should not swallow exceptions if one occurs in a store handler", function() {
-			var store = storeFactory( {
+			const store = storeFactory( {
 				handlers: {
-					taseMeBro: function() {
+					taseMeBro() {
 						throw new Error( "Don't Tase Me Bro!" );
 					}
 				}
 			} );
 
-			var creator = lux.actionCreator( {
+			const creator = lux.actionCreator( {
 				getActions: [ "taseMeBro" ]
 			} );
 
@@ -611,13 +611,13 @@ describe( "luxJS - Store", function() {
 	} );
 	describe( "When removing a Store", function() {
 		it( "Should remove all subscriptions", function() {
-			var store = storeFactory();
+			let store = storeFactory();
 			postal.subscriptions[ "lux.dispatcher" ].should.have.property( "storeOne.handle.*" );
 			store.dispose();
 			store = undefined;
 		} );
 		it( "Should remove the namespace from the stores cache", function() {
-			var store = storeFactory();
+			let store = storeFactory();
 			store.dispose();
 			store = undefined;
 			// Since actual namespaces are in a hidden variable, we simply try to create a new one
@@ -626,13 +626,13 @@ describe( "luxJS - Store", function() {
 			store.dispose();
 		} );
 		it( "Should remove the store from the Dispatcher action map", function() {
-			var storeIsInActionMap = function() {
-				var actionMap = lux.dispatcher.actionMap;
-				var isPresent = false;
-				var filterFn = function( x ) {
+			const storeIsInActionMap = function() {
+				const actionMap = lux.dispatcher.actionMap;
+				let isPresent = false;
+				const filterFn = function( x ) {
 					return x.namespace === "storeOne";
 				};
-				for ( var action in actionMap ) {
+				for ( const action in actionMap ) {
 					if ( actionMap[ action ].filter( filterFn ).length ) {
 						isPresent = true;
 						break;
@@ -640,7 +640,7 @@ describe( "luxJS - Store", function() {
 				}
 				return isPresent;
 			};
-			var store = storeFactory();
+			let store = storeFactory();
 			storeIsInActionMap().should.be.true();
 			store.dispose();
 			store = undefined;
@@ -648,8 +648,8 @@ describe( "luxJS - Store", function() {
 		} );
 		describe( "via lux.removeStore", function() {
 			it( "should call store.dispose", function() {
-				var store = storeFactory();
-				var spy = sinon.spy( store, "dispose" );
+				const store = storeFactory();
+				const spy = sinon.spy( store, "dispose" );
 				lux.removeStore( "storeOne" );
 				spy.should.be.calledOnce();
 				spy.restore();

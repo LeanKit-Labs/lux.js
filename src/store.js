@@ -20,7 +20,7 @@ function buildActionList( handlers ) {
 function ensureStoreOptions( options, handlers, store ) {
 	const namespace = ( options && options.namespace ) || store.namespace;
 	if ( namespace in stores ) {
-		throw new Error( `The store namespace "${namespace}" already exists.` );
+		throw new Error( `The store namespace "${ namespace }" already exists.` );
 	}
 	if ( !namespace ) {
 		throw new Error( "A lux store must have a namespace value provided" );
@@ -91,9 +91,8 @@ function processStoreArgs( ...options ) {
 }
 
 export class Store {
-
 	constructor( ...opt ) {
-		let [ state, handlers, options ] = processStoreArgs( ...opt );  // eslint-disable-line prefer-const
+		let [ state, handlers, options ] = processStoreArgs( ...opt ); // eslint-disable-line prefer-const
 		ensureStoreOptions( options, handlers, this );
 		const namespace = options.namespace;
 		Object.assign( this, options );
@@ -127,14 +126,14 @@ export class Store {
 			inDispatch = false;
 			if ( this.hasChanged ) {
 				this.hasChanged = false;
-				storeChannel.publish( `${this.namespace}.changed` );
+				storeChannel.publish( `${ this.namespace }.changed` );
 			}
 		};
 
 		mixin( this, mixin.actionListener( {
 			context: this,
 			channel: dispatcherChannel,
-			topic: `${namespace}.handle.*`,
+			topic: `${ namespace }.handle.*`,
 			handlers,
 			handlerFn: function( data ) {
 				if ( handlers.hasOwnProperty( data.actionType ) ) {
@@ -142,7 +141,7 @@ export class Store {
 					const res = handlers[ data.actionType ].handler.apply( this, data.actionArgs.concat( data.deps ) );
 					this.hasChanged = !( res === false );
 					dispatcherChannel.publish(
-						`${this.namespace}.handled.${data.actionType}`,
+						`${ this.namespace }.handled.${ data.actionType }`,
 						{ hasChanged: this.hasChanged, namespace: this.namespace }
 					);
 				}
@@ -151,7 +150,7 @@ export class Store {
 
 		this.__subscription = {
 			notify: dispatcherChannel.subscribe( "notify", () => this.flush() )
-					.constraint( () => inDispatch )
+				.constraint( () => inDispatch )
 		};
 
 		dispatcher.registerStore(
@@ -169,7 +168,7 @@ export class Store {
 		for ( let [ k, subscription ] of entries( this.__subscription ) ) {
 			subscription.unsubscribe();
 		}
-		/*eslint-enable */
+		/* eslint-enable */
 		delete stores[ this.namespace ];
 		dispatcher.removeStore( this.namespace );
 		this.luxCleanup();

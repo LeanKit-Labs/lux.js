@@ -72,7 +72,7 @@ module.exports = {
 					plugins: [ "add-module-exports" ]
 				}
 			}
-					]
+		]
 	},
 	plugins: [
 		new cleanWebpackPlugin( [ "lib" ], {

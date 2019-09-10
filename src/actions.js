@@ -10,7 +10,7 @@ export function generateActionCreator( actionList ) {
 			actions[ action ] = function() {
 				const args = Array.from( arguments );
 				actionChannel.publish( {
-					topic: `execute.${action}`,
+					topic: `execute.${ action }`,
 					data: {
 						actionType: action,
 						actionArgs: args
@@ -28,7 +28,7 @@ export function getActionGroup( group ) {
 	if ( actionGroups[ group ] ) {
 		return _.pick( actions, actionGroups[ group ] );
 	}
-	throw new Error( `There is no action group named '${group}'` );
+	throw new Error( `There is no action group named '${ group }'` );
 }
 
 // This method is deprecated, but will remain as
@@ -59,7 +59,7 @@ export function addToActionGroup( groupName, actionList ) {
 	actionList = typeof actionList === "string" ? [ actionList ] : actionList;
 	const diff = _.difference( actionList, Object.keys( actions ) );
 	if ( diff.length ) {
-		throw new Error( `The following actions do not exist: ${diff.join( ", " )}` );
+		throw new Error( `The following actions do not exist: ${ diff.join( ", " ) }` );
 	}
 	actionList.forEach( function( action ) {
 		if ( group.indexOf( action ) === -1 ) {

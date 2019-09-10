@@ -1,10 +1,11 @@
 module.exports = {
-	extends: [ "leankit" ],
+	extends: [ "leankit", "leankit/es6" ],
 	globals: {
-		lux:true,
-		postal:true
+		lux: true,
+		postal: true
  	},
-	rules:{
-		"valid-jsdoc": "off"
+	rules: {
+		"valid-jsdoc": "off",
+		"prefer-rest-params": "off"
 	}
 };

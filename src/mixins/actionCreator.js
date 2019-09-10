@@ -9,7 +9,7 @@ export function dispatch( action, ...args ) {
 	if ( actions[ action ] ) {
 		actions[ action ]( ...args );
 	} else {
-		throw new Error( `There is no action named '${action}'` );
+		throw new Error( `There is no action named '${ action }'` );
 	}
 }
 
