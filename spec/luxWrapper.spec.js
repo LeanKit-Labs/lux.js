@@ -1,4 +1,3 @@
-
 var luxWrapper = lux.luxWrapper;
 function storeFactory( options ) {
 	options = Object.assign( {
@@ -10,7 +9,7 @@ function storeFactory( options ) {
 	return new lux.Store( options );
 }
 function getMockReactComponent( options ) {
-	return React.createClass( _.extend( {
+	return createReactClass( _.extend( {
 		displayName: "MOCKT",
 		getDefaultProps: function() {
 			return { foo: "bar" };
@@ -164,11 +163,7 @@ describe( "luxWrapper", function() {
 					fakeActionBecauseClicketyClick: fakeActionStub
 				}
 			} );
-			targetComponent = React.createClass( {
-				propTypes: {
-					onThingThang: React.PropTypes.func,
-					onAnotherThang: React.PropTypes.func
-				},
+			targetComponent = createReactClass( {
 				displayName: "ActionMockt",
 				handleClick: function( e ) {
 					this.props.onThingThang( e, "another", "value" );

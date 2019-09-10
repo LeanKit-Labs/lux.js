@@ -3,6 +3,7 @@ var _ = require( "lodash" );
 var webpack = require( "webpack" );
 var path = require( "path" );
 const cleanWebpackPlugin = require( "clean-webpack-plugin" );
+const TerserPlugin = require('terser-webpack-plugin');
 
 var banner = [
 	" * <%= pkg.name %> - <%= pkg.description %>",
@@ -16,6 +17,7 @@ var header = _.template( banner )( { pkg: pkg } );
 let source = path.join( __dirname, "src", "lux.js" );
 
 module.exports = {
+	mode: "production",
 	entry: {
 		"lux": source,
 		"lux.min": source
@@ -46,12 +48,21 @@ module.exports = {
 			}
 		}
 	],
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new TerserPlugin( {
+				include: /\.min\.js$/,
+				extractComments: false
+			} )
+		]
+	},
 	module: {
-		loaders: [
+		rules: [
 			{
 				test: /\.js?$/,
 				exclude: /(node_modules|bower_components)/,
-				loader: "babel",
+				loader: "babel-loader",
 				query: {
 					compact: false,
 					presets: [
@@ -69,7 +80,6 @@ module.exports = {
 			verbose: true,
 			dry: false
 		} ),
-		new webpack.optimize.UglifyJsPlugin( { include: /\.min\.js$/, minimize: true } ),
 		new webpack.BannerPlugin( header )
 	]
 };

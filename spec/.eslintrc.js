@@ -3,6 +3,7 @@ module.exports = {
 	globals:{
 		React:true,
 		ReactDOM:true,
+		createReactClass:true,
 		utils:true,
 		_:true
 	}
