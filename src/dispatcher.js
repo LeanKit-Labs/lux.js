@@ -8,7 +8,7 @@ function calculateGen( store, lookup, gen, actionType, namespaces ) {
 	let calcdGen = gen;
 	const _namespaces = namespaces || [];
 	if ( _namespaces.indexOf( store.namespace ) > -1 ) {
-		throw new Error( `Circular dependency detected for the "${store.namespace}" store when participating in the "${actionType}" action.` );
+		throw new Error( `Circular dependency detected for the "${ store.namespace }" store when participating in the "${ actionType }" action.` );
 	}
 	if ( store.waitFor && store.waitFor.length ) {
 		store.waitFor.forEach( function( dep ) {
@@ -38,7 +38,7 @@ function buildGenerations( stores, actionType ) {
 		tree[ item.gen ] = tree[ item.gen ] || [];
 		tree[ item.gen ].push( item );
 	}
-	/*eslint-enable */
+	/* eslint-enable */
 	return tree;
 }
 
@@ -48,7 +48,7 @@ function processGeneration( generation, action ) {
 			deps: _.pick( this.stores, store.waitFor ) // eslint-disable-line no-invalid-this
 		}, action );
 		dispatcherChannel.publish(
-			`${store.namespace}.handle.${action.actionType}`,
+			`${ store.namespace }.handle.${ action.actionType }`,
 			data
 		);
 	} );
@@ -141,14 +141,14 @@ class Dispatcher extends machina.BehavioralFsm {
 				v.splice( idx, 1 );
 			}
 		}
-		/*eslint-enable */
+		/* eslint-enable */
 	}
 
 	createSubscribers() {
 		this.__subscriptions = [
 			actionChannel.subscribe(
 				"execute.*",
-				( data, env ) => this.handleActionDispatch( data )
+				data => this.handleActionDispatch( data )
 			),
 			dispatcherChannel.subscribe(
 				"*.handled.*",

@@ -5,7 +5,7 @@
 import { storeChannel, dispatcherChannel } from "../bus";
 import { ensureLuxProp, entries } from "../utils";
 
-function gateKeeper( instance, store, data ) {
+function gateKeeper( instance, store ) {
 	const payload = {};
 	payload[ store ] = true;
 	const __lux = instance.__lux;
@@ -44,14 +44,14 @@ export const storeMixin = {
 		const listenTo = typeof stores.listenTo === "string" ? [ stores.listenTo ] : stores.listenTo;
 
 		if ( !stores.onChange ) {
-			throw new Error( `A component was told to listen to the following store(s): ${listenTo} but no onChange handler was implemented` );
+			throw new Error( `A component was told to listen to the following store(s): ${ listenTo } but no onChange handler was implemented` );
 		}
 
 		__lux.waitFor = [];
 		__lux.heardFrom = [];
 
 		listenTo.forEach( store => {
-			__lux.subscriptions[ `${store}.changed` ] = storeChannel.subscribe( `${store}.changed`, () => gateKeeper( this, store ) );
+			__lux.subscriptions[ `${ store }.changed` ] = storeChannel.subscribe( `${ store }.changed`, () => gateKeeper( this, store ) );
 		} );
 
 		__lux.subscriptions.prenotify = dispatcherChannel.subscribe( "prenotify", data => handlePreNotify( this, data ) );

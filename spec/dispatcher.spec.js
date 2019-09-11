@@ -1,10 +1,9 @@
-/* global describe, it, before, lux, postal, sinon */
-
+/* global should */
 describe( "luxJS - Dispatcher", function() {
-	var dispatcher;
-	var dispatcherChannel = postal.channel( "lux.dispatcher" );
-	var testAction = "test";
-	var handler = sinon.spy();
+	let dispatcher;
+	const dispatcherChannel = postal.channel( "lux.dispatcher" );
+	const testAction = "test";
+	const handler = sinon.spy();
 
 	beforeEach( function() {
 		// lux exposes the single dispatcher instance, but for tests create a new one each time
@@ -25,7 +24,7 @@ describe( "luxJS - Dispatcher", function() {
 			]
 		} );
 
-		var subscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
+		const subscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
 
 		dispatcher.handleActionDispatch( {
 			actionType: testAction
@@ -53,8 +52,8 @@ describe( "luxJS - Dispatcher", function() {
 			]
 		} );
 
-		var alphaSubscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
-		var betaSubscription = dispatcherChannel.subscribe( "beta.handle.test", handler );
+		const alphaSubscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
+		const betaSubscription = dispatcherChannel.subscribe( "beta.handle.test", handler );
 
 		dispatcher.handleActionDispatch( {
 			actionType: testAction
@@ -76,7 +75,7 @@ describe( "luxJS - Dispatcher", function() {
 			]
 		} );
 
-		var alphaSubscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
+		const alphaSubscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
 
 		dispatcher.handleActionDispatch( {
 			actionType: testAction
@@ -90,7 +89,7 @@ describe( "luxJS - Dispatcher", function() {
 			]
 		} );
 
-		var betaSubscription = dispatcherChannel.subscribe( "beta.handle.test", handler );
+		const betaSubscription = dispatcherChannel.subscribe( "beta.handle.test", handler );
 
 		dispatcher.handleActionDispatch( {
 			actionType: testAction
@@ -120,8 +119,8 @@ describe( "luxJS - Dispatcher", function() {
 			]
 		} );
 
-		var alphaSubscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
-		var betaSubscription = dispatcherChannel.subscribe( "beta.handle.test", handler );
+		const alphaSubscription = dispatcherChannel.subscribe( "alpha.handle.test", handler );
+		const betaSubscription = dispatcherChannel.subscribe( "beta.handle.test", handler );
 
 		dispatcher.removeStore( "alpha", true );
 
@@ -144,7 +143,7 @@ describe( "luxJS - Dispatcher", function() {
 			]
 		} );
 
-		var subscription = dispatcherChannel.subscribe( "notify", handler );
+		const subscription = dispatcherChannel.subscribe( "notify", handler );
 
 		dispatcher.handleActionDispatch( {
 			actionType: testAction
@@ -166,17 +165,17 @@ describe( "luxJS - Dispatcher", function() {
 	} );
 
 	it( "should unsubscribe and remove all subscriptions when disposed", function() {
-		var subscriptions = dispatcher.__subscriptions.slice();
+		const subscriptions = dispatcher.__subscriptions.slice();
 
 		dispatcher.dispose();
 
-		subscriptions.forEach( ( sub ) => sub.inactive.should.be.ok );
+		subscriptions.forEach( sub => sub.inactive.should.be.ok );
 
 		should.equal( dispatcher.__subscriptions, null );
 	} );
 
 	describe( "when exiting dispatching state", function() {
-		var hasChanged, namespace, prenotifySent, alphaSubscription, prenotifySubscription;
+		let hasChanged, namespace, prenotifySent, alphaSubscription, prenotifySubscription;
 
 		beforeEach( function() {
 			namespace = "alpha";
@@ -193,10 +192,10 @@ describe( "luxJS - Dispatcher", function() {
 					{ actionType: "test", waitFor: [ "beta" ] }
 				]
 			} );
-			alphaSubscription = dispatcherChannel.subscribe( namespace + ".handle." + testAction, function() {
+			alphaSubscription = dispatcherChannel.subscribe( `${ namespace }.handle.${ testAction }`, function() {
 				dispatcherChannel.publish(
-					namespace + ".handled." + testAction,
-					{ hasChanged: hasChanged, namespace: namespace }
+					`${ namespace }.handled.${ testAction }`,
+					{ hasChanged, namespace }
 				);
 			} );
 			prenotifySubscription = dispatcherChannel.subscribe( "prenotify", function() {

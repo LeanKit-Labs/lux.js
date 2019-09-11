@@ -36,7 +36,8 @@ export default function luxWrapper( Component, {
 			}
 		}
 
-		componentWillMount( ...args ) {
+		// eslint-disable-next-line camelcase
+		UNSAFE_componentWillMount( ...args ) {
 			if ( componentWillMount ) {
 				componentWillMount.apply( this, args );
 			}
@@ -48,7 +49,8 @@ export default function luxWrapper( Component, {
 			}
 		}
 
-		componentWillReceiveProps( ...args ) {
+		// eslint-disable-next-line camelcase
+		UNSAFE_componentWillReceiveProps( ...args ) {
 			if ( getState ) {
 				this.setState( getComponentState( this, ...args ) );
 			}
@@ -57,7 +59,8 @@ export default function luxWrapper( Component, {
 			}
 		}
 
-		componentWillUpdate( ...args ) {
+		// eslint-disable-next-line camelcase
+		UNSAFE_componentWillUpdate( ...args ) {
 			if ( componentWillUpdate ) {
 				componentWillUpdate.apply( this, args );
 			}

@@ -15,7 +15,7 @@ export function actionListenerMixin( { handlers, handlerFn, context, channel, to
 			handlers = handlers || context.handlers;
 			channel = channel || actionChannel;
 			topic = topic || "execute.*";
-			handlerFn = handlerFn || ( ( data, env ) => {
+			handlerFn = handlerFn || ( data => {
 				const handler = handlers[ data.actionType ];
 				if ( handler ) {
 					handler.apply( context, data.actionArgs );
