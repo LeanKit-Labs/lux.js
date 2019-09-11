@@ -3,9 +3,12 @@ module.exports = {
 	globals: {
 		lux: true,
 		postal: true
- 	},
+	},
+	parserOptions: {
+		sourceType: "module"
+	},
 	rules: {
-		"valid-jsdoc": "off",
+		"no-invalid-this": "off",
 		"prefer-rest-params": "off"
 	}
 };
