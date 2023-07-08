@@ -79,7 +79,7 @@
     "dirty-chai": "^1.2.2",
     "eslint-config-leankit": "^5.0.0",
     "imports-loader": "^0.6.3",
-    "jsdom": "^9.0.0",
+    "jsdom": "^22.1.0",
     "mocha": "^6.2.0",
     "postal": "^2.0.5",
     "react": ">=16.3.0",
